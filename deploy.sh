@@ -1,0 +1,1 @@
+vercel --build-env MONGODB_URI="mongodb://ethanmarreel1:ktRharlr2lWQO4G@tradebook.xsloi.mongodb.net/?retryWrites=true&w=majority&appName=TradeBook"
