@@ -15,6 +15,7 @@
   "dependencies": {
     "@vercel/blob": "^0.25.1",
     "mongodb": "^6.10.0",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "serve-static-bun": "^0.5.3"
   }
 }
