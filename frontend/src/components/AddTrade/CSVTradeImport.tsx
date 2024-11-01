@@ -172,6 +172,9 @@ const CSVTradeImport: React.FC = () => {
               <p className="mt-2 text-sm text-gray-500">
                 Please upload a CSV file containing your trade data
               </p>
+              <p className="mt-2 text-sm text-gray-500">
+                Don't know how? <a href="https://www.loom.com/share/04414cd4698147eea9ee8bf38915c6d9" target="_blank" rel="noreferrer" className="text-blue-600">Learn more</a>
+              </p>
             </div>
 
             {parsingError && (
