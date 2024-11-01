@@ -1,19 +1,38 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Trade {
-  id: string;
-  date: string;
-  time: string;
-  pnl: number;
-  strategy: string;
-  notes: string;
-  symbol: string;
-  side: string;
-  entryPrice: number;
-  exitPrice: number;
-  quantity: number;
-  contractMultiplier: number;
-  brokerage: string;
+  orderId: string;
+  Account: string;
+  orderID: string;
+  B_S: string;
+  Contract: string;
+  Product: string;
+  ProductDescription: string;
+  avgPrice: number;
+  filledQty: number;
+  FillTime: string;
+  lastCommandId: string;
+  Status: string;
+  _priceFormat: number;
+  _priceFormatType: number;
+  _tickSize: number;
+  spreadDefinitionId: string;
+  VersionID: string;
+  Timestamp: string;
+  Date: string;
+  Quantity: number;
+  Text: string;
+  Type: string;
+  LimitPrice: number;
+  StopPrice: number;
+  decimalLimit: number;
+  decimalStop: number;
+  FilledQty: number;
+  AvgFillPrice: number;
+  decimalFillAvg: number;
+  EntryPrice?: number; // Ensure these fields exist if used in PnL
+  ExitPrice?: number;
+  side?: 'LONG' | 'SHORT';
 }
 
 export interface Playbook {
@@ -78,6 +97,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
 
   const addPlaybook = (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
     const newPlaybook: Playbook = {
+      ...playbook,
       ...playbook,
       id: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       createdAt: new Date().toISOString()

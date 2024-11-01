@@ -11,7 +11,7 @@ serve({
     const url = new URL(req.url);
     console.log(req.method + " " + url.pathname);
 
-    // Handle API requests
+    // Direct all API requests to '/api'
     if (url.pathname.startsWith("/api")) {
       return await handleApiRequest(req);
     }

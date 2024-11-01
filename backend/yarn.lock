@@ -175,6 +175,11 @@ retry@0.13.1:
   resolved "https://registry.npmjs.org/retry/-/retry-0.13.1.tgz"
   integrity sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==
 
+serve-static-bun@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.npmjs.org/serve-static-bun/-/serve-static-bun-0.5.3.tgz"
+  integrity sha512-QlfA/Z30MwZl4XXWM9KevfinJRJjzJMRK8sXABbaY06Y7KTuXtbT1n0e8qdf1PgM59mpgSh/JTUM9Jjsh0E58Q==
+
 sparse-bitfield@^3.0.3:
   version "3.0.3"
   resolved "https://registry.npmjs.org/sparse-bitfield/-/sparse-bitfield-3.0.3.tgz"

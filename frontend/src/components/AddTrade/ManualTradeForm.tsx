@@ -38,7 +38,8 @@ const ManualTradeForm: React.FC = () => {
     quantity: '',
     strategy: '',
     notes: '',
-    brokerage: ''
+    brokerage: '',
+    timestamp: new Date().toISOString(), // Added timestamp field
   });
 
   const calculatePnL = (data: typeof formData) => {
@@ -62,12 +63,15 @@ const ManualTradeForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    const timestamp = new Date(`${formData.date}T${formData.time}`).toISOString(); // Combine date and time
+    
     const pnl = calculatePnL(formData);
     
     addTrade({
       id: crypto.randomUUID(),
       date: formData.date,
       time: formData.time,
+      timestamp, // Include timestamp
       pnl,
       strategy: formData.strategy,
       notes: formData.notes,
