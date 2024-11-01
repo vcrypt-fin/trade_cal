@@ -1,44 +1,63 @@
+// src/components/Trades.tsx
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
-import { Filter, Calendar } from 'lucide-react';
-import { useTrades } from '../context/TradeContext';
+import { Filter, Calendar, Edit } from 'lucide-react';
+import { useTrades, Trade } from '../context/TradeContext';
 import { useJournal } from '../context/JournalContext';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Trades: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { trades } = useTrades();
   const { entries } = useJournal();
-  const [filteredTrades, setFilteredTrades] = useState(trades);
+  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]); // Initialize as empty array
 
   useEffect(() => {
+    console.log('All Trades:', trades); // Debugging
     if (location.state?.date) {
-      setFilteredTrades(trades.filter(trade => trade.date === location.state.date));
+      const filtered = trades.filter((trade) => trade.date === location.state.date);
+      console.log(`Filtered Trades for date ${location.state.date}:`, filtered); // Debugging
+      setFilteredTrades(filtered);
     } else {
       setFilteredTrades(trades);
+      console.log('No date filter applied. Showing all trades:', trades); // Debugging
     }
   }, [location.state, trades]);
 
   // Calculate summary statistics
   const calculateStats = () => {
-    if (filteredTrades.length === 0) return {
-      netPnl: 0,
-      profitFactor: 0,
-      winRate: 0,
-      avgRatio: 0
-    };
+    if (filteredTrades.length === 0)
+      return {
+        netPnl: 0,
+        profitFactor: 0,
+        winRate: 0,
+        avgRatio: 0,
+      };
 
-    const winningTrades = filteredTrades.filter(t => t.pnl > 0);
-    const losingTrades = filteredTrades.filter(t => t.pnl < 0);
-    
-    const totalProfit = winningTrades.reduce((sum, t) => sum + t.pnl, 0);
-    const totalLoss = Math.abs(losingTrades.reduce((sum, t) => sum + t.pnl, 0));
-    
-    const netPnl = filteredTrades.reduce((sum, t) => sum + t.pnl, 0);
-    const winRate = (winningTrades.length / filteredTrades.length) * 100;
+    let netPnl = 0;
+    let totalProfit = 0;
+    let totalLoss = 0;
+    let winningTradesCount = 0;
+    let losingTradesCount = 0;
+
+    filteredTrades.forEach((trade) => {
+      const pnl = trade.pnl || 0;
+
+      netPnl += pnl;
+      if (pnl > 0) {
+        totalProfit += pnl;
+        winningTradesCount += 1;
+      } else if (pnl < 0) {
+        totalLoss += Math.abs(pnl);
+        losingTradesCount += 1;
+      }
+    });
+
+    const winRate = (winningTradesCount / filteredTrades.length) * 100;
     const profitFactor = totalLoss === 0 ? totalProfit : totalProfit / totalLoss;
-    const avgWin = winningTrades.length > 0 ? totalProfit / winningTrades.length : 0;
-    const avgLoss = losingTrades.length > 0 ? totalLoss / losingTrades.length : 0;
+    const avgWin = winningTradesCount > 0 ? totalProfit / winningTradesCount : 0;
+    const avgLoss = losingTradesCount > 0 ? totalLoss / losingTradesCount : 0;
     const avgRatio = avgLoss === 0 ? avgWin : avgWin / avgLoss;
 
     return { netPnl, profitFactor, winRate, avgRatio };
@@ -46,7 +65,7 @@ const Trades: React.FC = () => {
 
   const stats = calculateStats();
 
-  const formatCurrency = (value: number) => 
+  const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
   const formatPercent = (value: number) =>
@@ -54,10 +73,14 @@ const Trades: React.FC = () => {
 
   // Get linked notes for a trade
   const getTradeNotes = (tradeId: string) => {
-    const linkedNotes = entries.filter(entry => 
+    const linkedNotes = entries.filter((entry) =>
       entry.linkedTrades?.includes(tradeId)
     );
-    return linkedNotes.map(note => note.content).join('\n');
+    return linkedNotes.map((note) => note.content).join('\n');
+  };
+
+  const handleEdit = (tradeId: string) => {
+    navigate(`/edit-trade/${tradeId}`);
   };
 
   return (
@@ -100,6 +123,13 @@ const Trades: React.FC = () => {
               <span>Date range</span>
             </button>
           </div>
+          <button
+            onClick={() => navigate('/add-trade')}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow-sm hover:bg-blue-700"
+          >
+            <Edit size={18} />
+            <span>Add Trade</span>
+          </button>
         </div>
 
         {/* Trades Table */}
@@ -123,10 +153,10 @@ const Trades: React.FC = () => {
                   Quantity
                 </th>
                 <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
-                  Entry
+                  Entry Price
                 </th>
                 <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
-                  Exit
+                  Exit Price
                 </th>
                 <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
                   P&L
@@ -137,39 +167,68 @@ const Trades: React.FC = () => {
                 <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
                   Notes
                 </th>
+                <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {filteredTrades.map((trade) => (
-                <tr key={trade.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.date}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.time}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm font-bold text-gray-900">{trade.symbol}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs ${
-                      trade.side === 'LONG' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                    }`}>
-                      {trade.side}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.quantity}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.entryPrice}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.exitPrice}</td>
-                  <td className={`px-6 py-4 border-b border-gray-200 text-sm font-semibold ${
-                    trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {formatCurrency(trade.pnl)}
-                  </td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.strategy}</td>
-                  <td className="px-6 py-4 border-b border-gray-200 text-sm">
-                    <div className="max-h-20 overflow-y-auto">
-                      <div dangerouslySetInnerHTML={{ 
-                        __html: getTradeNotes(trade.id) || trade.notes 
-                      }} />
-                    </div>
+              {filteredTrades.length === 0 ? (
+                <tr>
+                  <td colSpan={11} className="px-6 py-4 text-center text-gray-500">
+                    No trades available.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredTrades.map((trade) => {
+                  console.log('Rendering Trade:', trade); // Debugging
+
+                  const pnl = trade.pnl || 0;
+
+                  return (
+                    <tr key={trade.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.date}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.time}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm font-bold text-gray-900">{trade.symbol}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${
+                            trade.side === 'LONG' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                          }`}
+                        >
+                          {trade.side}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.quantity}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">
+                        {trade.entryPrice !== undefined ? trade.entryPrice.toFixed(2) : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">
+                        {trade.exitPrice !== undefined ? trade.exitPrice.toFixed(2) : 'N/A'}
+                      </td>
+                      <td
+                        className={`px-6 py-4 border-b border-gray-200 text-sm font-semibold ${
+                          pnl >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {formatCurrency(pnl)}
+                      </td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.strategy}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">
+                        {trade.notes || 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm">
+                        <button
+                          onClick={() => handleEdit(trade.id)}
+                          className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                        >
+                          Edit
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

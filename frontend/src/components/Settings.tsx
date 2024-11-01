@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useTrades } from '../context/TradeContext';
-import { useJournal } from '../context/JournalContext';
 import Sidebar from './Sidebar';
 
 const Settings: React.FC = () => {
@@ -20,6 +19,7 @@ const Settings: React.FC = () => {
         <h1 className="text-2xl font-semibold mb-6">Settings</h1>
 
         <div className="bg-white rounded-lg shadow-md p-6">
+          {/* Data Management Section */}
           <div className="mb-8">
             <h2 className="text-lg font-semibold mb-4">Data Management</h2>
             <div className="space-y-4">
@@ -36,8 +36,25 @@ const Settings: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Support Section */}
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold mb-4">Support</h2>
+            <div>
+              <a
+                href="mailto:eclinick@vcryptfinancial.com?subject=Bug%20Report&body=Please%20describe%20the%20issue%20you're%20experiencing:"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Report a Bug
+              </a>
+              <p className="mt-2 text-sm text-gray-500">
+                Encountered a bug? Send us an email with the details.
+              </p>
+            </div>
+          </div>
         </div>
 
+        {/* Confirmation Modal */}
         {showConfirmation && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-lg p-6 max-w-md">

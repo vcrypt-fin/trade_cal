@@ -1,3 +1,4 @@
+// src/components/CSVTradeImport.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
@@ -81,7 +82,10 @@ const CSVTradeImport: React.FC = () => {
         skipEmptyLines: 'greedy',
         transformHeader: (header) => header.trim(),
         transform: (value) => value.trim(),
-        dynamicTyping: true, // Automatically convert numeric values
+        dynamicTyping: {
+          orderId: false, // Ensure 'orderId' is parsed as string
+          // You can specify other fields here if needed
+        },
         complete: (results) => {
           try {
             // Ignore field count errors since we only need specific fields
@@ -206,3 +210,4 @@ const CSVTradeImport: React.FC = () => {
 };
 
 export default CSVTradeImport;
+

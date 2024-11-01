@@ -1,3 +1,4 @@
+// src/App.tsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -14,6 +15,7 @@ import Reports from './components/Reports/Reports';
 import Settings from './components/Settings';
 import { TradeProvider } from './context/TradeContext';
 import { JournalProvider } from './context/JournalContext';
+import EditTradeForm from './components/EditTradeForm';
 
 function DashboardLayout() {
   return (
@@ -36,6 +38,7 @@ function App() {
           <Routes>
             <Route path="/" element={<DashboardLayout />} />
             <Route path="/add-trade" element={<AddTradeForm />} />
+            <Route path="/edit-trade/:id" element={<EditTradeForm />} />
             <Route path="/notebook" element={<Notebook />} />
             <Route path="/journal" element={<Journal />} />
             <Route path="/playbook" element={<Playbook />} />
