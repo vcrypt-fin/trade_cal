@@ -27,13 +27,10 @@ export const writeTrades = async (trades: any) => {
 // API handler function
 export const handleApiRequest = async (req: Request) => {
   const url = new URL(req.url);
+  console.log(req.method + " " + url.pathname);
 
-  // Remove '/api' prefix from the pathname
-  const apiPath = url.pathname.replace(/^\/api/, '');
-  console.log(req.method + " " + apiPath);
-
-  // Handle API routes based on 'apiPath'
-  if (apiPath.startsWith("/")) {
+  // Handle API routes
+  if (url.pathname.startsWith("/api")) {
     if (req.method === "GET") {
       // Retrieve all trades
       const trades = await readTrades();
