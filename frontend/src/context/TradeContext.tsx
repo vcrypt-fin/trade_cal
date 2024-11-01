@@ -1,8 +1,8 @@
 // src/context/TradeContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Trade {
-  id: string;
+  id: string; // Ensure id is a string to accommodate UUIDs
   date: string;
   time: string;
   timestamp?: string;
@@ -11,7 +11,7 @@ export interface Trade {
   brokerage: string;
   contractMultiplier: number;
   entryPrice: number;
-  exitPrice?: number;
+  exitPrice?: number; // Made optional to handle incomplete trades
   quantity: number;
   strategy: string;
   notes: string;
@@ -22,50 +22,102 @@ export interface Playbook {
   id: string;
   name: string;
   description?: string;
+  createdAt: string;
 }
 
-interface TradeContextProps {
+interface TradeContextType {
   trades: Trade[];
   playbooks: Playbook[];
   addTrade: (trade: Trade) => void;
   editTrade: (updatedTrade: Trade) => void;
-  deleteTrade: (tradeId: string) => void;
-  addPlaybook: (playbook: Playbook) => void;
+  addPlaybook: (playbook: Omit<Playbook, 'id' | 'createdAt'>) => void;
+  getPlaybookById: (id: string) => Playbook | undefined;
+  clearAllTrades: () => void;
 }
 
-const TradeContext = createContext<TradeContextProps | undefined>(undefined);
+const TradeContext = createContext<TradeContextType | undefined>(undefined);
 
-export const TradeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
-  
-  const addTrade = (trade: Trade) => {
-    setTrades(prev => [...prev, trade]);
-  };
-  
-  const editTrade = (updatedTrade: Trade) => {
-    setTrades(prev => prev.map(trade => trade.id === updatedTrade.id ? updatedTrade : trade));
-  };
-  
-  const deleteTrade = (tradeId: string) => {
-    setTrades(prev => prev.filter(trade => trade.id !== tradeId));
-  };
-  
-  const addPlaybook = (playbook: Playbook) => {
-    setPlaybooks(prev => [...prev, playbook]);
-  };
-  
-  return (
-    <TradeContext.Provider value={{ trades, playbooks, addTrade, editTrade, deleteTrade, addPlaybook }}>
-      {children}
-    </TradeContext.Provider>
-  );
-};
-
-export const useTrades = (): TradeContextProps => {
+export function useTrades() {
   const context = useContext(TradeContext);
   if (!context) {
     throw new Error('useTrades must be used within a TradeProvider');
   }
   return context;
-};
+}
+
+export function TradeProvider({ children }: { children: React.ReactNode }) {
+  const [trades, setTrades] = useState<Trade[]>(() => {
+    const savedTrades = localStorage.getItem('trades');
+    return savedTrades ? JSON.parse(savedTrades) : [];
+  });
+
+  const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
+    const savedPlaybooks = localStorage.getItem('playbooks');
+    return savedPlaybooks
+      ? JSON.parse(savedPlaybooks)
+      : [
+          {
+            id: 'gap-and-go',
+            name: 'Gap and Go',
+            createdAt: new Date().toISOString(),
+          },
+          {
+            id: 'reversal',
+            name: 'Reversal',
+            createdAt: new Date().toISOString(),
+          },
+        ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('trades', JSON.stringify(trades));
+  }, [trades]);
+
+  useEffect(() => {
+    localStorage.setItem('playbooks', JSON.stringify(playbooks));
+  }, [playbooks]);
+
+  const addTrade = (trade: Trade) => {
+    setTrades((prev) => [...prev, trade]);
+  };
+
+  const editTrade = (updatedTrade: Trade) => {
+    setTrades((prev) =>
+      prev.map((trade) => (trade.id === updatedTrade.id ? updatedTrade : trade))
+    );
+  };
+
+  const addPlaybook = (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
+    const newPlaybook: Playbook = {
+      ...playbook,
+      id: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      createdAt: new Date().toISOString(),
+    };
+    setPlaybooks((prev) => [...prev, newPlaybook]);
+  };
+
+  const getPlaybookById = (id: string) => {
+    return playbooks.find((p) => p.id === id);
+  };
+
+  const clearAllTrades = () => {
+    setTrades([]);
+    setPlaybooks([]);
+  };
+
+  return (
+    <TradeContext.Provider
+      value={{
+        trades,
+        playbooks,
+        addTrade,
+        editTrade,
+        addPlaybook,
+        getPlaybookById,
+        clearAllTrades,
+      }}
+    >
+      {children}
+    </TradeContext.Provider>
+  );
+}
