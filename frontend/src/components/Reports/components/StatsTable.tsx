@@ -14,17 +14,25 @@ interface StatsTableProps {
 }
 
 const StatsTable: React.FC<StatsTableProps> = ({ data }) => {
-  const formatCurrency = (value: number) => 
-    new Intl.NumberFormat('en-US', {
+  const formatCurrency = (value: number) => {
+    const formatted = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2
     }).format(value);
 
-  const getPnLColor = (value: number) => {
-    if (value > 0) return 'text-green-600';
-    if (value < 0) return 'text-red-600';
-    return 'text-gray-900';  // Black for zero
+    const colorClass = value === 0 ? 'text-gray-900' : 
+                      value > 0 ? 'text-green-600' : 
+                      'text-red-600';
+
+    return { formatted, colorClass };
+  };
+
+  const getWinRateColor = (trades: number, winningTrades: number) => {
+    if (trades === 0) return 'text-gray-900';
+    const winRate = (winningTrades / trades) * 100;
+    if (winRate >= 50) return 'text-green-600';
+    return 'text-red-600';
   };
 
   return (
@@ -42,32 +50,38 @@ const StatsTable: React.FC<StatsTableProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((stat) => (
-            <tr key={stat.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.label}</td>
-              <td className={`px-6 py-4 whitespace-nowrap text-sm ${getPnLColor(stat.pnl)}`}>
-                {formatCurrency(stat.pnl)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {stat.trades > 0 
-                  ? `${((stat.winningTrades / stat.trades) * 100).toFixed(1)}%`
-                  : '-'
-                }
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
-                {formatCurrency(stat.totalProfits)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                {formatCurrency(stat.totalLoss)}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {stat.trades}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {stat.volume}
-              </td>
-            </tr>
-          ))}
+          {data.map((stat) => {
+            const pnlFormatted = formatCurrency(stat.pnl);
+            const profitsFormatted = formatCurrency(stat.totalProfits);
+            const lossFormatted = formatCurrency(stat.totalLoss);
+
+            return (
+              <tr key={stat.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.label}</td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${pnlFormatted.colorClass}`}>
+                  {pnlFormatted.formatted}
+                </td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${getWinRateColor(stat.trades, stat.winningTrades)}`}>
+                  {stat.trades > 0 
+                    ? `${((stat.winningTrades / stat.trades) * 100).toFixed(1)}%`
+                    : '-'
+                  }
+                </td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${profitsFormatted.colorClass}`}>
+                  {profitsFormatted.formatted}
+                </td>
+                <td className={`px-6 py-4 whitespace-nowrap text-sm ${lossFormatted.colorClass}`}>
+                  {lossFormatted.formatted}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {stat.trades}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {stat.volume}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
