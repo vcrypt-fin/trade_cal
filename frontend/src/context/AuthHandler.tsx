@@ -31,7 +31,7 @@ const AuthChecker: React.FC = () => {
     checkAuthToken();
   }, [isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
 
-  return <div>{isAuthenticated ? 'User authenticated' : 'Redirecting to Auth0...'}</div>;
+  return <></>
 };
 
 export default AuthChecker;

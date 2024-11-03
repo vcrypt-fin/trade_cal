@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export interface Trade {
-  id: string; // Ensure id is a string to accommodate UUIDs
+  id: string;
   date: string;
   time: string;
   timestamp?: string;
@@ -11,7 +11,7 @@ export interface Trade {
   brokerage: string;
   contractMultiplier: number;
   entryPrice: number;
-  exitPrice?: number; // Made optional to handle incomplete trades
+  exitPrice?: number;
   quantity: number;
   strategy: string;
   notes: string;
@@ -46,63 +46,122 @@ export function useTrades() {
 }
 
 export function TradeProvider({ children }: { children: React.ReactNode }) {
-  const [trades, setTrades] = useState<Trade[]>(() => {
-    const savedTrades = localStorage.getItem('trades');
-    return savedTrades ? JSON.parse(savedTrades) : [];
-  });
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
 
-  const [playbooks, setPlaybooks] = useState<Playbook[]>(() => {
-    const savedPlaybooks = localStorage.getItem('playbooks');
-    return savedPlaybooks
-      ? JSON.parse(savedPlaybooks)
-      : [
-          {
-            id: 'gap-and-go',
-            name: 'Gap and Go',
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'reversal',
-            name: 'Reversal',
-            createdAt: new Date().toISOString(),
-          },
-        ];
-  });
+  const SERVER_URL = 'http://71.193.245.4';
 
   useEffect(() => {
-    localStorage.setItem('trades', JSON.stringify(trades));
-  }, [trades]);
+    const fetchData = async () => {
+      try {
+        const tradeResponse = await fetch(`${SERVER_URL}/trades`, {
+          credentials: 'include', // Send cookies with the request
+        });
+        const playbookResponse = await fetch(`${SERVER_URL}/playbooks`, {
+          credentials: 'include',
+        });
 
-  useEffect(() => {
-    localStorage.setItem('playbooks', JSON.stringify(playbooks));
-  }, [playbooks]);
+        if (tradeResponse.ok && playbookResponse.ok) {
+          const tradeData = await tradeResponse.json();
+          const playbookData = await playbookResponse.json();
+          setTrades(tradeData);
+          setPlaybooks(playbookData);
+        } else {
+          console.error('Failed to fetch data from server');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
 
-  const addTrade = (trade: Trade) => {
-    setTrades((prev) => [...prev, trade]);
+    fetchData();
+  }, []);
+
+  const addTrade = async (trade: Trade) => {
+    try {
+      const response = await fetch(`${SERVER_URL}/trades`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(trade),
+      });
+
+      if (response.ok) {
+        setTrades((prev) => [...prev, trade]);
+      } else {
+        console.error('Failed to add trade');
+      }
+    } catch (error) {
+      console.error('Error adding trade:', error);
+    }
   };
 
-  const editTrade = (updatedTrade: Trade) => {
-    setTrades((prev) =>
-      prev.map((trade) => (trade.id === updatedTrade.id ? updatedTrade : trade))
-    );
+  const editTrade = async (updatedTrade: Trade) => {
+    try {
+      const response = await fetch(`${SERVER_URL}/trades/${updatedTrade.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updatedTrade),
+      });
+
+      if (response.ok) {
+        setTrades((prev) =>
+          prev.map((trade) => (trade.id === updatedTrade.id ? updatedTrade : trade))
+        );
+      } else {
+        console.error('Failed to edit trade');
+      }
+    } catch (error) {
+      console.error('Error editing trade:', error);
+    }
   };
 
-  const addPlaybook = (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
+  const addPlaybook = async (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
     const newPlaybook: Playbook = {
       ...playbook,
       id: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       createdAt: new Date().toISOString(),
     };
-    setPlaybooks((prev) => [...prev, newPlaybook]);
+
+    try {
+      const response = await fetch(`${SERVER_URL}/playbooks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(newPlaybook),
+      });
+
+      if (response.ok) {
+        setPlaybooks((prev) => [...prev, newPlaybook]);
+      } else {
+        console.error('Failed to add playbook');
+      }
+    } catch (error) {
+      console.error('Error adding playbook:', error);
+    }
   };
 
   const getPlaybookById = (id: string) => {
     return playbooks.find((p) => p.id === id);
   };
 
-  const clearAllTrades = () => {
-    setTrades([]);
-    setPlaybooks([]);
+  const clearAllTrades = async () => {
+    try {
+      const response = await fetch(`${SERVER_URL}/clear`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        setTrades([]);
+        setPlaybooks([]);
+      } else {
+        console.error('Failed to clear all trades and playbooks');
+      }
+    } catch (error) {
+      console.error('Error clearing trades and playbooks:', error);
+    }
   };
 
   return (
