@@ -27,7 +27,10 @@ const CSVTradeImport: React.FC = () => {
       'avgPrice',
       'filledQty',
       'Fill Time',
-      'Status'
+      'Status',
+      'Limit Price',
+      'Stop Price',
+
     ];
 
     const firstRow = data[0];

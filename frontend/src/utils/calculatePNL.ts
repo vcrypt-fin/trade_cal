@@ -10,6 +10,10 @@ interface CSVTrade {
   'Fill Time': string;
   Status: string;
   Text: string;
+  'Limit Price': number | string;
+  'Stop Price': number | string;
+  'Avg Fill Price': number | string;
+  _tickSize: number | string;
 }
 
 interface Position {
@@ -66,20 +70,6 @@ function formatTime(timeStr: string): string {
   }
 }
 
-function getContractMultiplier(product: string): number {
-  const multipliers: Record<string, number> = {
-    'MNQ': 2,
-    'MES': 5,
-    'ES': 50,
-    'NQ': 20,
-    'RTY': 10,
-    'CL': 1000,
-    'GC': 100,
-    'SI': 5000
-  };
-  return multipliers[product] || 1;
-}
-
 export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
   const processedTrades: Trade[] = [];
   const openPositions: Map<string, Position> = new Map();
@@ -93,7 +83,8 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
     const quantity = parseNumber(trade.filledQty);
     const price = parseNumber(trade.avgPrice);
     const key = trade.Contract;
-    const multiplier = getContractMultiplier(trade.Product);
+    const tickSize = parseNumber(trade._tickSize);
+    const multiplier = (1/tickSize)/2 ;
 
     if (!openPositions.has(key)) {
       // Opening a new position
@@ -114,9 +105,6 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
       if ((position.side === 'LONG' && !isBuy) || (position.side === 'SHORT' && isBuy)) {
         // Closing or partially closing position
         const closeQuantity = Math.min(position.remainingQuantity, quantity);
-        const pnl = position.side === 'LONG' 
-          ? (price - position.entryPrice) * closeQuantity * multiplier
-          : (position.entryPrice - price) * closeQuantity * multiplier;
 
         position.exits.push({
           price,
@@ -128,7 +116,7 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
 
         if (position.remainingQuantity === 0) {
           // Position fully closed, calculate total P&L
-          let totalPnL = position.exits.reduce((sum, exit) => {
+          const totalPnL = position.exits.reduce((sum, exit) => {
             const exitPnL = position.side === 'LONG'
               ? (exit.price - position.entryPrice) * exit.quantity * multiplier
               : (position.entryPrice - exit.price) * exit.quantity * multiplier;
@@ -152,6 +140,9 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
           });
           
           openPositions.delete(key);
+        } else {
+          // Position partially closed, update position quantity
+          position.quantity -= closeQuantity;
         }
       } else {
         // Adding to existing position
