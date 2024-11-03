@@ -21,7 +21,7 @@ const CSVTradeImport: React.FC = () => {
       throw new Error('No data found in CSV file');
     }
 
-    // Only check for essential fields
+    // Only check for essential fields based on the expected CSV
     const requiredFields = [
       'orderId',
       'B/S',
@@ -33,13 +33,16 @@ const CSVTradeImport: React.FC = () => {
       'Status',
       'Limit Price',
       'Stop Price',
+      'Quantity',
+      'Type',
+      'Timestamp',
     ];
 
     const firstRow = data[0];
     const missingFields = requiredFields.filter(field => {
       // Check for both exact match and case-insensitive match
       return !Object.keys(firstRow).some(key => 
-        key.toLowerCase() === field.toLowerCase()
+        key.trim().toLowerCase() === field.trim().toLowerCase()
       );
     });
 
@@ -89,7 +92,10 @@ const CSVTradeImport: React.FC = () => {
         transform: (value) => value.trim(),
         dynamicTyping: {
           orderId: false, // Ensure 'orderId' is parsed as string
-          // You can specify other fields here if needed
+          filledQty: true,
+          Quantity: true,
+          avgPrice: true,
+          'Avg Fill Price': true,
         },
         complete: async (results) => {
           try {
@@ -101,7 +107,7 @@ const CSVTradeImport: React.FC = () => {
 
             if (relevantErrors.length > 0) {
               const errorMessage = relevantErrors
-                .map(error => `Row ${error.row}: ${error.message}`)
+                .map(error => `Row ${error.row + 1}: ${error.message}`)
                 .join('; ');
               setParsingError(`CSV parsing errors: ${errorMessage}`);
               setIsProcessing(false);
@@ -110,7 +116,7 @@ const CSVTradeImport: React.FC = () => {
 
             validateCSVData(results.data);
             const trades = calculatePNL(results.data);
-            
+
             if (trades.length === 0) {
               setParsingError('No valid trades found in the CSV file');
               setIsProcessing(false);
