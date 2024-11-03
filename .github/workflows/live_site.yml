@@ -3,7 +3,7 @@ name: Build and Deploy to Netlify
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # You can specify the Node.js version here
+          node-version: '18'
 
       - name: Install Dependencies
         working-directory: ./frontend
@@ -32,10 +32,10 @@ jobs:
         with:
           publish-dir: './frontend/dist'
           production-branch: master
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.PAT }}
           deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false
-          enable-commit-comment: true
+          enable-pull-request-comment: false  # Avoid commit comments to bypass permission error
+          enable-commit-comment: false        # Disable commit comment to prevent the 403 error
           overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
