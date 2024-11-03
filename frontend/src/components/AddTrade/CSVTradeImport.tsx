@@ -5,6 +5,7 @@ import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 import { parse } from 'papaparse';
 import { calculatePNL } from '../../utils/calculatePNL';
+import axios from 'axios';
 
 const CSVTradeImport: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,8 @@ const CSVTradeImport: React.FC = () => {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [parsingError, setParsingError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const SERVER_URL = `${window.location.origin}/api`;
 
   const validateCSVData = (data: any[]) => {
     if (!Array.isArray(data) || data.length === 0) {
@@ -30,14 +33,13 @@ const CSVTradeImport: React.FC = () => {
       'Status',
       'Limit Price',
       'Stop Price',
-
     ];
 
     const firstRow = data[0];
     const missingFields = requiredFields.filter(field => {
       // Check for both exact match and case-insensitive match
       return !Object.keys(firstRow).some(key => 
-        key === field || key.toLowerCase() === field.toLowerCase()
+        key.toLowerCase() === field.toLowerCase()
       );
     });
 
@@ -60,13 +62,13 @@ const CSVTradeImport: React.FC = () => {
     }
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     if (!csvFile) return;
     setIsProcessing(true);
     setParsingError(null);
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       if (!event.target?.result) {
         setParsingError('Failed to read file');
         setIsProcessing(false);
@@ -89,7 +91,7 @@ const CSVTradeImport: React.FC = () => {
           orderId: false, // Ensure 'orderId' is parsed as string
           // You can specify other fields here if needed
         },
-        complete: (results) => {
+        complete: async (results) => {
           try {
             // Ignore field count errors since we only need specific fields
             const relevantErrors = results.errors.filter(error => 
@@ -115,10 +117,24 @@ const CSVTradeImport: React.FC = () => {
               return;
             }
 
-            trades.forEach(trade => addTrade(trade));
-            setIsProcessing(false);
-            navigate('/');
-          } catch (error) {
+            // Send trades to backend
+            const apiResponse = await axios.post(`${SERVER_URL}/trades/bulk`, trades, {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (apiResponse.status === 201) {
+              const { added, skipped } = apiResponse.data;
+              added.forEach((trade: any) => addTrade(trade)); // Update local state
+              if (skipped.length > 0) {
+                alert(`${skipped.length} duplicate trades were skipped.`);
+              }
+              setIsProcessing(false);
+              navigate('/');
+            }
+
+          } catch (error: any) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
             console.error('Error processing trades:', error);
             setParsingError(`Error processing trades: ${errorMessage}`);
@@ -216,4 +232,3 @@ const CSVTradeImport: React.FC = () => {
 };
 
 export default CSVTradeImport;
-

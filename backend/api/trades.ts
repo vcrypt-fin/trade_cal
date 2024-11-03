@@ -1,5 +1,5 @@
 // api.ts
-import { Trade, Playbook } from "../../frontend/src/context/TradeContext";
+import { Trade, Playbook } from "../../frontend/src/context/TradeContext"; // Ensure correct path
 
 const TRADES_FILE_PATH = "./trades.json";
 const PLAYBOOKS_FILE_PATH = "./playbooks.json";
@@ -44,26 +44,73 @@ export async function handleApiRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const pathname = url.pathname;
 
+  // Handle CORS preflight
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*', // Adjust this in production
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
+  }
+
+  // Routing
+  let response: Response;
+
   if (pathname === "/api/trades") {
-    if (req.method === "GET") return getTrades();
-    if (req.method === "POST") return addTrade(await req.json());
+    if (req.method === "GET") {
+      response = getTrades();
+    } else if (req.method === "POST") {
+      const trade = await req.json();
+      response = addTrade(trade);
+    } else {
+      response = new Response("Method Not Allowed", { status: 405 });
+    }
   }
-
-  if (pathname.startsWith("/api/trades/")) {
+  else if (pathname === "/api/trades/bulk") {
+    if (req.method === "POST") {
+      const newTrades = await req.json();
+      response = addBulkTrades(newTrades);
+    } else {
+      response = new Response("Method Not Allowed", { status: 405 });
+    }
+  }
+  else if (pathname.startsWith("/api/trades/")) {
     const tradeId = pathname.split("/")[3];
-    if (req.method === "PUT") return editTrade(tradeId, await req.json());
+    if (req.method === "PUT") {
+      const updatedTrade = await req.json();
+      response = editTrade(tradeId, updatedTrade);
+    } else {
+      response = new Response("Method Not Allowed", { status: 405 });
+    }
+  }
+  else if (pathname === "/api/playbooks") {
+    if (req.method === "GET") {
+      response = getPlaybooks();
+    } else if (req.method === "POST") {
+      const playbookData = await req.json();
+      response = addPlaybook(playbookData);
+    } else {
+      response = new Response("Method Not Allowed", { status: 405 });
+    }
+  }
+  else if (pathname === "/api/clear" && req.method === "DELETE") {
+    response = clearAllData();
+  }
+  else {
+    response = new Response("Not Found", { status: 404 });
   }
 
-  if (pathname === "/api/playbooks") {
-    if (req.method === "GET") return getPlaybooks();
-    if (req.method === "POST") return addPlaybook(await req.json());
-  }
+  // Add CORS headers to the response
+  const headers = new Headers(response.headers);
+  headers.set('Access-Control-Allow-Origin', '*'); // Adjust this in production
 
-  if (pathname === "/api/clear" && req.method === "DELETE") {
-    return clearAllData();
-  }
-
-  return new Response("Not Found", { status: 404 });
+  return new Response(response.body, {
+    status: response.status,
+    headers: headers,
+  });
 }
 
 function getTrades() {
@@ -72,15 +119,53 @@ function getTrades() {
 }
 
 function addTrade(trade: Trade) {
-  trades.push(trade);
-  saveTradesToFile(); // Save trades to file after each addition
-  return new Response(JSON.stringify(trade), { status: 201 });
+  const existingTrade = trades.find(t => t.orderId === trade.orderId);
+  if (existingTrade) {
+    // Option 1: Skip adding duplicate
+    // return new Response(JSON.stringify({ message: 'Trade already exists' }), { status: 409 });
+
+    // Option 2: Update existing trade
+    trades = trades.map(t => t.orderId === trade.orderId ? { ...t, ...trade } : t);
+    saveTradesToFile();
+    return new Response(JSON.stringify(trades.find(t => t.orderId === trade.orderId)), { status: 200 });
+  } else {
+    trades.push(trade);
+    saveTradesToFile();
+    return new Response(JSON.stringify(trade), { status: 201 });
+  }
+}
+
+function addBulkTrades(newTrades: Trade[]) {
+  const addedTrades: Trade[] = [];
+  const skippedTrades: Trade[] = [];
+
+  newTrades.forEach(trade => {
+    const existingTrade = trades.find(t => t.orderId === trade.orderId);
+    if (existingTrade) {
+      // Option 1: Skip adding duplicate
+      // skippedTrades.push(trade);
+
+      // Option 2: Update existing trade
+      trades = trades.map(t => t.orderId === trade.orderId ? { ...t, ...trade } : t);
+      addedTrades.push(trades.find(t => t.orderId === trade.orderId)!);
+    } else {
+      trades.push(trade);
+      addedTrades.push(trade);
+    }
+  });
+
+  saveTradesToFile();
+  return new Response(JSON.stringify({ added: addedTrades, skipped: skippedTrades }), { status: 201 });
 }
 
 function editTrade(tradeId: string, updatedTrade: Trade) {
-  trades = trades.map((trade) => (trade.id === tradeId ? updatedTrade : trade));
+  const index = trades.findIndex(t => t.id === tradeId);
+  if (index === -1) {
+    return new Response(JSON.stringify({ message: 'Trade not found' }), { status: 404 });
+  }
+  trades[index] = { ...trades[index], ...updatedTrade };
   saveTradesToFile();
-  return new Response(JSON.stringify(updatedTrade), { status: 200 });
+  return new Response(JSON.stringify(trades[index]), { status: 200 });
 }
 
 function getPlaybooks() {

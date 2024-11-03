@@ -1,3 +1,4 @@
+// src/components/BrokerageLink.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../Sidebar';
@@ -7,6 +8,8 @@ const BrokerageLink: React.FC = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const SERVER_URL = `${window.location.origin}/api`;
 
   const handleTradeovateConnect = async () => {
     setLoading(true);
@@ -33,12 +36,31 @@ const BrokerageLink: React.FC = () => {
         }
       });
 
-      // Step 3: Set the Orders to State
-      setOrders(ordersResponse.data);
-      console.log('Orders fetched successfully:', ordersResponse.data);
-    } catch (error) {
+      const fetchedOrders = ordersResponse.data;
+
+      // Step 3: Send Orders to Backend
+      const apiResponse = await axios.post(`${SERVER_URL}/trades/bulk`, fetchedOrders, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (apiResponse.status === 201) {
+        const { added, skipped } = apiResponse.data;
+        setOrders(added); // Update local state with added trades
+        console.log('Orders synced with backend successfully:', apiResponse.data);
+        if (skipped.length > 0) {
+          alert(`${skipped.length} duplicate trades were skipped.`);
+        }
+      }
+
+    } catch (error: any) {
       console.error('Error connecting to Tradeovate:', error);
-      alert('Failed to connect to Tradeovate. Please try again.');
+      if (error.response && error.response.status === 409) {
+        alert('Some trades already exist and were skipped.');
+      } else {
+        alert('Failed to connect to Tradeovate. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -69,6 +91,7 @@ const BrokerageLink: React.FC = () => {
               <button
                 onClick={handleTradeovateConnect}
                 className="w-full flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+                disabled={loading}
               >
                 <div>
                   <h3 className="font-semibold">Tradeovate</h3>
@@ -86,7 +109,7 @@ const BrokerageLink: React.FC = () => {
                   <ul className="bg-gray-100 p-4 rounded-lg shadow-inner">
                     {orders.map((order, index) => (
                       <li key={index} className="mb-2">
-                        <span className="font-semibold">Order ID:</span> {order.id} <br />
+                        <span className="font-semibold">Order ID:</span> {order.orderId} <br />
                         <span className="font-semibold">Symbol:</span> {order.symbol} <br />
                         <span className="font-semibold">Quantity:</span> {order.quantity}
                       </li>
