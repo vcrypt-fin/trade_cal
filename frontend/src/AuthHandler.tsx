@@ -18,9 +18,13 @@ const AuthChecker: React.FC = () => {
           // Get the token silently from Auth0 if authenticated
           token = await getAccessTokenSilently();
 
+          console.log('Token fetched from Auth0:', token);
+
           // Store the token in cookies
           Cookies.set('auth_token', token, { secure: true, sameSite: 'strict' });
         }
+      } else {
+        console.log('Token found in cookies:', token);
       }
     };
 
