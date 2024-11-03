@@ -49,7 +49,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
 
-  const SERVER_URL = 'http://71.193.245.4';
+  const SERVER_URL = `${window.location.origin}/api`;
 
   useEffect(() => {
     const fetchData = async () => {
