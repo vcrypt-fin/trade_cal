@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// src/components/Calendar.tsx
+
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTrades } from '../context/TradeContext';
 import { useNavigate } from 'react-router-dom';
@@ -39,6 +41,11 @@ interface CalendarDayProps {
 }
 
 const CalendarDay: React.FC<CalendarDayProps> = ({ dayNum, trade, onClick }) => {
+  if (dayNum === 0) {
+    // Render empty cells for days not in the current month
+    return <div className="aspect-square p-1"></div>;
+  }
+
   return (
     <div className="aspect-square p-1" onClick={onClick}>
       <div className="relative h-full">
@@ -68,19 +75,32 @@ const CalendarHeader: React.FC = () => {
 };
 
 const Calendar: React.FC = () => {
-  const { trades } = useTrades();
+  const { trades, isLoading, fetchTrades } = useTrades(); // Destructure fetchTrades
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+
+  useEffect(() => {
+    // Fetch the latest trades when the Calendar component mounts
+    fetchTrades();
+  }, [fetchTrades]); // Dependency array includes fetchTrades
+
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
   const totalDays = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
 
   const getDayTrades = (dayNum: number): DayTrade | undefined => {
-    const dayStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(dayNum).padStart(2, '0');
+    const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
     
-    const dayTrades = trades.filter(trade => trade.date === dayStr);
-    
+    console.log(`Looking for trades on: ${dayStr}`);
+
+    const dayTrades = trades.filter(trade => {
+      console.log(`Trade date: ${trade.date}`);
+      return trade.date === dayStr;
+    });
+
     if (dayTrades.length === 0) return undefined;
 
     const totalProfit = dayTrades.reduce((sum, trade) => sum + trade.pnl, 0);
@@ -96,16 +116,19 @@ const Calendar: React.FC = () => {
   };
 
   const handleDayClick = (dayNum: number) => {
-    const dayStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(dayNum).padStart(2, '0');
+    const dayStr = `${year}-${month}-${day}`;
     navigate('/trades', { state: { date: dayStr } });
   };
 
   const handlePrevMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1));
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1));
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
   
   const renderCalendarDays = () => {
@@ -125,6 +148,10 @@ const Calendar: React.FC = () => {
   };
 
   const monthYear = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+  if (isLoading) {
+    return <div className="bg-white rounded-lg p-6 shadow-sm">Loading calendar...</div>;
+  }
 
   return (
     <div className="bg-white rounded-lg p-6 shadow-sm">

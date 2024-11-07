@@ -1,27 +1,28 @@
 // src/components/Trades.tsx
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
-import { Filter, Calendar, Edit } from 'lucide-react';
-import { useTrades, Trade } from '../context/TradeContext';
-import { useJournal } from '../context/JournalContext';
+import { Filter, Calendar as CalendarIcon, Edit } from 'lucide-react';
+import { Trade } from '../context/TradeContext'; // Ensure correct import
+import { useJournal } from '../context/JournalContext'; // Assuming you have JournalContext
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTrades } from '../context/TradeContext'; // Import the useTrades hook
 
 const Trades: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { trades } = useTrades();
+  const { trades } = useTrades(); // Consume trades from context
   const { entries } = useJournal();
-  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]); // Initialize as empty array
+  const [filteredTrades, setFilteredTrades] = useState<Trade[]>([]);
 
+  // Filter trades based on the date from location state
   useEffect(() => {
-    console.log('All Trades:', trades); // Debugging
     if (location.state?.date) {
       const filtered = trades.filter((trade) => trade.date === location.state.date);
-      console.log(`Filtered Trades for date ${location.state.date}:`, filtered); // Debugging
       setFilteredTrades(filtered);
+      console.log(`Filtered trades for date ${location.state.date}:`, filtered);
     } else {
       setFilteredTrades(trades);
-      console.log('No date filter applied. Showing all trades:', trades); // Debugging
+      console.log('Displaying all trades:', trades);
     }
   }, [location.state, trades]);
 
@@ -119,7 +120,7 @@ const Trades: React.FC = () => {
               <span>Filters</span>
             </button>
             <button className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-50">
-              <Calendar size={18} />
+              <CalendarIcon size={18} />
               <span>Date range</span>
             </button>
           </div>
@@ -181,15 +182,15 @@ const Trades: React.FC = () => {
                 </tr>
               ) : (
                 filteredTrades.map((trade) => {
-                  console.log('Rendering Trade:', trade); // Debugging
-
                   const pnl = trade.pnl || 0;
 
                   return (
                     <tr key={trade.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.date}</td>
                       <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.time}</td>
-                      <td className="px-6 py-4 border-b border-gray-200 text-sm font-bold text-gray-900">{trade.symbol}</td>
+                      <td className="px-6 py-4 border-b border-gray-200 text-sm font-bold text-gray-900">
+                        {trade.symbol}
+                      </td>
                       <td className="px-6 py-4 border-b border-gray-200 text-sm">
                         <span
                           className={`px-2 py-1 rounded-full text-xs ${
@@ -234,7 +235,8 @@ const Trades: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+      );
+      
+    };
 
-export default Trades;
+    export default Trades;

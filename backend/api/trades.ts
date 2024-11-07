@@ -1,4 +1,5 @@
 // api.ts
+
 import { Trade, Playbook } from "../../frontend/src/context/TradeContext"; // Ensure correct path
 
 const TRADES_FILE_PATH = "./trades.json";
@@ -14,14 +15,25 @@ let playbooks: Playbook[] = loadPlaybooksFromFile() || [
 function loadTradesFromFile(): Trade[] {
   try {
     const data = Bun.file(TRADES_FILE_PATH).textSync();
-    return JSON.parse(data);
-  } catch {
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    } else {
+      console.error("Trades data is not an array:", parsed);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error loading trades from file:", error);
     return [];
   }
 }
 
 // Helper to save trades to file
 function saveTradesToFile() {
+  if (!Array.isArray(trades)) {
+    console.error("Cannot save trades. Data is not an array:", trades);
+    return;
+  }
   Bun.write(TRADES_FILE_PATH, JSON.stringify(trades, null, 2));
 }
 
@@ -29,14 +41,25 @@ function saveTradesToFile() {
 function loadPlaybooksFromFile(): Playbook[] {
   try {
     const data = Bun.file(PLAYBOOKS_FILE_PATH).textSync();
-    return JSON.parse(data);
-  } catch {
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      return parsed;
+    } else {
+      console.error("Playbooks data is not an array:", parsed);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error loading playbooks from file:", error);
     return [];
   }
 }
 
 // Helper to save playbooks to file
 function savePlaybooksToFile() {
+  if (!Array.isArray(playbooks)) {
+    console.error("Cannot save playbooks. Data is not an array:", playbooks);
+    return;
+  }
   Bun.write(PLAYBOOKS_FILE_PATH, JSON.stringify(playbooks, null, 2));
 }
 
@@ -44,15 +67,19 @@ export async function handleApiRequest(req: Request): Promise<Response> {
   const url = new URL(req.url);
   const pathname = url.pathname;
 
+  console.log(`Received ${req.method} request for ${pathname}`);
+
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*', // Adjust this in production
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': '*', // Allow all headers
+  };
+
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': '*', // Adjust this in production
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
+      headers: corsHeaders,
     });
   }
 
@@ -69,6 +96,9 @@ export async function handleApiRequest(req: Request): Promise<Response> {
       response = new Response("Method Not Allowed", { status: 405 });
     }
   }
+  else if (pathname === "/api/health") { // Fixed typo from "/api/heath" to "/api/health"
+    response = new Response("OK", { status: 200 });
+  }
   else if (pathname === "/api/trades/bulk") {
     if (req.method === "POST") {
       const newTrades = await req.json();
@@ -79,7 +109,7 @@ export async function handleApiRequest(req: Request): Promise<Response> {
   }
   else if (pathname.startsWith("/api/trades/")) {
     const tradeId = pathname.split("/")[3];
-    if (req.method === "PUT") {
+    if (req.method === "PUT" || req.method === "PATCH") { // Accept PATCH as per frontend code
       const updatedTrade = await req.json();
       response = editTrade(tradeId, updatedTrade);
     } else {
@@ -119,15 +149,15 @@ function getTrades() {
 }
 
 function addTrade(trade: Trade) {
-  const existingTrade = trades.find(t => t.orderId === trade.orderId);
+  const existingTrade = trades.find(t => t.id === trade.id);
   if (existingTrade) {
     // Option 1: Skip adding duplicate
     // return new Response(JSON.stringify({ message: 'Trade already exists' }), { status: 409 });
 
     // Option 2: Update existing trade
-    trades = trades.map(t => t.orderId === trade.orderId ? { ...t, ...trade } : t);
+    trades = trades.map(t => t.id === trade.id ? { ...t, ...trade } : t);
     saveTradesToFile();
-    return new Response(JSON.stringify(trades.find(t => t.orderId === trade.orderId)), { status: 200 });
+    return new Response(JSON.stringify(trades.find(t => t.id === trade.id)), { status: 200 });
   } else {
     trades.push(trade);
     saveTradesToFile();
@@ -136,18 +166,29 @@ function addTrade(trade: Trade) {
 }
 
 function addBulkTrades(newTrades: Trade[]) {
+  if (!Array.isArray(newTrades)) {
+    console.error("Bulk trades data is not an array:", newTrades);
+    return new Response(JSON.stringify({ message: 'Invalid data format. Expected an array of trades.' }), { status: 400 });
+  }
+
   const addedTrades: Trade[] = [];
   const skippedTrades: Trade[] = [];
 
   newTrades.forEach(trade => {
-    const existingTrade = trades.find(t => t.orderId === trade.orderId);
+    if (!trade.date) {
+      console.warn('Trade without date:', trade);
+      skippedTrades.push(trade);
+      return;
+    }
+
+    const existingTrade = trades.find(t => t.id === trade.id);
     if (existingTrade) {
       // Option 1: Skip adding duplicate
-      // skippedTrades.push(trade);
+      skippedTrades.push(trade);
 
       // Option 2: Update existing trade
-      trades = trades.map(t => t.orderId === trade.orderId ? { ...t, ...trade } : t);
-      addedTrades.push(trades.find(t => t.orderId === trade.orderId)!);
+      // trades = trades.map(t => t.id === trade.id ? { ...t, ...trade } : t);
+      // addedTrades.push(trades.find(t => t.id === trade.id)!);
     } else {
       trades.push(trade);
       addedTrades.push(trade);
