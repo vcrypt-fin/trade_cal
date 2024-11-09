@@ -8,6 +8,12 @@ import { parse } from 'papaparse';
 import { calculatePNL } from '../../utils/calculatePNL';
 import axios from 'axios';
 
+// Unique ID Generator Function
+const generateUniqueId = (): string => {
+  // Combines current timestamp with a random number to ensure uniqueness
+  return `trade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
 const CSVTradeImport: React.FC = () => {
   const navigate = useNavigate();
   const { addBulkTrades } = useTrades();
@@ -166,18 +172,16 @@ const CSVTradeImport: React.FC = () => {
               return;
             }
 
-            // Optional: Perform a health check before proceeding
-            try {
-              const healthCheck = await axios.get(`${SERVER_URL}/health`);
-              if (healthCheck.status !== 200) {
-                throw new Error('API health check failed');
-              }
-            } catch (healthError: any) {
-              throw new Error('API health check failed');
-            }
+            // Assign unique string IDs to each trade to prevent duplicates
+            const tradesWithUniqueIds = trades.map(trade => ({
+              ...trade,
+              id: generateUniqueId(), // Assign a unique string ID
+            }));
+
+            console.log('Trades with unique IDs:', tradesWithUniqueIds);
 
             // Send trades to backend using addBulkTrades
-            await addBulkTrades(trades);
+            await addBulkTrades(tradesWithUniqueIds);
             alert('Bulk trades uploaded successfully!');
             setCsvFile(null);
             navigate('/'); // Redirect to calendar

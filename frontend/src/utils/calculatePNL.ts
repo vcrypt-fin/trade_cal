@@ -15,7 +15,6 @@ interface CSVTrade {
   limitPrice: number | string;
   stopPrice: number | string;
   avgFillPrice: number | string;
-  _tickSize: number | string;
 }
 
 interface Trade {
@@ -74,19 +73,33 @@ function formatTime(dateTimeString: string): string {
   const date = new Date(dateTimeString);
   return isNaN(date.getTime())
     ? ''
-    : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Returns 'HH:MM AM/PM'
+    : date.toLocaleTimeString('en-GB', { hour12: false }); // Returns 'HH:MM:SS'
 }
 
 export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
   const processedTrades: Trade[] = [];
   const openPositions: Map<string, Position> = new Map();
 
-  console.log('Total trades from CSV:', csvTrades.length);
-  csvTrades.forEach((trade, index) => {
-    console.log(`Trade ${index + 1}:`, trade);
-  });
+  // Mapping of product symbols to their contract multipliers
+  const productMultipliers: { [key: string]: number } = {
+    // Futures
+    'NQ': 20, // E-mini Nasdaq 100
+    'MNQ': 2, // Micro E-mini Nasdaq 100
+    'ES': 50, // E-mini S&P 500
+    'MES': 5, // Micro E-mini S&P 500
+    // Add other futures symbols as needed
 
-  // Filter trades
+    // Forex (example)
+    // 'EURUSD': 100000,
+
+    // Stocks (default multiplier)
+    // Stocks typically have a multiplier of 1
+  };
+
+  // Default multiplier if product not found in the map
+  const defaultMultiplier = 1;
+
+  // Filter and sort trades
   const filledTrades = csvTrades
     .filter(trade =>
       trade.status === 'Filled' &&
@@ -96,15 +109,15 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
     )
     .sort((a, b) => new Date(a.fillTime).getTime() - new Date(b.fillTime).getTime());
 
-  console.log('Filtered filledTrades:', filledTrades);
-
   filledTrades.forEach(trade => {
     const isBuy = trade.side.toUpperCase().includes('BUY');
     const quantity = parseNumber(trade.filledQty);
     const price = parseNumber(trade.avgPrice);
     const key = trade.contract;
-    const tickSize = parseNumber(trade._tickSize);
-    const multiplier = tickSize !== 0 ? (1 / tickSize) / 2 : 1; // Prevent division by zero
+    const product = trade.product.toUpperCase();
+
+    // Get the correct multiplier from the map
+    const multiplier = productMultipliers[product] || defaultMultiplier;
 
     if (!openPositions.has(key)) {
       // Opening a new position
@@ -117,9 +130,8 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
         exits: [],
         orderId: trade.orderId,
         text: trade.text,
-        product: trade.product
+        product: product
       });
-      console.log(`Opened new position for ${key}:`, openPositions.get(key));
     } else {
       const position = openPositions.get(key)!;
 
@@ -127,7 +139,6 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
         // Closing or partially closing position
         const closeQuantity = Math.min(position.remainingQuantity, quantity);
         if (closeQuantity <= 0) {
-          console.log(`Trade ${trade.orderId} has zero closeQuantity, skipping.`);
           return;
         }
 
@@ -138,8 +149,6 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
         });
 
         position.remainingQuantity -= closeQuantity;
-
-        console.log(`Trade ${trade.orderId} closes ${closeQuantity} of position for ${key}`);
 
         if (position.remainingQuantity === 0) {
           // Position fully closed, calculate total P&L
@@ -166,12 +175,9 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
             brokerage: 'tradeovate'
           });
 
-          console.log(`Closed position for ${key}. Total P&L: ${totalPnL}`);
-
           openPositions.delete(key);
         } else {
-          // Position partially closed, update position quantity
-          console.log(`Partially closed position for ${key}. Remaining Quantity: ${position.remainingQuantity}`);
+          // Position partially closed
         }
       } else {
         // Adding to existing position
@@ -180,12 +186,9 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
         position.entryPrice = totalCost / totalQuantity;
         position.quantity = totalQuantity;
         position.remainingQuantity = totalQuantity;
-
-        console.log(`Added to existing position for ${key}. New Entry Price: ${position.entryPrice}, New Quantity: ${position.quantity}`);
       }
     }
   });
 
-  console.log('Final processedTrades:', processedTrades);
   return processedTrades;
 }

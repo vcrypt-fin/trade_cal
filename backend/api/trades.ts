@@ -1,4 +1,4 @@
-// api.ts
+// trades.ts
 
 import { Trade, Playbook } from "../../frontend/src/context/TradeContext"; // Ensure correct path
 
@@ -96,7 +96,7 @@ export async function handleApiRequest(req: Request): Promise<Response> {
       response = new Response("Method Not Allowed", { status: 405 });
     }
   }
-  else if (pathname === "/api/health") { // Fixed typo from "/api/heath" to "/api/health"
+  else if (pathname === "/api/health") {
     response = new Response("OK", { status: 200 });
   }
   else if (pathname === "/api/trades/bulk") {
@@ -109,7 +109,7 @@ export async function handleApiRequest(req: Request): Promise<Response> {
   }
   else if (pathname.startsWith("/api/trades/")) {
     const tradeId = pathname.split("/")[3];
-    if (req.method === "PUT" || req.method === "PATCH") { // Accept PATCH as per frontend code
+    if (req.method === "PUT" || req.method === "PATCH") {
       const updatedTrade = await req.json();
       response = editTrade(tradeId, updatedTrade);
     } else {
@@ -225,9 +225,10 @@ function addPlaybook(playbookData: Omit<Playbook, "id" | "createdAt">) {
 }
 
 function clearAllData() {
+  // Clearing JSON trades.json and playbooks.json
   trades = [];
   playbooks = [];
   saveTradesToFile();
   savePlaybooksToFile();
-  return new Response("All data cleared", { status: 200 });
+  return new Response(JSON.stringify({ message: "All data cleared." }), { status: 200 });
 }

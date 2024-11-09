@@ -1,4 +1,5 @@
 // src/components/EditTradeForm.tsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTrades, Trade } from '../context/TradeContext';
@@ -15,6 +16,7 @@ const EditTradeForm: React.FC = () => {
     if (id) {
       const tradeToEdit = trades.find((trade) => trade.id === id);
       if (tradeToEdit) {
+        // Directly set the time without conversion
         setFormData(tradeToEdit);
       } else {
         alert('Trade not found');
@@ -47,6 +49,7 @@ const EditTradeForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData) {
+      // No conversion needed; save time as is
       editTrade(formData);
       alert('Trade updated successfully!');
       navigate('/trades');
@@ -114,6 +117,7 @@ const EditTradeForm: React.FC = () => {
                   onChange={handleChange}
                   className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   required
+                  step="1" // Allows seconds
                 />
               </div>
             </div>

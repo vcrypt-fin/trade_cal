@@ -1,3 +1,5 @@
+// src/App.tsx
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -15,19 +17,7 @@ import Settings from './components/Settings';
 import { TradeProvider } from './context/TradeContext';
 import { JournalProvider } from './context/JournalContext';
 import EditTradeForm from './components/EditTradeForm';
-
-function DashboardLayout() {
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
-        <Header />
-        <Stats />
-        <Calendar />
-      </div>
-    </div>
-  );
-}
+import DashboardLayout from './components/DashboardLayout'; // Ensure correct import
 
 function App() {
   return (

@@ -35,8 +35,22 @@ interface TradeContextType {
   addBulkTrades: (newTrades: Trade[]) => Promise<void>;
   getPlaybookById: (id: string) => Playbook | undefined;
   clearAllTrades: () => Promise<void>;
-  fetchTrades: () => Promise<void>; // Exposed fetchTrades
+  fetchTrades: () => Promise<void>;
   isLoading: boolean;
+  // New additions for filter management
+  filters: {
+    startDate: string;
+    endDate: string;
+    symbols: string[];
+    strategies: string[];
+  };
+  setFilters: (filters: {
+    startDate: string;
+    endDate: string;
+    symbols: string[];
+    strategies: string[];
+  }) => void;
+  resetFilters: () => void;
 }
 
 const TradeContext = createContext<TradeContextType | undefined>(undefined);
@@ -81,7 +95,41 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true); // Initialize as loading
 
-  // Memoize fetchTrades to prevent it from being redefined on every render
+  // Filters state
+  const [filters, setFiltersState] = useState<{
+    startDate: string;
+    endDate: string;
+    symbols: string[];
+    strategies: string[];
+  }>({
+    startDate: new Date(new Date().setDate(1)).toISOString().split('T')[0], // First day of current month
+    endDate: new Date().toISOString().split('T')[0], // Today
+    symbols: [],
+    strategies: [],
+  });
+
+  const setFilters = useCallback((newFilters: {
+    startDate: string;
+    endDate: string;
+    symbols: string[];
+    strategies: string[];
+  }) => {
+    console.log('Setting filters:', newFilters);
+    setFiltersState(newFilters);
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    const defaultFilters = {
+      startDate: new Date(new Date().setDate(1)).toISOString().split('T')[0],
+      endDate: new Date().toISOString().split('T')[0],
+      symbols: [],
+      strategies: [],
+    };
+    console.log('Resetting filters to:', defaultFilters);
+    setFiltersState(defaultFilters);
+  }, []);
+
+  // Fetch trades from backend
   const fetchTrades = useCallback(async () => {
     console.log('Fetching trades from backend...');
     try {
@@ -311,7 +359,11 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     clearAllTrades,
     fetchTrades,
     isLoading,
-  }), [trades, playbooks, addTrade, editTrade, addPlaybook, addBulkTrades, getPlaybookById, clearAllTrades, fetchTrades, isLoading]);
+    // New additions
+    filters,
+    setFilters,
+    resetFilters,
+  }), [trades, playbooks, addTrade, editTrade, addPlaybook, addBulkTrades, getPlaybookById, clearAllTrades, fetchTrades, isLoading, filters]);
 
   return (
     <TradeContext.Provider value={contextValue}>

@@ -6,10 +6,10 @@ import { useTrades } from '../context/TradeContext';
 import { useNavigate } from 'react-router-dom';
 
 interface DayTrade {
-  date: number;
-  profit: number;
-  trades: number;
-  winRate: number;
+  date: string;   // Format: 'YYYY-MM-DD'
+  profit: number; // PnL
+  trades: number; // Number of trades
+  winRate: number; // Percentage
 }
 
 interface TradeInfoProps {
@@ -75,14 +75,14 @@ const CalendarHeader: React.FC = () => {
 };
 
 const Calendar: React.FC = () => {
-  const { trades, isLoading, fetchTrades } = useTrades(); // Destructure fetchTrades
+  const { trades, filters, fetchTrades, isLoading } = useTrades();
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    // Fetch the latest trades when the Calendar component mounts
+    // Fetch the latest trades when the Calendar component mounts or when filters change
     fetchTrades();
-  }, [fetchTrades]); // Dependency array includes fetchTrades
+  }, [fetchTrades, filters]);
 
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
   const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
@@ -93,25 +93,32 @@ const Calendar: React.FC = () => {
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(dayNum).padStart(2, '0');
     const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
-    
-    console.log(`Looking for trades on: ${dayStr}`);
 
-    const dayTrades = trades.filter(trade => {
-      console.log(`Trade date: ${trade.date}`);
-      return trade.date === dayStr;
+    // Filter trades within the selected date range, symbols, and strategies
+    const filteredTrades = trades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const start = new Date(filters.startDate);
+      const end = new Date(filters.endDate);
+      return (
+        trade.date === dayStr &&
+        tradeDate >= start &&
+        tradeDate <= end &&
+        (filters.symbols.length === 0 || filters.symbols.includes(trade.symbol)) &&
+        (filters.strategies.length === 0 || filters.strategies.includes(trade.strategy))
+      );
     });
 
-    if (dayTrades.length === 0) return undefined;
+    if (filteredTrades.length === 0) return undefined;
 
-    const totalProfit = dayTrades.reduce((sum, trade) => sum + trade.pnl, 0);
-    const winningTrades = dayTrades.filter(trade => trade.pnl > 0).length;
-    const winRate = (winningTrades / dayTrades.length) * 100;
+    const totalProfit = filteredTrades.reduce((sum, trade) => sum + trade.pnl, 0);
+    const winningTrades = filteredTrades.filter(trade => trade.pnl > 0).length;
+    const winRate = (winningTrades / filteredTrades.length) * 100;
 
     return {
-      date: dayNum,
+      date: dayStr,
       profit: totalProfit,
-      trades: dayTrades.length,
-      winRate: winRate
+      trades: filteredTrades.length,
+      winRate: winRate,
     };
   };
 
@@ -160,6 +167,7 @@ const Calendar: React.FC = () => {
           <button 
             className="p-2 hover:bg-gray-100 rounded-full"
             onClick={handlePrevMonth}
+            aria-label="Previous Month"
           >
             <ChevronLeft size={20} />
           </button>
@@ -167,6 +175,7 @@ const Calendar: React.FC = () => {
           <button 
             className="p-2 hover:bg-gray-100 rounded-full"
             onClick={handleNextMonth}
+            aria-label="Next Month"
           >
             <ChevronRight size={20} />
           </button>
