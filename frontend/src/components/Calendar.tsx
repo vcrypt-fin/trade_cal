@@ -93,7 +93,7 @@ const Calendar: React.FC = () => {
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(dayNum).padStart(2, '0');
     const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
-
+  
     // Filter trades within the selected date range, symbols, and strategies
     const filteredTrades = trades.filter(trade => {
       const tradeDate = new Date(trade.date);
@@ -126,7 +126,7 @@ const Calendar: React.FC = () => {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(dayNum).padStart(2, '0');
-    const dayStr = `${year}-${month}-${day}`;
+    const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
     navigate('/trades', { state: { date: dayStr } });
   };
 

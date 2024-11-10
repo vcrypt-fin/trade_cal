@@ -51,7 +51,14 @@ export default function Header() {
 
           {/* Conditionally render FilterBar */}
           {isFilterDropdownOpen && (
-            <FilterBar />
+            <FilterBar 
+              dateRange={[null, null]}
+              onDateRangeChange={(range) => {}}
+              selectedSymbols={[]}
+              onSymbolChange={() => {}}
+              selectedTypes={[]}
+              onTypeChange={() => {}}
+            />
           )}
         </div>
 

@@ -76,7 +76,10 @@ function formatTime(dateTimeString: string): string {
     : date.toLocaleTimeString('en-GB', { hour12: false }); // Returns 'HH:MM:SS'
 }
 
-export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
+export function calculatePNL(
+  csvTrades: CSVTrade[], 
+  dateRange?: { startDate: string; endDate: string }
+): Trade[] {
   const processedTrades: Trade[] = [];
   const openPositions: Map<string, Position> = new Map();
 
@@ -99,8 +102,18 @@ export function calculatePNL(csvTrades: CSVTrade[]): Trade[] {
   // Default multiplier if product not found in the map
   const defaultMultiplier = 1;
 
+  const filteredTrades = dateRange ?
+    csvTrades.filter(trade => {
+      const tradeDate = new Date(trade.fillTime);
+      const startDate = new Date(dateRange.startDate);
+      const endDate = new Date(dateRange.endDate);
+      return tradeDate >= startDate && tradeDate <= endDate;
+    }) :
+    csvTrades;
+
+    
   // Filter and sort trades
-  const filledTrades = csvTrades
+  const filledTrades = filteredTrades
     .filter(trade =>
       trade.status === 'Filled' &&
       trade.fillTime &&

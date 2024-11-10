@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 
+
 interface ContractSpec {
   symbol: string;
   multiplier: number;
@@ -41,8 +42,12 @@ const ManualTradeForm: React.FC = () => {
   // Initialize form data excluding exitPrice and takeProfits
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
-    time: new Date().toLocaleTimeString('en-US', { hour12: false }).slice(0, 5),
-    symbol: '',
+    time: new Date().toLocaleTimeString('en-US', { 
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).replace(/,/g, ''),  // Ensures HH:MM:SS format
     contractType: '',
     side: '',
     entryPrice: '',
@@ -60,34 +65,54 @@ const ManualTradeForm: React.FC = () => {
 
   // Function to calculate total PNL
   const calculatePnL = (data: typeof formData, exes: Execution[]) => {
+    //console.log('🔍 calculatePnL input:', { data, exes });
+    
     const contractType = data.contractType;
     const multiplier = contractSpecs[contractType]?.multiplier || 1;
     const direction = data.side === 'LONG' ? 1 : -1;
-
+  
+    console.log('📊 PNL calculation params:', {
+      contractType,
+      multiplier,
+      direction,
+    });
+  
     let totalPnL = 0;
-
-    // Find the Entry execution
     const entry = exes.find(exe => exe.type === 'ENTRY');
+    
+    //console.log('🎯 Entry execution:', entry);
+    
     if (!entry) {
-      return 0; // No entry, no PNL
+      console.warn('⚠️ No entry execution found');
+      return 0;
     }
-
+  
     const entryPrice = parseFloat(entry.price);
     const entryQuantity = parseFloat(entry.quantity);
-
-    // Calculate PNL for each Exit execution
+  
+    //console.log('📈 Processing exit executions...');
     exes.forEach(exe => {
       if (exe.type === 'EXIT') {
         const exitPrice = parseFloat(exe.price);
         const exitQuantity = parseFloat(exe.quantity);
         const fee = parseFloat(exe.fee) || 0;
-
+  
         const pointDifference = exitPrice - entryPrice;
         const pnl = pointDifference * exitQuantity * multiplier * direction - fee;
+        
+        console.log('Exit execution details:', {
+          exitPrice,
+          exitQuantity,
+          fee,
+          pointDifference,
+          executionPnL: pnl
+        });
+        
         totalPnL += pnl;
       }
     });
-
+  
+    //console.log('💰 Final PNL:', totalPnL);
     return totalPnL;
   };
 
@@ -125,57 +150,74 @@ const ManualTradeForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validate that total Exit quantity does not exceed Entry quantity
-    const entry = executions.find(exe => exe.type === 'ENTRY');
-    if (!entry) {
-      alert('Entry execution is missing.');
-      return;
+    //console.log('🚀 Form submission started');
+  
+    // Parse and format the time
+    const timeValue = formData.time;
+    console.log('Original time value:', timeValue);
+    
+    let timeWithSeconds;
+    if (timeValue.includes('PM') || timeValue.includes('AM')) {
+      // Parse the 12-hour format time
+      const [time, period] = timeValue.split(' ');
+      const [hours, minutes] = time.split(':');
+      let hour24 = parseInt(hours, 10);
+      
+      // Convert to 24-hour format
+      if (period === 'PM' && hour24 !== 12) {
+        hour24 += 12;
+      } else if (period === 'AM' && hour24 === 12) {
+        hour24 = 0;
+      }
+      
+      // Format with leading zeros and append seconds
+      timeWithSeconds = `${hour24.toString().padStart(2, '0')}:${minutes}:00`;
+    } else {
+      // If it's already in 24-hour format, just append seconds
+      const [hours, minutes] = timeValue.split(':');
+      timeWithSeconds = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:00`;
     }
+  
+    console.log('⏰ Formatted time:', timeWithSeconds);
+  
+    try {
+      const tradeData = {
+        id: crypto.randomUUID(),
+        date: formData.date,
+        time: timeWithSeconds, // Use the formatted time with seconds
+        timestamp: new Date(`${formData.date}T${timeWithSeconds}`).toISOString(),
+        pnl: calculatePnL(formData, executions),
+        strategy: formData.strategy,
+        notes: formData.notes,
+        symbol: `${formData.contractType}`,
+        side: formData.side as 'LONG' | 'SHORT',
+        entryPrice: parseFloat(formData.entryPrice),
+        exitPrice: executions.find(exe => exe.type === 'EXIT')?.price ? 
+          parseFloat(executions.find(exe => exe.type === 'EXIT')!.price) : 
+          undefined,
+        quantity: parseFloat(formData.quantity),
+        contractMultiplier: contractSpecs[formData.contractType]?.multiplier || 1,
+        brokerage: formData.brokerage || '',
+      };
+  
+      console.log('📤 Sending trade data to context:', tradeData);
+      
+      // Add error handling for the addTrade call
+      addTrade(tradeData)
+        .then(() => {
+          console.log('✅ Trade submitted successfully');
+          navigate('/trades');
+        })
+        .catch((error) => {
+          console.error('❌ Error adding trade:', error);
+          // Optionally show an error message to the user
+          alert('Failed to add trade. Please ensure all fields are correct.');
+        });
 
-    const entryQuantity = parseFloat(entry.quantity);
-    const totalExitQuantity = executions
-      .filter(exe => exe.type === 'EXIT')
-      .reduce((acc, exe) => acc + parseFloat(exe.quantity || '0'), 0);
-
-    if (totalExitQuantity > entryQuantity) {
-      alert('Total Exit quantity cannot exceed the Entry quantity.');
-      return;
+    } catch (error) {
+      console.error('❌ Error preparing trade data:', error);
+      alert('Failed to prepare trade data. Please check all fields.');
     }
-
-    const timestamp = new Date(`${formData.date}T${formData.time}`).toISOString(); // Combine date and time
-
-    const pnl = calculatePnL(formData, executions);
-
-    // Calculate exitPrice as the price of the last EXIT execution
-    const exitExecutions = executions.filter(exe => exe.type === 'EXIT');
-    const exitPrice = exitExecutions.length > 0 ? parseFloat(exitExecutions[exitExecutions.length - 1].price) : undefined;
-
-    // Ensure that exitPrice is set if there are EXIT executions
-    if (exitExecutions.length > 0 && (isNaN(exitPrice!) || exitPrice === undefined)) {
-      alert('Please provide valid exit prices for all EXIT executions.');
-      return;
-    }
-
-    addTrade({
-      id: crypto.randomUUID(),
-      date: formData.date,
-      time: formData.time,
-      timestamp, // Include timestamp
-      pnl,
-      strategy: formData.strategy,
-      notes: formData.notes,
-      symbol: `${formData.contractType}`,
-      side: formData.side as 'LONG' | 'SHORT',
-      entryPrice: parseFloat(formData.entryPrice),
-      exitPrice: exitPrice, // Add exitPrice
-      quantity: parseFloat(formData.quantity),
-      contractMultiplier: contractSpecs[formData.contractType]?.multiplier || 1,
-      brokerage: formData.brokerage || '', // Provide default empty string if brokerage is not set
-      // Removed executions as it's not part of the Trade interface
-    });
-
-    navigate('/trades');
   };
 
   // Check if there are strategies (playbooks)
