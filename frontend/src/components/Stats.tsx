@@ -1,6 +1,7 @@
 import React from 'react';
 import { Info } from 'lucide-react';
 import { useTrades } from '../context/TradeContext';
+import { Trade } from '../types/trade';
 
 interface StatCardProps {
   title: string;
@@ -35,7 +36,16 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, info, type = 'number'
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm text-gray-600">{title}</h3>
         {info && (
-          <Info size={16} className="text-gray-400 cursor-help" title={info} />
+          <div className="relative group">
+            <Info 
+              size={16} 
+              className="text-gray-400 cursor-help"
+              aria-label={info}
+            />
+            <div className="hidden group-hover:block absolute z-50 p-2 bg-gray-800 text-white text-sm rounded shadow-lg -right-2 top-6 w-48">
+              {info}
+            </div>
+          </div>
         )}
       </div>
       <p className={`text-2xl font-semibold ${getValueColor(value)}`}>
@@ -45,31 +55,109 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, info, type = 'number'
   );
 };
 
+const getFilteredTrades = (trades: Trade[], filters: any) => {
+  console.log('=== Filter Debug ===');
+  console.log('Current filters:', {
+    startDate: filters.startDate,
+    endDate: filters.endDate,
+    symbols: filters.symbols,
+    strategies: filters.strategies
+  });
+  console.log('Total trades before filtering:', trades.length);
+
+  // Log a sample trade for debugging
+  if (trades.length > 0) {
+    console.log('Sample trade date format:', trades[0].date);
+  }
+
+  const filtered = trades.filter(trade => {
+    // Parse dates properly
+    const tradeDate = new Date(trade.date);
+    const startDate = new Date(filters.startDate);
+    const endDate = new Date(filters.endDate);
+    
+    // Set hours to 0 for consistent date comparison
+    tradeDate.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+    
+    const matchesDateRange = tradeDate >= startDate && tradeDate <= endDate;
+    const matchesSymbol = filters.symbols.length === 0 || filters.symbols.includes(trade.symbol);
+    const matchesStrategy = filters.strategies.length === 0 || filters.strategies.includes(trade.strategy);
+    
+    // Detailed logging for first few trades
+    if (trades.indexOf(trade) < 3) {
+      console.log(`Trade ${trade.id} (${trade.date}):`, {
+        tradeDate: tradeDate.toISOString(),
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        matchesDateRange,
+        matchesSymbol,
+        matchesStrategy
+      });
+    }
+
+    return matchesDateRange && matchesSymbol && matchesStrategy;
+  });
+
+  console.log('Filtered trades count:', filtered.length);
+  console.log('=== End Filter Debug ===');
+  return filtered;
+};
+
 const Stats: React.FC = () => {
-  const { trades } = useTrades();
+  const { trades, filters } = useTrades();
+  
+  console.log('Stats rendered with filters:', filters);
+  
+  // Log whenever filters change
+  React.useEffect(() => {
+    console.log('=== Stats Component Update ===');
+    console.log('Filters updated:', filters);
+    console.log('Available trades:', trades.length);
+    console.log('=== End Stats Update ===');
+  }, [trades, filters]);
 
-  // Calculate Net P&L
-  const netPnl = trades.reduce((sum, trade) => sum + trade.pnl, 0);
+  const filteredTrades = React.useMemo(() => {
+    console.log('Stats: Recalculating filtered trades with filters:', filters);
+    return getFilteredTrades(trades, filters);
+  }, [trades, filters]);
 
-  // Calculate Profit Factor
-  const winningTrades = trades.filter(trade => trade.pnl > 0);
-  const losingTrades = trades.filter(trade => trade.pnl < 0);
-  const grossProfit = winningTrades.reduce((sum, trade) => sum + trade.pnl, 0);
-  const grossLoss = Math.abs(losingTrades.reduce((sum, trade) => sum + trade.pnl, 0));
-  const profitFactor = grossLoss === 0 ? grossProfit : grossProfit / grossLoss;
+  const netPnl = React.useMemo(() => 
+    filteredTrades.reduce((sum, trade) => sum + trade.pnl, 0),
+    [filteredTrades]
+  );
 
-  // Calculate Win Rate
-  const winRate = trades.length > 0 ? (winningTrades.length / trades.length) * 100 : 0;
+  const { winningTrades, losingTrades } = React.useMemo(() => ({
+    winningTrades: filteredTrades.filter(trade => trade.pnl > 0),
+    losingTrades: filteredTrades.filter(trade => trade.pnl < 0)
+  }), [filteredTrades]);
 
-  // Calculate Current Streak
+  const { grossProfit, grossLoss, profitFactor } = React.useMemo(() => {
+    const grossProfit = winningTrades.reduce((sum, trade) => sum + trade.pnl, 0);
+    const grossLoss = Math.abs(losingTrades.reduce((sum, trade) => sum + trade.pnl, 0));
+    return {
+      grossProfit,
+      grossLoss,
+      profitFactor: grossLoss === 0 ? grossProfit : +(grossProfit / grossLoss).toFixed(2)
+    };
+  }, [winningTrades, losingTrades]);
+
+  const winRate = React.useMemo(() => 
+    filteredTrades.length > 0 
+      ? +((winningTrades.length / filteredTrades.length) * 100).toFixed(1)
+      : 0,
+    [filteredTrades.length, winningTrades.length]
+  );
+
   const calculateStreak = () => {
-    if (trades.length === 0) return { value: 0, type: 'trades' };
+    if (filteredTrades.length === 0) return { value: 0, type: 'trades' };
     
     let streak = 1;
-    let isWinning = trades[trades.length - 1].pnl > 0;
+    let isWinning = filteredTrades[filteredTrades.length - 1].pnl > 0;
     
-    for (let i = trades.length - 2; i >= 0; i--) {
-      const currentIsWin = trades[i].pnl > 0;
+    for (let i = filteredTrades.length - 2; i >= 0; i--) {
+      const currentIsWin = filteredTrades[i].pnl > 0;
       if (currentIsWin === isWinning) {
         streak++;
       } else {
@@ -87,7 +175,7 @@ const Stats: React.FC = () => {
       <StatCard
         title="Net P&L"
         value={netPnl}
-        info="Total profit/loss for all trades"
+        info={`Filtered P&L from ${filters.startDate} to ${filters.endDate}`}
         type="currency"
       />
       <StatCard

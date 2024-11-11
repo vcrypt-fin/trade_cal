@@ -181,34 +181,51 @@ export const handleApiRequest = async (req: Request): Promise<Response> => {
       if (req.method === "POST") {
         try {
           const tradeData = await req.json();
+          console.log("Received trade data:", tradeData);
 
-          // Basic validation
-          if (!tradeData.date || !tradeData.time || !tradeData.symbol || !tradeData.side) {
-            throw new Error("Missing required trade fields.");
+          if (!tradeData.date || !tradeData.symbol || !tradeData.side) {
+            console.error("Validation failed:", tradeData);
+            throw new Error("Missing required trade fields: date, symbol, or side");
           }
 
-          // Validate time format (HH:MM:SS)
-          const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-          if (!timeRegex.test(tradeData.time)) {
-            throw new Error("Invalid time format. Expected HH:MM:SS.");
+          if (!tradeData.time) {
+            const now = new Date();
+            tradeData.time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
           }
+
+          const newTrade = {
+            id: generateUniqueId(),
+            brokerage: tradeData.brokerage || 'Default',
+            contractMultiplier: tradeData.contractMultiplier || 1,
+            notes: tradeData.notes || '',
+            ...tradeData
+          };
 
           const trades = await readTrades();
-
-          // Assign a unique ID using UUID
-          const newTrade = { id: generateUniqueId(), ...tradeData };
           trades.push(newTrade);
           await writeTrades(trades);
+          
           console.log("Added new trade:", newTrade);
           return new Response(JSON.stringify(newTrade), {
             status: 201,
-            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            headers: { 
+              "Content-Type": "application/json", 
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Credentials": "true"
+            },
           });
         } catch (error) {
           console.error("Error creating trade:", error);
-          return new Response(JSON.stringify({ error: error.message || "Invalid trade data." }), {
+          return new Response(JSON.stringify({ 
+            error: error.message || "Invalid trade data",
+            details: error.toString()
+          }), {
             status: 400,
-            headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+            headers: { 
+              "Content-Type": "application/json", 
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Credentials": "true"
+            },
           });
         }
       }

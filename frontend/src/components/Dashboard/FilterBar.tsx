@@ -34,6 +34,13 @@ const FilterBar: React.FC = () => {
   }, [filters]);
 
   const handleApply = () => {
+    console.log('FilterBar: Applying new filters:', {
+      startDate: localStartDate,
+      endDate: localEndDate,
+      symbols: localSelectedSymbols,
+      strategies: localSelectedStrategies,
+    });
+    
     setFilters({
       startDate: localStartDate,
       endDate: localEndDate,

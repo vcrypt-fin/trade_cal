@@ -98,8 +98,11 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   });
 
   const setFilters = useCallback((newFilters: Filters) => {
-    console.log('Setting filters:', newFilters);
-    setFiltersState(newFilters);
+    console.log('TradeContext: Setting new filters:', newFilters);
+    setFiltersState(prevFilters => {
+      console.log('TradeContext: Previous filters:', prevFilters);
+      return newFilters;
+    });
   }, []);
 
   const resetFilters = useCallback(() => {
@@ -158,28 +161,17 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const addTrade = useCallback(async (trade: Trade) => {
-    console.log('Attempting to add trade:', trade);
+  const addTrade = useCallback(async (trade: Omit<Trade, 'id'>) => {
     try {
-      if (!trade.time.includes(':')) {
-        throw new Error('Invalid time format');
-      }
-
-      // Ensure time has seconds
-      const timeWithSeconds = trade.time.length === 5 ? `${trade.time}:00` : trade.time;
-      const tradeWithSeconds = {
-        ...trade,
-        time: timeWithSeconds
-      };
-
+      console.log('Sending trade data:', trade);
+      
       const response = await fetch(`${SERVER_URL}/trades`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify(tradeWithSeconds),
         credentials: 'include',
+        body: JSON.stringify(trade),
       });
 
       if (!response.ok) {
@@ -191,7 +183,6 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       const newTrade = await response.json();
       setTrades(prev => [...prev, newTrade]);
       await fetchTrades(); // Refresh trades after adding
-      return newTrade;
     } catch (error) {
       console.error('Error adding trade:', error);
       throw error;
