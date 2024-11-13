@@ -158,7 +158,7 @@ const CSVTradeImport: React.FC = () => {
                   newRow[mappedKey] = row[key];
                 }
               }
-              console.log(`Normalized row ${index + 1}:`, newRow); // Detailed row logging
+              //console.log(`Normalized row ${index + 1}:`, newRow); // Detailed row logging
               return newRow;
             });
 

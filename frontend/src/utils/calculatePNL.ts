@@ -17,22 +17,6 @@ interface CSVTrade {
   avgFillPrice: number | string;
 }
 
-interface Trade {
-  id: string;
-  date: string; // 'YYYY-MM-DD'
-  time: string; // 'HH:MM AM/PM'
-  symbol: string;
-  side: 'LONG' | 'SHORT';
-  entryPrice: number;
-  exitPrice: number;
-  quantity: number;
-  pnl: number;
-  strategy: string;
-  notes: string;
-  contractMultiplier: number;
-  brokerage: string;
-}
-
 interface Position {
   entryPrice: number;
   quantity: number;
@@ -77,131 +61,234 @@ function formatTime(dateTimeString: string): string {
 }
 
 export function calculatePNL(
-  csvTrades: CSVTrade[], 
+  csvTrades: CSVTrade[],
   dateRange?: { startDate: string; endDate: string }
 ): Trade[] {
+  console.log('Starting calculatePNL with trades:', csvTrades);
+
   const processedTrades: Trade[] = [];
-  const openPositions: Map<string, Position> = new Map();
+  const openPositions: Map<string, Position[]> = new Map();
 
-  // Mapping of product symbols to their contract multipliers
   const productMultipliers: { [key: string]: number } = {
-    // Futures
-    'NQ': 20, // E-mini Nasdaq 100
-    'MNQ': 2, // Micro E-mini Nasdaq 100
-    'ES': 50, // E-mini S&P 500
-    'MES': 5, // Micro E-mini S&P 500
-    // Add other futures symbols as needed
-
-    // Forex (example)
-    // 'EURUSD': 100000,
-
-    // Stocks (default multiplier)
-    // Stocks typically have a multiplier of 1
+    'NQ': 20,
+    'E-MINI NA': 20,
+    'MNQ': 2,
+    'ES': 50,
+    'MES': 5,
   };
 
-  // Default multiplier if product not found in the map
-  const defaultMultiplier = 1;
+  console.log('Product multipliers:', productMultipliers);
 
-  const filteredTrades = dateRange ?
-    csvTrades.filter(trade => {
-      const tradeDate = new Date(trade.fillTime);
-      const startDate = new Date(dateRange.startDate);
-      const endDate = new Date(dateRange.endDate);
-      return tradeDate >= startDate && tradeDate <= endDate;
-    }) :
-    csvTrades;
+  const filteredTrades = dateRange
+    ? csvTrades.filter(trade => {
+        const tradeDate = new Date(trade.fillTime);
+        const startDate = new Date(dateRange.startDate);
+        const endDate = new Date(dateRange.endDate);
+        return tradeDate >= startDate && tradeDate <= endDate;
+      })
+    : csvTrades;
 
-    
-  // Filter and sort trades
+  console.log('Filtered trades:', filteredTrades);
+
   const filledTrades = filteredTrades
     .filter(trade =>
       trade.status === 'Filled' &&
       trade.fillTime &&
-      trade.avgPrice &&
-      trade.filledQty
+      trade.avgPrice !== null &&
+      trade.filledQty !== null
     )
     .sort((a, b) => new Date(a.fillTime).getTime() - new Date(b.fillTime).getTime());
+
+  console.log('Filled and sorted trades:', filledTrades);
 
   filledTrades.forEach(trade => {
     const isBuy = trade.side.toUpperCase().includes('BUY');
     const quantity = parseNumber(trade.filledQty);
     const price = parseNumber(trade.avgPrice);
-    const key = trade.contract;
     const product = trade.product.toUpperCase();
+    const contract = trade.contract;
+    const key = `${product}-${contract}`; // Consistent key per product and contract
+    console.log('key:', key);
+    console.log('\nProcessing trade:', {
+      orderId: trade.orderId,
+      side: trade.side,
+      product,
+      contract,
+      price,
+      quantity,
+      key
+    });
 
-    // Get the correct multiplier from the map
-    const multiplier = productMultipliers[product] || defaultMultiplier;
+    const multiplier = productMultipliers[product] || 1;
+    console.log('Selected multiplier for product:', product, 'is:', multiplier);
 
     if (!openPositions.has(key)) {
-      // Opening a new position
-      openPositions.set(key, {
-        entryPrice: price,
-        quantity: quantity,
-        remainingQuantity: quantity,
-        entryTime: trade.fillTime,
-        side: isBuy ? 'LONG' : 'SHORT',
-        exits: [],
-        orderId: trade.orderId,
-        text: trade.text,
-        product: product
-      });
-    } else {
-      const position = openPositions.get(key)!;
+      openPositions.set(key, []);
+      console.log(`No existing positions for ${key}. Initialized positions array.`);
+    }
 
-      if ((position.side === 'LONG' && !isBuy) || (position.side === 'SHORT' && isBuy)) {
-        // Closing or partially closing position
-        const closeQuantity = Math.min(position.remainingQuantity, quantity);
-        if (closeQuantity <= 0) {
-          return;
-        }
+    const positions = openPositions.get(key)!;
 
-        position.exits.push({
-          price,
-          quantity: closeQuantity,
-          time: trade.fillTime
-        });
+    if (isBuy) {
+      // Buy trade: Either closing SHORT positions or opening LONG positions
+      let remainingQty = quantity;
 
-        position.remainingQuantity -= closeQuantity;
+      console.log(`Attempting to close SHORT positions for ${key} with quantity: ${remainingQty}`);
 
-        if (position.remainingQuantity === 0) {
-          // Position fully closed, calculate total P&L
-          const totalPnL = position.exits.reduce((sum, exit) => {
-            const exitPnL = position.side === 'LONG'
-              ? (exit.price - position.entryPrice) * exit.quantity * multiplier
-              : (position.entryPrice - exit.price) * exit.quantity * multiplier;
-            return sum + exitPnL;
-          }, 0);
-
-          processedTrades.push({
-            id: String(position.orderId), // Ensure 'id' is a string
-            date: formatDate(position.entryTime), // 'YYYY-MM-DD'
-            time: formatTime(position.entryTime), // 'HH:MM AM/PM'
-            symbol: position.product,
-            side: position.side,
-            entryPrice: position.entryPrice,
-            exitPrice: position.exits[position.exits.length - 1].price,
-            quantity: position.quantity,
-            pnl: totalPnL,
-            strategy: position.text || 'N/A',
-            notes: '',
-            contractMultiplier: multiplier,
-            brokerage: 'tradeovate'
+      // Attempt to close existing SHORT positions first (FIFO)
+      for (const pos of positions) {
+        if (pos.side === 'SHORT' && remainingQty > 0) {
+          const closeQty = Math.min(pos.remainingQuantity, remainingQty);
+          pos.exits.push({
+            price,
+            quantity: closeQty,
+            time: trade.fillTime
           });
 
-          openPositions.delete(key);
-        } else {
-          // Position partially closed
+          pos.remainingQuantity -= closeQty;
+          remainingQty -= closeQty;
+
+          console.log(`Closing ${closeQty} of SHORT position for ${key}. Remaining quantity in SHORT position: ${pos.remainingQuantity}`);
+
+          if (pos.remainingQuantity === 0) {
+            // Calculate PnL for the closed SHORT position
+            const totalPnL = pos.exits.reduce((sum, exit) => {
+              const exitPnL = (pos.entryPrice - exit.price) * exit.quantity * multiplier;
+              return sum + exitPnL;
+            }, 0);
+
+            processedTrades.push({
+              id: String(pos.orderId),
+              date: formatDate(pos.entryTime),
+              time: formatTime(pos.entryTime),
+              symbol: pos.product,
+              side: pos.side,
+              entryPrice: pos.entryPrice,
+              exitPrice: pos.exits[pos.exits.length - 1].price,
+              quantity: pos.quantity,
+              pnl: totalPnL,
+              strategy: pos.text || 'N/A',
+              notes: '',
+              contractMultiplier: multiplier,
+              brokerage: 'tradeovate'
+            });
+
+            console.log(`SHORT position for ${key} fully closed with PnL: ${totalPnL}`);
+
+            // Remove the closed position from openPositions
+            const index = positions.indexOf(pos);
+            if (index > -1) {
+              positions.splice(index, 1);
+              console.log(`Removed fully closed SHORT position from openPositions for ${key}.`);
+            }
+          }
         }
+        if (remainingQty <= 0) break;
+      }
+
+      if (remainingQty > 0) {
+        // Open a new LONG position for the remaining quantity
+        const newLongPos: Position = {
+          entryPrice: price,
+          quantity: remainingQty,
+          remainingQuantity: remainingQty,
+          entryTime: trade.fillTime,
+          side: 'LONG',
+          exits: [],
+          orderId: trade.orderId,
+          text: trade.text,
+          product: product
+        };
+
+        positions.push(newLongPos);
+        console.log(`Opening new LONG position for ${key}:`, newLongPos);
       } else {
-        // Adding to existing position
-        const totalCost = (position.entryPrice * position.quantity) + (price * quantity);
-        const totalQuantity = position.quantity + quantity;
-        position.entryPrice = totalCost / totalQuantity;
-        position.quantity = totalQuantity;
-        position.remainingQuantity = totalQuantity;
+        console.log(`All ${quantity} units of the BUY trade for ${key} have been used to close existing SHORT positions.`);
+      }
+    } else {
+      // Sell trade: Either closing LONG positions or opening SHORT positions
+      let remainingQty = quantity;
+
+      console.log(`Attempting to close LONG positions for ${key} with quantity: ${remainingQty}`);
+
+      // Attempt to close existing LONG positions first (FIFO)
+      for (const pos of positions) {
+        if (pos.side === 'LONG' && remainingQty > 0) {
+          const closeQty = Math.min(pos.remainingQuantity, remainingQty);
+          pos.exits.push({
+            price,
+            quantity: closeQty,
+            time: trade.fillTime
+          });
+
+          pos.remainingQuantity -= closeQty;
+          remainingQty -= closeQty;
+
+          console.log(`Closing ${closeQty} of LONG position for ${key}. Remaining quantity in LONG position: ${pos.remainingQuantity}`);
+
+          if (pos.remainingQuantity === 0) {
+            // Calculate PnL for the closed LONG position
+            const totalPnL = pos.exits.reduce((sum, exit) => {
+              const exitPnL = (exit.price - pos.entryPrice) * exit.quantity * multiplier;
+              return sum + exitPnL;
+            }, 0);
+
+            processedTrades.push({
+              id: String(pos.orderId),
+              date: formatDate(pos.entryTime),
+              time: formatTime(pos.entryTime),
+              symbol: pos.product,
+              side: pos.side,
+              entryPrice: pos.entryPrice,
+              exitPrice: pos.exits[pos.exits.length - 1].price,
+              quantity: pos.quantity,
+              pnl: totalPnL,
+              strategy: pos.text || 'N/A',
+              notes: '',
+              contractMultiplier: multiplier,
+              brokerage: 'tradeovate'
+            });
+
+            console.log(`LONG position for ${key} fully closed with PnL: ${totalPnL}`);
+
+            // Remove the closed position from openPositions
+            const index = positions.indexOf(pos);
+            if (index > -1) {
+              positions.splice(index, 1);
+              console.log(`Removed fully closed LONG position from openPositions for ${key}.`);
+            }
+          }
+        }
+        if (remainingQty <= 0) break;
+      }
+
+      if (remainingQty > 0) {
+        // Open a new SHORT position for the remaining quantity
+        const newShortPos: Position = {
+          entryPrice: price,
+          quantity: remainingQty,
+          remainingQuantity: remainingQty,
+          entryTime: trade.fillTime,
+          side: 'SHORT',
+          exits: [],
+          orderId: trade.orderId,
+          text: trade.text,
+          product: product
+        };
+
+        positions.push(newShortPos);
+        console.log(`Opening new SHORT position for ${key}:`, newShortPos);
+      } else {
+        console.log(`All ${quantity} units of the SELL trade for ${key} have been used to close existing LONG positions.`);
       }
     }
   });
+
+  // Optional: Handle any remaining open positions if needed
+  // For example, you might want to calculate unrealized PnL or report open positions
+
+  console.log('Final processed trades:', processedTrades);
+  console.log('Open positions remaining:', openPositions);
 
   return processedTrades;
 }
