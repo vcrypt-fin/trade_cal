@@ -1,12 +1,8 @@
 [
   {
-    "id": "41b378d4-248d-432d-b228-cc64d94531cc",
-    "name": "Gap and Go",
-    "createdAt": "2024-11-13T03:15:34.824Z"
-  },
-  {
-    "id": "546ccb34-2d64-47ca-a7aa-ea785ca74f4a",
-    "name": "Reversal",
-    "createdAt": "2024-11-13T03:15:34.824Z"
+    "id": "zigzag",
+    "name": "Zigzag",
+    "description": "zz",
+    "createdAt": "2024-11-13T03:59:13.586Z"
   }
 ]

@@ -1,7 +1,7 @@
 // src/components/Trades.tsx
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import { Filter, Calendar as CalendarIcon, Edit } from 'lucide-react';
+import { Filter, Calendar as CalendarIcon, Edit, Trash2, Tag } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTrades } from '../context/TradeContext';
 import Stats from './Stats';
@@ -10,8 +10,9 @@ import FilterBar from './Dashboard/FilterBar';
 const Trades: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { trades, filters } = useTrades();
+  const { trades, filters, editTrade, playbooks } = useTrades();
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
@@ -39,6 +40,81 @@ const Trades: React.FC = () => {
       return matchesDateRange && matchesSymbol && matchesStrategy;
     });
   }, [trades, filters]);
+
+  const handleSelectAll = () => {
+    if (selectedTrades.length === filteredTrades.length) {
+      setSelectedTrades([]);
+    } else {
+      setSelectedTrades(filteredTrades.map(trade => trade.id));
+    }
+  };
+
+  const handleSelectTrade = (tradeId: string) => {
+    setSelectedTrades(prev => 
+      prev.includes(tradeId) 
+        ? prev.filter(id => id !== tradeId)
+        : [...prev, tradeId]
+    );
+  };
+
+  const handleMassUpdateStrategy = async (playbookId: string) => {
+    if (!playbookId) return;
+    
+    try {
+      // Find the selected playbook using ID
+      const selectedPlaybook = playbooks.find(p => p.id === playbookId);
+      if (!selectedPlaybook) {
+        console.error('Selected playbook not found');
+        return;
+      }
+
+      // Create an array of promises for updating trades
+      const updates = selectedTrades.map(tradeId => {
+        const trade = trades.find(t => t.id === tradeId);
+        if (trade) {
+          // Match EditTradeForm's behavior exactly
+          const updatedTrade = {
+            ...trade,
+            strategy: playbookId,  // Use playbook ID as strategy (not the name)
+          };
+          
+          console.log('Updating trade:', trade.id, 'with strategy:', playbookId);
+          
+          return editTrade(updatedTrade);
+        }
+      });
+      
+      await Promise.all(updates.filter(Boolean));
+      setSelectedTrades([]);
+      
+      console.log(`Successfully updated ${updates.length} trades with playbook ID: ${playbookId}`);
+    } catch (error) {
+      console.error('Error updating strategies:', error);
+    }
+  };
+
+  const handleMassDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedTrades.length} trades?`)) {
+      return;
+    }
+
+    try {
+      const deletions = selectedTrades.map(tradeId => {
+        const trade = trades.find(t => t.id === tradeId);
+        if (trade) {
+          return editTrade({
+            ...trade,
+            deleted: true // Assuming your backend handles soft deletion
+          });
+        }
+      });
+
+      await Promise.all(deletions.filter(Boolean));
+      setSelectedTrades([]);
+    } catch (error) {
+      console.error('Error deleting trades:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -70,11 +146,56 @@ const Trades: React.FC = () => {
           </button>
         </div>
 
+        {/* Mass Action Buttons */}
+        {selectedTrades.length > 0 && (
+          <div className="mb-4 flex gap-2 items-center bg-blue-50 p-4 rounded-lg">
+            <span className="text-sm text-blue-700">
+              {selectedTrades.length} trades selected
+            </span>
+            <div className="flex gap-2 ml-4">
+              <select
+                onChange={(e) => handleMassUpdateStrategy(e.target.value)}
+                className="px-3 py-1 border rounded-md text-sm"
+                defaultValue=""
+              >
+                <option value="" disabled>Update Strategy</option>
+                {playbooks.map((playbook) => (
+                  <option key={playbook.id} value={playbook.id}>
+                    {playbook.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleMassDelete}
+                className="px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700 flex items-center gap-1"
+              >
+                <Trash2 size={14} />
+                Delete Selected
+              </button>
+              <button
+                onClick={() => setSelectedTrades([])}
+                className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 flex items-center gap-1"
+              >
+                <Tag size={14} />
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Trades Table */}
         <div className="overflow-x-auto bg-white p-4 rounded-lg shadow-md">
           <table className="min-w-full">
             <thead>
               <tr>
+                <th className="px-6 py-3 border-b-2 border-gray-200 text-left">
+                  <input
+                    type="checkbox"
+                    checked={selectedTrades.length === filteredTrades.length && filteredTrades.length > 0}
+                    onChange={handleSelectAll}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                </th>
                 <th className="px-6 py-3 border-b-2 border-gray-200 text-left text-sm font-semibold text-gray-700">
                   Date
                 </th>
@@ -113,13 +234,21 @@ const Trades: React.FC = () => {
             <tbody>
               {filteredTrades.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={12} className="px-6 py-4 text-center text-gray-500">
                     No trades available.
                   </td>
                 </tr>
               ) : (
                 filteredTrades.map((trade) => (
                   <tr key={trade.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 border-b border-gray-200">
+                      <input
+                        type="checkbox"
+                        checked={selectedTrades.includes(trade.id)}
+                        onChange={() => handleSelectTrade(trade.id)}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </td>
                     <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.date}</td>
                     <td className="px-6 py-4 border-b border-gray-200 text-sm">{trade.time}</td>
                     <td className="px-6 py-4 border-b border-gray-200 text-sm font-bold text-gray-900">

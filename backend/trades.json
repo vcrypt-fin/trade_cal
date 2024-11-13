@@ -1,6 +1,6 @@
 [
   {
-    "id": "trade-1731461980673-twvf2m8qi",
+    "id": "trade-1731470303836-awed7lxrl",
     "date": "2024-11-05",
     "time": "00:24:33",
     "symbol": "MNQ",
@@ -9,13 +9,14 @@
     "exitPrice": 20129.75,
     "quantity": 18,
     "pnl": 684,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-0t6z7rqjj",
+    "id": "trade-1731470303836-l3m3fxfxr",
     "date": "2024-11-05",
     "time": "01:45:40",
     "symbol": "MNQ",
@@ -24,13 +25,14 @@
     "exitPrice": 20124.75,
     "quantity": 18,
     "pnl": 1197,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-8ckrqtaud",
+    "id": "trade-1731470303836-bgd7vl494",
     "date": "2024-11-05",
     "time": "02:34:06",
     "symbol": "MNQ",
@@ -39,13 +41,14 @@
     "exitPrice": 20133.25,
     "quantity": 18,
     "pnl": -216,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-i40c0bun3",
+    "id": "trade-1731470303836-cp3zp0erq",
     "date": "2024-11-05",
     "time": "02:51:32",
     "symbol": "MNQ",
@@ -54,13 +57,14 @@
     "exitPrice": 20139,
     "quantity": 18,
     "pnl": -252,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-50micdts3",
+    "id": "trade-1731470303836-oi5f6zaal",
     "date": "2024-11-05",
     "time": "03:07:57",
     "symbol": "MNQ",
@@ -75,7 +79,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nbclpgcj8",
+    "id": "trade-1731470303836-te7cmwc8b",
     "date": "2024-11-05",
     "time": "04:14:17",
     "symbol": "MNQ",
@@ -90,7 +94,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-07pwsgagx",
+    "id": "trade-1731470303836-08t0dcr51",
     "date": "2024-11-05",
     "time": "05:01:43",
     "symbol": "MNQ",
@@ -105,7 +109,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-blqpf1mfw",
+    "id": "trade-1731470303836-ecammi0mi",
     "date": "2024-11-05",
     "time": "05:17:19",
     "symbol": "MNQ",
@@ -114,13 +118,14 @@
     "exitPrice": 20150,
     "quantity": 18,
     "pnl": -234,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-uquh0ladq",
+    "id": "trade-1731470303836-li53zdkao",
     "date": "2024-11-05",
     "time": "05:33:05",
     "symbol": "MNQ",
@@ -135,7 +140,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-mtjviouw5",
+    "id": "trade-1731470303836-3jmfj0zcq",
     "date": "2024-11-05",
     "time": "05:48:43",
     "symbol": "MNQ",
@@ -150,7 +155,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-f6h5extu6",
+    "id": "trade-1731470303836-8xyuktpfi",
     "date": "2024-11-05",
     "time": "06:19:14",
     "symbol": "MNQ",
@@ -159,13 +164,14 @@
     "exitPrice": 20177,
     "quantity": 18,
     "pnl": 1260,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-at22000vv",
+    "id": "trade-1731470303836-9401pbpwz",
     "date": "2024-11-05",
     "time": "07:19:14",
     "symbol": "MNQ",
@@ -180,7 +186,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-n2n49xf56",
+    "id": "trade-1731470303836-qi2ojylou",
     "date": "2024-11-05",
     "time": "07:49:14",
     "symbol": "MNQ",
@@ -195,7 +201,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i7lrsqpiw",
+    "id": "trade-1731470303836-t1ackdllh",
     "date": "2024-11-05",
     "time": "08:04:15",
     "symbol": "MNQ",
@@ -210,7 +216,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fcgfzy5hn",
+    "id": "trade-1731470303836-4wrsnm76v",
     "date": "2024-11-05",
     "time": "08:19:15",
     "symbol": "MNQ",
@@ -225,7 +231,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6nj2hamzb",
+    "id": "trade-1731470303836-cvah5cn57",
     "date": "2024-11-05",
     "time": "08:49:16",
     "symbol": "MNQ",
@@ -234,13 +240,14 @@
     "exitPrice": 20331,
     "quantity": 18,
     "pnl": -108,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-t9fkcgwhd",
+    "id": "trade-1731470303836-sl19wqplx",
     "date": "2024-11-05",
     "time": "09:04:17",
     "symbol": "MNQ",
@@ -255,7 +262,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-a1a6uamap",
+    "id": "trade-1731470303836-p7loamxas",
     "date": "2024-11-05",
     "time": "09:34:21",
     "symbol": "MNQ",
@@ -270,7 +277,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-utt0hsym3",
+    "id": "trade-1731470303836-q1fitjm70",
     "date": "2024-11-05",
     "time": "09:35:07",
     "symbol": "MNQ",
@@ -285,7 +292,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-j1exwtmhi",
+    "id": "trade-1731470303836-bhiw4rvo3",
     "date": "2024-11-05",
     "time": "09:46:19",
     "symbol": "MNQ",
@@ -300,7 +307,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-g896uxtjf",
+    "id": "trade-1731470303836-48v8n6is5",
     "date": "2024-11-05",
     "time": "10:03:09",
     "symbol": "NQ",
@@ -315,7 +322,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9s9luxfiu",
+    "id": "trade-1731470303836-7my16v1gl",
     "date": "2024-11-05",
     "time": "10:29:55",
     "symbol": "NQ",
@@ -324,13 +331,14 @@
     "exitPrice": 20332.25,
     "quantity": 1,
     "pnl": -200,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-joq1clo8b",
+    "id": "trade-1731470303836-z2rg6g4uu",
     "date": "2024-11-05",
     "time": "10:32:25",
     "symbol": "NQ",
@@ -345,7 +353,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rml50vgau",
+    "id": "trade-1731470303836-rr6u5hmu7",
     "date": "2024-11-05",
     "time": "10:34:54",
     "symbol": "NQ",
@@ -360,7 +368,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-plfwaisv6",
+    "id": "trade-1731470303836-697vmdhd2",
     "date": "2024-11-05",
     "time": "10:42:25",
     "symbol": "NQ",
@@ -369,13 +377,14 @@
     "exitPrice": 20323,
     "quantity": 1,
     "pnl": 110,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-wslfmpwt6",
+    "id": "trade-1731470303836-d1jm3772n",
     "date": "2024-11-05",
     "time": "10:52:29",
     "symbol": "NQ",
@@ -390,7 +399,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-sckvq86yt",
+    "id": "trade-1731470303836-53hih2187",
     "date": "2024-11-05",
     "time": "10:55:49",
     "symbol": "NQ",
@@ -405,7 +414,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-c89cfkes6",
+    "id": "trade-1731470303836-kq487e3xr",
     "date": "2024-11-05",
     "time": "10:57:29",
     "symbol": "NQ",
@@ -420,7 +429,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-q7n4dleta",
+    "id": "trade-1731470303836-zhjna7eyq",
     "date": "2024-11-05",
     "time": "10:59:16",
     "symbol": "NQ",
@@ -435,7 +444,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-wbxxkpm0o",
+    "id": "trade-1731470303836-irlhisoxq",
     "date": "2024-11-05",
     "time": "11:00:53",
     "symbol": "NQ",
@@ -450,7 +459,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4zxhb07eq",
+    "id": "trade-1731470303836-z7grlczjn",
     "date": "2024-11-05",
     "time": "11:05:58",
     "symbol": "NQ",
@@ -465,7 +474,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-aog4gvtki",
+    "id": "trade-1731470303836-0z8w0ljq6",
     "date": "2024-11-05",
     "time": "11:07:43",
     "symbol": "NQ",
@@ -480,7 +489,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-askpmbvv9",
+    "id": "trade-1731470303836-fr9mi0wdd",
     "date": "2024-11-05",
     "time": "11:14:23",
     "symbol": "NQ",
@@ -495,7 +504,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-z30ldvxya",
+    "id": "trade-1731470303836-ltcr5rzs5",
     "date": "2024-11-05",
     "time": "11:17:43",
     "symbol": "NQ",
@@ -510,7 +519,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kz0mgengb",
+    "id": "trade-1731470303836-llldpy2al",
     "date": "2024-11-05",
     "time": "11:19:25",
     "symbol": "NQ",
@@ -519,13 +528,14 @@
     "exitPrice": 20306.25,
     "quantity": 1,
     "pnl": 95,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-22v740pc9",
+    "id": "trade-1731470303836-gjvh3ktlb",
     "date": "2024-11-05",
     "time": "11:24:28",
     "symbol": "NQ",
@@ -540,7 +550,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-sh9ex123n",
+    "id": "trade-1731470303836-oef327iga",
     "date": "2024-11-05",
     "time": "11:31:08",
     "symbol": "MNQ",
@@ -555,7 +565,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-vssz0uq9h",
+    "id": "trade-1731470303836-pgcej5oo6",
     "date": "2024-11-05",
     "time": "11:32:49",
     "symbol": "MNQ",
@@ -564,13 +574,14 @@
     "exitPrice": 20322.25,
     "quantity": 15,
     "pnl": -37.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-86ff6sq7e",
+    "id": "trade-1731470303836-9w24xpabs",
     "date": "2024-11-05",
     "time": "11:34:31",
     "symbol": "MNQ",
@@ -585,7 +596,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-wjjiq4yqe",
+    "id": "trade-1731470303836-cafi1hy0x",
     "date": "2024-11-05",
     "time": "11:36:13",
     "symbol": "MNQ",
@@ -600,7 +611,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fqhx06wan",
+    "id": "trade-1731470303836-65eav9gxm",
     "date": "2024-11-05",
     "time": "11:37:54",
     "symbol": "MNQ",
@@ -615,7 +626,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-na83w55nj",
+    "id": "trade-1731470303836-mcxkdagn8",
     "date": "2024-11-05",
     "time": "11:39:34",
     "symbol": "MNQ",
@@ -624,13 +635,14 @@
     "exitPrice": 20329.25,
     "quantity": 15,
     "pnl": -37.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-qoltfsl3i",
+    "id": "trade-1731470303836-mn38ger06",
     "date": "2024-11-05",
     "time": "11:41:14",
     "symbol": "MNQ",
@@ -645,7 +657,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fjjh6tway",
+    "id": "trade-1731470303836-qp9qf1kdl",
     "date": "2024-11-05",
     "time": "11:42:54",
     "symbol": "MNQ",
@@ -660,7 +672,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-yehjrh5zg",
+    "id": "trade-1731470303836-43rs04dc5",
     "date": "2024-11-05",
     "time": "11:44:34",
     "symbol": "MNQ",
@@ -675,7 +687,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-c450od2be",
+    "id": "trade-1731470303836-74gcs457w",
     "date": "2024-11-05",
     "time": "11:47:58",
     "symbol": "MNQ",
@@ -690,7 +702,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gvflvb1ms",
+    "id": "trade-1731470303836-ihssjwmfb",
     "date": "2024-11-05",
     "time": "11:51:17",
     "symbol": "MNQ",
@@ -705,7 +717,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nbpwy1dqy",
+    "id": "trade-1731470303836-zjv59xyks",
     "date": "2024-11-05",
     "time": "11:57:58",
     "symbol": "MNQ",
@@ -720,7 +732,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-t68bz4zii",
+    "id": "trade-1731470303836-yv87ibwsb",
     "date": "2024-11-05",
     "time": "11:29:29",
     "symbol": "NQ",
@@ -735,7 +747,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ytpnwrxg4",
+    "id": "trade-1731470303836-nrzbxt2lm",
     "date": "2024-11-05",
     "time": "12:01:18",
     "symbol": "MNQ",
@@ -744,13 +756,14 @@
     "exitPrice": 20296.25,
     "quantity": 15,
     "pnl": -15,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-c3e7wyvrp",
+    "id": "trade-1731470303836-mndcg7snc",
     "date": "2024-11-05",
     "time": "12:01:19",
     "symbol": "MNQ",
@@ -765,7 +778,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ejzwao0cw",
+    "id": "trade-1731470303836-0lmots3ur",
     "date": "2024-11-05",
     "time": "12:06:19",
     "symbol": "MNQ",
@@ -780,7 +793,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-lk7eqf88k",
+    "id": "trade-1731470303836-kbql1m5vm",
     "date": "2024-11-05",
     "time": "12:12:59",
     "symbol": "MNQ",
@@ -795,7 +808,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-t8i745tmp",
+    "id": "trade-1731470303836-vntal8wuj",
     "date": "2024-11-05",
     "time": "12:14:39",
     "symbol": "MNQ",
@@ -810,7 +823,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-bpqpvkuy7",
+    "id": "trade-1731470303836-jau421g0p",
     "date": "2024-11-05",
     "time": "12:16:20",
     "symbol": "MNQ",
@@ -819,13 +832,14 @@
     "exitPrice": 20324,
     "quantity": 15,
     "pnl": 15,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-kpdvd2ibj",
+    "id": "trade-1731470303836-mrrufyyqm",
     "date": "2024-11-05",
     "time": "12:16:22",
     "symbol": "MNQ",
@@ -840,7 +854,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-y35ceac4s",
+    "id": "trade-1731470303836-k1tf8b0if",
     "date": "2024-11-05",
     "time": "12:19:41",
     "symbol": "MNQ",
@@ -855,7 +869,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9j6x2wonf",
+    "id": "trade-1731470303836-sdm6i76ys",
     "date": "2024-11-05",
     "time": "12:21:21",
     "symbol": "MNQ",
@@ -870,7 +884,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ftuaay2vl",
+    "id": "trade-1731470303836-gq6xa3gys",
     "date": "2024-11-05",
     "time": "12:28:07",
     "symbol": "MNQ",
@@ -885,7 +899,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1benxwxgy",
+    "id": "trade-1731470303836-gddeglhxz",
     "date": "2024-11-05",
     "time": "12:31:29",
     "symbol": "MNQ",
@@ -900,7 +914,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-axbk63rrk",
+    "id": "trade-1731470303836-qak2jy2az",
     "date": "2024-11-05",
     "time": "12:31:30",
     "symbol": "MNQ",
@@ -909,13 +923,14 @@
     "exitPrice": 20337.5,
     "quantity": 15,
     "pnl": -300,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-6z8i4pg0n",
+    "id": "trade-1731470303836-tel76zie3",
     "date": "2024-11-05",
     "time": "12:33:10",
     "symbol": "MNQ",
@@ -930,7 +945,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-u6yr6j9hr",
+    "id": "trade-1731470303836-poeazo851",
     "date": "2024-11-05",
     "time": "12:36:30",
     "symbol": "MNQ",
@@ -945,7 +960,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nc2xmfpzi",
+    "id": "trade-1731470303836-dicxxj4g4",
     "date": "2024-11-05",
     "time": "12:38:10",
     "symbol": "MNQ",
@@ -960,7 +975,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1o517a82e",
+    "id": "trade-1731470303836-z61kg2w3b",
     "date": "2024-11-05",
     "time": "12:39:51",
     "symbol": "MNQ",
@@ -975,7 +990,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ifkrsynxx",
+    "id": "trade-1731470303836-ive23ty26",
     "date": "2024-11-05",
     "time": "12:14:40",
     "symbol": "NQ",
@@ -990,7 +1005,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-b5iwvkl5t",
+    "id": "trade-1731470303836-gz155z7n3",
     "date": "2024-11-05",
     "time": "12:44:51",
     "symbol": "MNQ",
@@ -999,13 +1014,14 @@
     "exitPrice": 20307.25,
     "quantity": 15,
     "pnl": 187.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-93tnwdn99",
+    "id": "trade-1731470303836-qd2bbu94t",
     "date": "2024-11-05",
     "time": "12:46:31",
     "symbol": "MNQ",
@@ -1020,7 +1036,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-a2sqkhdtf",
+    "id": "trade-1731470303836-m0j7xz3jk",
     "date": "2024-11-05",
     "time": "12:48:11",
     "symbol": "MNQ",
@@ -1035,7 +1051,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6xetm4g8a",
+    "id": "trade-1731470303836-pbckns9ef",
     "date": "2024-11-05",
     "time": "12:51:31",
     "symbol": "MNQ",
@@ -1050,7 +1066,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1qnyw9ehz",
+    "id": "trade-1731470303836-1z20algjr",
     "date": "2024-11-05",
     "time": "12:53:11",
     "symbol": "MNQ",
@@ -1065,7 +1081,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nqi8rv13a",
+    "id": "trade-1731470303836-lvs7jv8vq",
     "date": "2024-11-05",
     "time": "12:56:31",
     "symbol": "MNQ",
@@ -1080,7 +1096,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-p4eelrlgn",
+    "id": "trade-1731470303836-fnf6d5g02",
     "date": "2024-11-05",
     "time": "12:58:11",
     "symbol": "MNQ",
@@ -1095,7 +1111,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8hpvwopyo",
+    "id": "trade-1731470303836-vwssumwkx",
     "date": "2024-11-05",
     "time": "13:01:35",
     "symbol": "MNQ",
@@ -1110,7 +1126,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9u8rd6rm2",
+    "id": "trade-1731470303836-pfjdigzrh",
     "date": "2024-11-05",
     "time": "13:04:52",
     "symbol": "MNQ",
@@ -1125,7 +1141,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5xj4e1efu",
+    "id": "trade-1731470303836-s9w6k3959",
     "date": "2024-11-05",
     "time": "13:06:34",
     "symbol": "MNQ",
@@ -1140,7 +1156,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-j7v8i4iat",
+    "id": "trade-1731470303836-489xq1kvg",
     "date": "2024-11-05",
     "time": "13:09:54",
     "symbol": "MNQ",
@@ -1155,7 +1171,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-b3u28gktn",
+    "id": "trade-1731470303836-qk2be2b9r",
     "date": "2024-11-05",
     "time": "13:11:35",
     "symbol": "MNQ",
@@ -1164,13 +1180,14 @@
     "exitPrice": 20364.25,
     "quantity": 15,
     "pnl": -457.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-kknp3ukrv",
+    "id": "trade-1731470303836-uaiycfq91",
     "date": "2024-11-05",
     "time": "13:18:21",
     "symbol": "MNQ",
@@ -1185,7 +1202,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-0cjhb0az0",
+    "id": "trade-1731470303836-zu9h4pxu9",
     "date": "2024-11-05",
     "time": "13:23:38",
     "symbol": "MNQ",
@@ -1200,7 +1217,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-k0akwbl5u",
+    "id": "trade-1731470303836-4jtenvxt0",
     "date": "2024-11-05",
     "time": "13:37:38",
     "symbol": "MNQ",
@@ -1209,13 +1226,14 @@
     "exitPrice": 20366.75,
     "quantity": 15,
     "pnl": -180,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-33vv2dkfx",
+    "id": "trade-1731470303836-9mke3ur33",
     "date": "2024-11-05",
     "time": "13:15:01",
     "symbol": "NQ",
@@ -1230,7 +1248,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5fgwh05x8",
+    "id": "trade-1731470303836-yfe2rl5ym",
     "date": "2024-11-05",
     "time": "15:29:35",
     "symbol": "MNQ",
@@ -1239,13 +1257,14 @@
     "exitPrice": 20344.75,
     "quantity": 15,
     "pnl": 105,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-q5t2kpaf5",
+    "id": "trade-1731470303836-7xgz6sojl",
     "date": "2024-11-05",
     "time": "16:50:10",
     "symbol": "NQ",
@@ -1260,7 +1279,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-40v51x3xl",
+    "id": "trade-1731470303836-m5d0e0gwf",
     "date": "2024-11-05",
     "time": "17:03:10",
     "symbol": "NQ",
@@ -1275,7 +1294,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fio4xn4b0",
+    "id": "trade-1731470303836-64kujdb03",
     "date": "2024-11-05",
     "time": "17:18:23",
     "symbol": "MNQ",
@@ -1290,7 +1309,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-x9ivhkwhd",
+    "id": "trade-1731470303836-ig7fbwk31",
     "date": "2024-11-05",
     "time": "17:42:41",
     "symbol": "MNQ",
@@ -1299,13 +1318,14 @@
     "exitPrice": 20394.5,
     "quantity": 15,
     "pnl": -15,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-9gxzpvx3i",
+    "id": "trade-1731470303836-wrubnrth5",
     "date": "2024-11-05",
     "time": "17:42:42",
     "symbol": "MNQ",
@@ -1320,7 +1340,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kxot4v2em",
+    "id": "trade-1731470303836-zvusuwlai",
     "date": "2024-11-05",
     "time": "17:55:30",
     "symbol": "MNQ",
@@ -1329,13 +1349,14 @@
     "exitPrice": 20399.75,
     "quantity": 15,
     "pnl": -120,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-2hucvq02a",
+    "id": "trade-1731470303836-w4xcwh2ts",
     "date": "2024-11-05",
     "time": "17:15:51",
     "symbol": "NQ",
@@ -1350,7 +1371,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-17yrdk328",
+    "id": "trade-1731470303836-jppibi86t",
     "date": "2024-11-05",
     "time": "18:06:14",
     "symbol": "MNQ",
@@ -1365,7 +1386,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-q6bext4bq",
+    "id": "trade-1731470303836-am3qcy8vo",
     "date": "2024-11-05",
     "time": "19:11:41",
     "symbol": "MNQ",
@@ -1374,13 +1395,14 @@
     "exitPrice": 20590.5,
     "quantity": 15,
     "pnl": 135,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-xb3g0xlwx",
+    "id": "trade-1731470303836-v46d0iqnk",
     "date": "2024-11-05",
     "time": "19:21:42",
     "symbol": "MNQ",
@@ -1395,7 +1417,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rlw8x4nc0",
+    "id": "trade-1731470303836-ip2svdo98",
     "date": "2024-11-05",
     "time": "19:24:14",
     "symbol": "MNQ",
@@ -1410,7 +1432,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ual0c4nef",
+    "id": "trade-1731470303836-v0zr1lnax",
     "date": "2024-11-05",
     "time": "19:36:51",
     "symbol": "MNQ",
@@ -1425,7 +1447,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4v3gdqhtm",
+    "id": "trade-1731470303836-2px6sksw8",
     "date": "2024-11-05",
     "time": "19:49:36",
     "symbol": "MNQ",
@@ -1440,7 +1462,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6avytggxe",
+    "id": "trade-1731470303836-s79c8ma6u",
     "date": "2024-11-05",
     "time": "19:52:10",
     "symbol": "MNQ",
@@ -1455,7 +1477,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-cva4ghz6r",
+    "id": "trade-1731470303836-mz78fqx7l",
     "date": "2024-11-05",
     "time": "20:28:39",
     "symbol": "MNQ",
@@ -1470,7 +1492,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6n7mj4v2m",
+    "id": "trade-1731470303836-2uw8wlgqf",
     "date": "2024-11-05",
     "time": "20:41:35",
     "symbol": "MNQ",
@@ -1485,7 +1507,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-d0di9odjl",
+    "id": "trade-1731470303836-suy3ycx8u",
     "date": "2024-11-05",
     "time": "20:54:52",
     "symbol": "MNQ",
@@ -1500,7 +1522,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-d98107pwg",
+    "id": "trade-1731470303836-63wnu0oef",
     "date": "2024-11-05",
     "time": "20:54:54",
     "symbol": "MNQ",
@@ -1509,13 +1531,14 @@
     "exitPrice": 20497,
     "quantity": 15,
     "pnl": 2962.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-51evlp7ar",
+    "id": "trade-1731470303836-sy9xyin51",
     "date": "2024-11-05",
     "time": "21:33:34",
     "symbol": "MNQ",
@@ -1530,7 +1553,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1tfmj9zdq",
+    "id": "trade-1731470303836-lut1zvpu5",
     "date": "2024-11-05",
     "time": "21:41:40",
     "symbol": "MNQ",
@@ -1545,7 +1568,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-372u9bpad",
+    "id": "trade-1731470303836-lbnj1vbx0",
     "date": "2024-11-05",
     "time": "22:12:47",
     "symbol": "MNQ",
@@ -1560,7 +1583,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ahyijb24u",
+    "id": "trade-1731470303836-nftlz0aq6",
     "date": "2024-11-05",
     "time": "22:12:48",
     "symbol": "MNQ",
@@ -1575,7 +1598,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fk6i2kotd",
+    "id": "trade-1731470303836-dj96p4t2d",
     "date": "2024-11-05",
     "time": "22:25:37",
     "symbol": "MNQ",
@@ -1584,13 +1607,14 @@
     "exitPrice": 20615.75,
     "quantity": 15,
     "pnl": 442.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-1gh6jkn4e",
+    "id": "trade-1731470303836-ikck72st1",
     "date": "2024-11-05",
     "time": "22:28:07",
     "symbol": "MNQ",
@@ -1605,7 +1629,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7m79h19ii",
+    "id": "trade-1731470303836-yetnfpv7k",
     "date": "2024-11-05",
     "time": "22:51:01",
     "symbol": "MNQ",
@@ -1620,7 +1644,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-bufx82om4",
+    "id": "trade-1731470303836-9pf8lqonb",
     "date": "2024-11-05",
     "time": "23:03:51",
     "symbol": "MNQ",
@@ -1635,7 +1659,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-chi9wjon4",
+    "id": "trade-1731470303836-fofumrpgn",
     "date": "2024-11-05",
     "time": "23:29:01",
     "symbol": "MNQ",
@@ -1644,13 +1668,14 @@
     "exitPrice": 20677.75,
     "quantity": 15,
     "pnl": -22.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-dwyoyimew",
+    "id": "trade-1731470303836-gon5g6pf0",
     "date": "2024-11-05",
     "time": "23:29:02",
     "symbol": "MNQ",
@@ -1665,7 +1690,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9l3ebz9v4",
+    "id": "trade-1731470303836-ztalz9ibx",
     "date": "2024-11-05",
     "time": "23:41:45",
     "symbol": "MNQ",
@@ -1680,7 +1705,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-r612zu8e8",
+    "id": "trade-1731470303836-aht5enuae",
     "date": "2024-11-05",
     "time": "23:59:22",
     "symbol": "MNQ",
@@ -1695,7 +1720,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nup77ydvn",
+    "id": "trade-1731470303836-mzd97etth",
     "date": "2024-11-06",
     "time": "00:06:56",
     "symbol": "MNQ",
@@ -1710,7 +1735,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-shva2gh07",
+    "id": "trade-1731470303836-zw7zhtheb",
     "date": "2024-11-06",
     "time": "00:14:29",
     "symbol": "MNQ",
@@ -1719,13 +1744,14 @@
     "exitPrice": 20678.5,
     "quantity": 15,
     "pnl": -120,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-awm4byiqs",
+    "id": "trade-1731470303836-mfvtnr7ux",
     "date": "2024-11-06",
     "time": "00:29:44",
     "symbol": "MNQ",
@@ -1740,7 +1766,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6wkq3bul0",
+    "id": "trade-1731470303836-x4cnehxsz",
     "date": "2024-11-06",
     "time": "00:32:19",
     "symbol": "MNQ",
@@ -1755,7 +1781,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-khk23d7nk",
+    "id": "trade-1731470303836-lxnd1fh8s",
     "date": "2024-11-06",
     "time": "01:10:51",
     "symbol": "MNQ",
@@ -1770,7 +1796,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-s620r8ke9",
+    "id": "trade-1731470303836-tw75n0ddv",
     "date": "2024-11-06",
     "time": "01:15:51",
     "symbol": "MNQ",
@@ -1785,7 +1811,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8936jfzfy",
+    "id": "trade-1731470303836-z5w0q7tsu",
     "date": "2024-11-06",
     "time": "01:23:34",
     "symbol": "MNQ",
@@ -1800,7 +1826,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-s40pqmifa",
+    "id": "trade-1731470303836-pbr8nt3k4",
     "date": "2024-11-06",
     "time": "01:31:20",
     "symbol": "MNQ",
@@ -1815,7 +1841,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9byjtx7kt",
+    "id": "trade-1731470303836-3oi0qud3n",
     "date": "2024-11-06",
     "time": "01:49:10",
     "symbol": "MNQ",
@@ -1830,7 +1856,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-3ktbtbnzr",
+    "id": "trade-1731470303836-h4exllag7",
     "date": "2024-11-06",
     "time": "02:02:09",
     "symbol": "MNQ",
@@ -1839,13 +1865,14 @@
     "exitPrice": 20697.25,
     "quantity": 15,
     "pnl": -870,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-qhzm95cxu",
+    "id": "trade-1731470303836-ehg37u1wv",
     "date": "2024-11-06",
     "time": "02:15:07",
     "symbol": "MNQ",
@@ -1854,13 +1881,14 @@
     "exitPrice": 20697,
     "quantity": 15,
     "pnl": -37.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-5kdplrbs9",
+    "id": "trade-1731470303836-vj54gvt9w",
     "date": "2024-11-06",
     "time": "02:17:47",
     "symbol": "MNQ",
@@ -1875,7 +1903,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rrforzowm",
+    "id": "trade-1731470303836-euhx2rseg",
     "date": "2024-11-06",
     "time": "02:28:37",
     "symbol": "MNQ",
@@ -1890,7 +1918,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-s6kfge5rd",
+    "id": "trade-1731470303836-y4vd6759h",
     "date": "2024-11-06",
     "time": "02:33:56",
     "symbol": "MNQ",
@@ -1905,7 +1933,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1irjuw5b1",
+    "id": "trade-1731470303836-fz4h249c0",
     "date": "2024-11-06",
     "time": "02:50:15",
     "symbol": "MNQ",
@@ -1920,7 +1948,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9zx4er2xz",
+    "id": "trade-1731470303836-ttvt6zoje",
     "date": "2024-11-06",
     "time": "02:55:31",
     "symbol": "MNQ",
@@ -1935,7 +1963,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-v5ztrji6p",
+    "id": "trade-1731470303836-14ollqdvw",
     "date": "2024-11-06",
     "time": "03:21:43",
     "symbol": "MNQ",
@@ -1944,13 +1972,14 @@
     "exitPrice": 20681.5,
     "quantity": 15,
     "pnl": -30,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-bz8hif5od",
+    "id": "trade-1731470303836-dudjn0q1d",
     "date": "2024-11-06",
     "time": "03:21:44",
     "symbol": "MNQ",
@@ -1965,7 +1994,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-pvhy8wvk5",
+    "id": "trade-1731470303836-tw0266418",
     "date": "2024-11-06",
     "time": "03:35:07",
     "symbol": "MNQ",
@@ -1980,7 +2009,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-w2kb9j2eg",
+    "id": "trade-1731470303836-2gklssbix",
     "date": "2024-11-06",
     "time": "03:37:40",
     "symbol": "MNQ",
@@ -1989,13 +2018,14 @@
     "exitPrice": 20668,
     "quantity": 15,
     "pnl": 120,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-mb5wrnpp4",
+    "id": "trade-1731470303836-nkf2u1w8a",
     "date": "2024-11-06",
     "time": "04:07:54",
     "symbol": "MNQ",
@@ -2010,7 +2040,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-zs53f07zv",
+    "id": "trade-1731470303836-7ex0v1qm9",
     "date": "2024-11-06",
     "time": "04:12:54",
     "symbol": "MNQ",
@@ -2025,7 +2055,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-xjkb1iadb",
+    "id": "trade-1731470303836-7kt5wkcxy",
     "date": "2024-11-06",
     "time": "05:03:49",
     "symbol": "MNQ",
@@ -2040,7 +2070,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-29sjcxso2",
+    "id": "trade-1731470303836-sgf0dltpl",
     "date": "2024-11-06",
     "time": "05:08:56",
     "symbol": "MNQ",
@@ -2055,7 +2085,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nbge4kufc",
+    "id": "trade-1731470303836-6wc8d7eb9",
     "date": "2024-11-06",
     "time": "05:16:33",
     "symbol": "MNQ",
@@ -2070,7 +2100,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-f83gjcwfk",
+    "id": "trade-1731470303836-7c7q66zu7",
     "date": "2024-11-06",
     "time": "05:24:04",
     "symbol": "MNQ",
@@ -2085,7 +2115,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6i2cx5vzi",
+    "id": "trade-1731470303836-6b96aabpx",
     "date": "2024-11-06",
     "time": "05:54:21",
     "symbol": "MNQ",
@@ -2100,7 +2130,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-aiis3p4jo",
+    "id": "trade-1731470303836-ei08eznq9",
     "date": "2024-11-06",
     "time": "05:54:23",
     "symbol": "MNQ",
@@ -2109,13 +2139,14 @@
     "exitPrice": 20677.75,
     "quantity": 15,
     "pnl": 375,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-vc0fzr27x",
+    "id": "trade-1731470303836-a3y0sql48",
     "date": "2024-11-06",
     "time": "06:19:33",
     "symbol": "MNQ",
@@ -2130,7 +2161,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kwbba2anb",
+    "id": "trade-1731470303836-2nyqbaafc",
     "date": "2024-11-06",
     "time": "06:39:34",
     "symbol": "MNQ",
@@ -2145,7 +2176,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-aw3dc8oer",
+    "id": "trade-1731470303836-z4rdo63t5",
     "date": "2024-11-06",
     "time": "06:54:33",
     "symbol": "MNQ",
@@ -2160,7 +2191,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-iwowv0kql",
+    "id": "trade-1731470303836-gb61ssbxm",
     "date": "2024-11-06",
     "time": "06:57:04",
     "symbol": "MNQ",
@@ -2175,7 +2206,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ip5af4vwt",
+    "id": "trade-1731470303836-wnybsuu3h",
     "date": "2024-11-06",
     "time": "07:09:34",
     "symbol": "MNQ",
@@ -2184,13 +2215,14 @@
     "exitPrice": 20699.75,
     "quantity": 15,
     "pnl": -22.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-bm5x3slyf",
+    "id": "trade-1731470303836-bkynue2er",
     "date": "2024-11-06",
     "time": "07:09:35",
     "symbol": "MNQ",
@@ -2205,7 +2237,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-sy9z5ba5r",
+    "id": "trade-1731470303836-c0b13noxm",
     "date": "2024-11-06",
     "time": "07:39:34",
     "symbol": "MNQ",
@@ -2220,7 +2252,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8i18gshca",
+    "id": "trade-1731470303836-dc4yau369",
     "date": "2024-11-06",
     "time": "07:47:04",
     "symbol": "MNQ",
@@ -2235,7 +2267,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-zix9wn81g",
+    "id": "trade-1731470303837-isv9ibd5e",
     "date": "2024-11-06",
     "time": "08:09:34",
     "symbol": "MNQ",
@@ -2244,13 +2276,14 @@
     "exitPrice": 20740.75,
     "quantity": 15,
     "pnl": 450,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-mn20dyv60",
+    "id": "trade-1731470303837-5bt7dhqfy",
     "date": "2024-11-06",
     "time": "08:12:04",
     "symbol": "MNQ",
@@ -2265,7 +2298,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8eay61dmr",
+    "id": "trade-1731470303837-4rjf8u84t",
     "date": "2024-11-06",
     "time": "08:49:34",
     "symbol": "MNQ",
@@ -2280,7 +2313,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fqbleekak",
+    "id": "trade-1731470303837-zp12cxtm4",
     "date": "2024-11-06",
     "time": "08:54:34",
     "symbol": "MNQ",
@@ -2295,7 +2328,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-t4jw7xx1j",
+    "id": "trade-1731470303837-ojaff2w2d",
     "date": "2024-11-06",
     "time": "09:09:41",
     "symbol": "MNQ",
@@ -2310,7 +2343,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-d9vp4p26i",
+    "id": "trade-1731470303837-gv19jrb96",
     "date": "2024-11-06",
     "time": "09:14:38",
     "symbol": "MNQ",
@@ -2325,7 +2358,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-qn7dxjoio",
+    "id": "trade-1731470303837-c1uiodg3i",
     "date": "2024-11-06",
     "time": "09:24:42",
     "symbol": "MNQ",
@@ -2340,7 +2373,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8ip6vwr08",
+    "id": "trade-1731470303837-q0i6fpzwb",
     "date": "2024-11-06",
     "time": "09:27:13",
     "symbol": "MNQ",
@@ -2355,7 +2388,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-jlcd88vpv",
+    "id": "trade-1731470303837-b1zcvb9e4",
     "date": "2024-11-06",
     "time": "09:39:48",
     "symbol": "MNQ",
@@ -2370,7 +2403,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-938rxnhlv",
+    "id": "trade-1731470303837-uu0t6pyu4",
     "date": "2024-11-06",
     "time": "09:54:52",
     "symbol": "MNQ",
@@ -2385,7 +2418,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-yjv0u4cwi",
+    "id": "trade-1731470303837-odofddt76",
     "date": "2024-11-06",
     "time": "10:24:57",
     "symbol": "MNQ",
@@ -2400,7 +2433,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-vs61qb8fg",
+    "id": "trade-1731470303837-phd83ebhl",
     "date": "2024-11-06",
     "time": "10:40:03",
     "symbol": "MNQ",
@@ -2409,13 +2442,14 @@
     "exitPrice": 20852.25,
     "quantity": 15,
     "pnl": -232.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-wf4smbrl4",
+    "id": "trade-1731470303837-zac8val0k",
     "date": "2024-11-06",
     "time": "10:55:05",
     "symbol": "MNQ",
@@ -2430,7 +2464,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-itk7if7ql",
+    "id": "trade-1731470303837-5j3hwoa8l",
     "date": "2024-11-06",
     "time": "10:55:06",
     "symbol": "MNQ",
@@ -2439,13 +2473,14 @@
     "exitPrice": 20867.5,
     "quantity": 15,
     "pnl": -360,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-ze5oe40y3",
+    "id": "trade-1731470303837-51mx3of2a",
     "date": "2024-11-06",
     "time": "11:10:06",
     "symbol": "MNQ",
@@ -2454,13 +2489,14 @@
     "exitPrice": 20877.75,
     "quantity": 15,
     "pnl": 315,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-asb7n8nov",
+    "id": "trade-1731470303837-4oem6yrmb",
     "date": "2024-11-06",
     "time": "11:20:09",
     "symbol": "MNQ",
@@ -2475,7 +2511,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-j945soiak",
+    "id": "trade-1731470303837-5695he3uk",
     "date": "2024-11-06",
     "time": "11:40:15",
     "symbol": "MNQ",
@@ -2490,7 +2526,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i6x462w5s",
+    "id": "trade-1731470303837-7mxapf0e3",
     "date": "2024-11-06",
     "time": "11:45:15",
     "symbol": "MNQ",
@@ -2505,7 +2541,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6afutn3ui",
+    "id": "trade-1731470303837-83jzt3s0p",
     "date": "2024-11-06",
     "time": "11:55:18",
     "symbol": "MNQ",
@@ -2520,7 +2556,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6f59z2071",
+    "id": "trade-1731470303837-rxp40i6ll",
     "date": "2024-11-06",
     "time": "11:57:49",
     "symbol": "MNQ",
@@ -2535,7 +2571,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-u7lvr7jq4",
+    "id": "trade-1731470303837-304yunjti",
     "date": "2024-11-06",
     "time": "12:22:56",
     "symbol": "MNQ",
@@ -2550,7 +2586,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rwize6dcf",
+    "id": "trade-1731470303837-4rio3p53b",
     "date": "2024-11-06",
     "time": "12:25:26",
     "symbol": "MNQ",
@@ -2565,7 +2601,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-3zbtx1am9",
+    "id": "trade-1731470303837-f0kgmytnm",
     "date": "2024-11-06",
     "time": "12:35:28",
     "symbol": "MNQ",
@@ -2580,7 +2616,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-yav2o0pw8",
+    "id": "trade-1731470303837-s4g4179nw",
     "date": "2024-11-06",
     "time": "12:55:30",
     "symbol": "MNQ",
@@ -2595,7 +2631,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-l7mi3v4sf",
+    "id": "trade-1731470303837-03ewxclko",
     "date": "2024-11-06",
     "time": "13:00:30",
     "symbol": "MNQ",
@@ -2610,7 +2646,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-sy76ce8t9",
+    "id": "trade-1731470303837-rqimyotoe",
     "date": "2024-11-06",
     "time": "13:10:36",
     "symbol": "MNQ",
@@ -2625,7 +2661,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-oxmyoosbv",
+    "id": "trade-1731470303837-8koxmb09b",
     "date": "2024-11-06",
     "time": "13:26:39",
     "symbol": "MNQ",
@@ -2640,7 +2676,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-tsr1t3hp4",
+    "id": "trade-1731470303837-5fwpc80ff",
     "date": "2024-11-06",
     "time": "13:26:40",
     "symbol": "MNQ",
@@ -2649,13 +2685,14 @@
     "exitPrice": 20902,
     "quantity": 15,
     "pnl": 82.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-heerv0fky",
+    "id": "trade-1731470303837-284wydcnk",
     "date": "2024-11-06",
     "time": "13:40:32",
     "symbol": "MNQ",
@@ -2670,7 +2707,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-zyyvcznod",
+    "id": "trade-1731470303837-il2pcak9r",
     "date": "2024-11-06",
     "time": "13:54:33",
     "symbol": "MNQ",
@@ -2685,7 +2722,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gfpl3wekd",
+    "id": "trade-1731470303837-42r9u5o43",
     "date": "2024-11-06",
     "time": "15:16:55",
     "symbol": "MNQ",
@@ -2700,7 +2737,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gbud2ek5x",
+    "id": "trade-1731470303837-r9bfaeiqs",
     "date": "2024-11-06",
     "time": "16:05:08",
     "symbol": "MNQ",
@@ -2709,13 +2746,14 @@
     "exitPrice": 20904.5,
     "quantity": 15,
     "pnl": -105,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-otqzk20hv",
+    "id": "trade-1731470303837-gpw9qrb47",
     "date": "2024-11-06",
     "time": "16:07:45",
     "symbol": "MNQ",
@@ -2730,7 +2768,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4cx4qu7r5",
+    "id": "trade-1731470303837-wt1e14scz",
     "date": "2024-11-06",
     "time": "16:23:58",
     "symbol": "MNQ",
@@ -2745,7 +2783,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-db4xctgyp",
+    "id": "trade-1731470303837-ax3xkzm6z",
     "date": "2024-11-06",
     "time": "16:31:49",
     "symbol": "MNQ",
@@ -2760,7 +2798,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6mtqsauu9",
+    "id": "trade-1731470303837-ah5mvx629",
     "date": "2024-11-06",
     "time": "16:58:29",
     "symbol": "MNQ",
@@ -2775,7 +2813,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-so0d9ifv5",
+    "id": "trade-1731470303837-dquwtuj9g",
     "date": "2024-11-06",
     "time": "17:11:47",
     "symbol": "MNQ",
@@ -2790,7 +2828,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-21cpt09hh",
+    "id": "trade-1731470303837-18stiiihn",
     "date": "2024-11-06",
     "time": "15:07:47",
     "symbol": "NQ",
@@ -2805,7 +2843,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ix8j1agi7",
+    "id": "trade-1731470303837-ftw48x79e",
     "date": "2024-11-06",
     "time": "17:11:48",
     "symbol": "MNQ",
@@ -2820,7 +2858,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-dyvjgae3f",
+    "id": "trade-1731470303837-i5jian091",
     "date": "2024-11-06",
     "time": "17:25:18",
     "symbol": "MNQ",
@@ -2835,7 +2873,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-hijjsvytz",
+    "id": "trade-1731470303837-wegzhesof",
     "date": "2024-11-06",
     "time": "17:51:14",
     "symbol": "MNQ",
@@ -2850,7 +2888,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-qxsqi8uu6",
+    "id": "trade-1731470303837-6lwymildm",
     "date": "2024-11-06",
     "time": "18:04:41",
     "symbol": "MNQ",
@@ -2859,13 +2897,14 @@
     "exitPrice": 20901.5,
     "quantity": 15,
     "pnl": -217.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-q8u5zp3ew",
+    "id": "trade-1731470303837-q50st2l16",
     "date": "2024-11-06",
     "time": "18:15:26",
     "symbol": "NQ",
@@ -2880,7 +2919,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7pubrqqtm",
+    "id": "trade-1731470303837-cpkzf7h4w",
     "date": "2024-11-06",
     "time": "18:31:55",
     "symbol": "MNQ",
@@ -2895,7 +2934,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-eg7edrmau",
+    "id": "trade-1731470303837-h2buwj7lm",
     "date": "2024-11-06",
     "time": "18:31:56",
     "symbol": "MNQ",
@@ -2910,7 +2949,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-tlt40w7s9",
+    "id": "trade-1731470303837-acjp8v4so",
     "date": "2024-11-06",
     "time": "19:01:02",
     "symbol": "MNQ",
@@ -2925,7 +2964,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-l6h8yq664",
+    "id": "trade-1731470303837-jumiqiy9s",
     "date": "2024-11-06",
     "time": "19:14:59",
     "symbol": "MNQ",
@@ -2940,7 +2979,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gsrygj8m6",
+    "id": "trade-1731470303837-76v6sabhq",
     "date": "2024-11-06",
     "time": "19:28:39",
     "symbol": "MNQ",
@@ -2949,13 +2988,14 @@
     "exitPrice": 20915,
     "quantity": 15,
     "pnl": -262.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-qq7kyrdmr",
+    "id": "trade-1731470303837-kewjgsvx3",
     "date": "2024-11-06",
     "time": "19:39:38",
     "symbol": "MNQ",
@@ -2970,7 +3010,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-e9nmk6awh",
+    "id": "trade-1731470303837-zsqngl0uq",
     "date": "2024-11-06",
     "time": "19:42:40",
     "symbol": "MNQ",
@@ -2985,7 +3025,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-obfvy89vz",
+    "id": "trade-1731470303837-x6wnxl2yi",
     "date": "2024-11-06",
     "time": "19:57:07",
     "symbol": "MNQ",
@@ -3000,7 +3040,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-67g5ef8pv",
+    "id": "trade-1731470303837-wn7c0vrri",
     "date": "2024-11-06",
     "time": "20:14:58",
     "symbol": "MNQ",
@@ -3015,7 +3055,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1kcdva80f",
+    "id": "trade-1731470303837-xontkdr3z",
     "date": "2024-11-06",
     "time": "20:27:32",
     "symbol": "MNQ",
@@ -3024,13 +3064,14 @@
     "exitPrice": 20914.5,
     "quantity": 15,
     "pnl": 0,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-6tvzfuy9o",
+    "id": "trade-1731470303837-gz2n4eybb",
     "date": "2024-11-06",
     "time": "20:43:58",
     "symbol": "MNQ",
@@ -3045,7 +3086,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fug1p1aao",
+    "id": "trade-1731470303837-79cwgis2y",
     "date": "2024-11-06",
     "time": "20:53:33",
     "symbol": "MNQ",
@@ -3060,7 +3101,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-3b3ik1tf2",
+    "id": "trade-1731470303837-0whffewjq",
     "date": "2024-11-06",
     "time": "20:59:10",
     "symbol": "MNQ",
@@ -3075,7 +3116,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-tqkvfrd6g",
+    "id": "trade-1731470303837-mrb8xenlq",
     "date": "2024-11-06",
     "time": "21:41:50",
     "symbol": "MNQ",
@@ -3090,7 +3131,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-huoqs2ge9",
+    "id": "trade-1731470303837-v1urwa1dx",
     "date": "2024-11-06",
     "time": "21:55:52",
     "symbol": "MNQ",
@@ -3105,7 +3146,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-lod9qaotn",
+    "id": "trade-1731470303837-na56iabh8",
     "date": "2024-11-06",
     "time": "22:18:32",
     "symbol": "MNQ",
@@ -3120,7 +3161,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-2pjidfqw6",
+    "id": "trade-1731470303837-dg3z2ghp5",
     "date": "2024-11-06",
     "time": "22:34:52",
     "symbol": "MNQ",
@@ -3135,7 +3176,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ahqziqjpq",
+    "id": "trade-1731470303837-llj8tlosp",
     "date": "2024-11-06",
     "time": "22:37:45",
     "symbol": "NQ",
@@ -3150,7 +3191,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-waxynkdfo",
+    "id": "trade-1731470303837-kmpaamkkj",
     "date": "2024-11-06",
     "time": "22:51:25",
     "symbol": "MNQ",
@@ -3159,13 +3200,14 @@
     "exitPrice": 20954,
     "quantity": 15,
     "pnl": -15,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-aepcw81qo",
+    "id": "trade-1731470303837-fn0fnd09q",
     "date": "2024-11-06",
     "time": "22:51:26",
     "symbol": "MNQ",
@@ -3180,7 +3222,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-npbi4ko67",
+    "id": "trade-1731470303837-q8wsgiccw",
     "date": "2024-11-06",
     "time": "23:05:16",
     "symbol": "MNQ",
@@ -3195,7 +3237,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ebhjyq9n6",
+    "id": "trade-1731470303837-iw79jac94",
     "date": "2024-11-06",
     "time": "23:39:40",
     "symbol": "MNQ",
@@ -3210,7 +3252,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-r7k900mmr",
+    "id": "trade-1731470303837-pzxckn3zb",
     "date": "2024-11-06",
     "time": "23:45:13",
     "symbol": "MNQ",
@@ -3225,7 +3267,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-644sabvft",
+    "id": "trade-1731470303837-pglgiuio8",
     "date": "2024-11-06",
     "time": "23:59:09",
     "symbol": "MNQ",
@@ -3240,7 +3282,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ofvxm143g",
+    "id": "trade-1731470303837-4cl4pamox",
     "date": "2024-11-07",
     "time": "00:11:53",
     "symbol": "MNQ",
@@ -3249,13 +3291,14 @@
     "exitPrice": 20940.75,
     "quantity": 15,
     "pnl": -367.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-u3rm8i5s8",
+    "id": "trade-1731470303837-vkqs9puy0",
     "date": "2024-11-07",
     "time": "00:24:55",
     "symbol": "MNQ",
@@ -3270,7 +3313,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-nv08zz1cl",
+    "id": "trade-1731470303837-0cwq9mdi3",
     "date": "2024-11-07",
     "time": "00:27:36",
     "symbol": "MNQ",
@@ -3285,7 +3328,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-y0ff3ccqe",
+    "id": "trade-1731470303837-tfa8tqzwz",
     "date": "2024-11-07",
     "time": "00:37:51",
     "symbol": "MNQ",
@@ -3300,7 +3343,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-6o2zmnj7s",
+    "id": "trade-1731470303837-dyvnm03v1",
     "date": "2024-11-07",
     "time": "00:43:04",
     "symbol": "MNQ",
@@ -3315,7 +3358,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-l4r6oa0x7",
+    "id": "trade-1731470303837-ke3godart",
     "date": "2024-11-07",
     "time": "01:14:45",
     "symbol": "MNQ",
@@ -3330,7 +3373,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kdrl76yio",
+    "id": "trade-1731470303837-72l535f57",
     "date": "2024-11-07",
     "time": "01:17:34",
     "symbol": "MNQ",
@@ -3345,7 +3388,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-f3cib8plw",
+    "id": "trade-1731470303837-mi53t5mpq",
     "date": "2024-11-07",
     "time": "01:45:12",
     "symbol": "MNQ",
@@ -3360,7 +3403,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ua0ujxdcv",
+    "id": "trade-1731470303837-snvxep8ww",
     "date": "2024-11-07",
     "time": "01:48:00",
     "symbol": "MNQ",
@@ -3369,13 +3412,14 @@
     "exitPrice": 20948,
     "quantity": 15,
     "pnl": -105,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-coihvn732",
+    "id": "trade-1731470303837-i77liv3nw",
     "date": "2024-11-07",
     "time": "02:14:32",
     "symbol": "MNQ",
@@ -3390,7 +3434,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kefsklhlv",
+    "id": "trade-1731470303837-333svpd5l",
     "date": "2024-11-07",
     "time": "02:24:21",
     "symbol": "MNQ",
@@ -3405,7 +3449,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-bfouhzvik",
+    "id": "trade-1731470303837-867qsrf7y",
     "date": "2024-11-07",
     "time": "02:29:39",
     "symbol": "MNQ",
@@ -3420,7 +3464,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-j8exkuf4e",
+    "id": "trade-1731470303837-e1ek81urc",
     "date": "2024-11-07",
     "time": "02:41:17",
     "symbol": "MNQ",
@@ -3429,13 +3473,14 @@
     "exitPrice": 20944.5,
     "quantity": 15,
     "pnl": 7.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-ztgio39qk",
+    "id": "trade-1731470303837-fm1fe47l8",
     "date": "2024-11-07",
     "time": "02:44:11",
     "symbol": "MNQ",
@@ -3444,13 +3489,14 @@
     "exitPrice": 20945,
     "quantity": 15,
     "pnl": -37.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-gwsc3bvc3",
+    "id": "trade-1731470303837-rxjveh3e7",
     "date": "2024-11-07",
     "time": "02:59:23",
     "symbol": "MNQ",
@@ -3465,7 +3511,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-veix6w2tq",
+    "id": "trade-1731470303837-82oalmnbd",
     "date": "2024-11-07",
     "time": "03:13:21",
     "symbol": "MNQ",
@@ -3480,7 +3526,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-x4adv0tav",
+    "id": "trade-1731470303837-2kyigrwmj",
     "date": "2024-11-07",
     "time": "03:16:05",
     "symbol": "MNQ",
@@ -3489,13 +3535,14 @@
     "exitPrice": 20939,
     "quantity": 15,
     "pnl": -367.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-alqu3vx14",
+    "id": "trade-1731470303837-yvjmtxftk",
     "date": "2024-11-07",
     "time": "03:27:20",
     "symbol": "MNQ",
@@ -3510,7 +3557,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-0rrk452cz",
+    "id": "trade-1731470303837-9t4vq4a6a",
     "date": "2024-11-07",
     "time": "03:33:07",
     "symbol": "MNQ",
@@ -3525,7 +3572,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-mitml7hd3",
+    "id": "trade-1731470303837-rlmowuqyp",
     "date": "2024-11-07",
     "time": "03:41:18",
     "symbol": "MNQ",
@@ -3540,7 +3587,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-tfinth6fp",
+    "id": "trade-1731470303837-f84ytbpmk",
     "date": "2024-11-07",
     "time": "03:56:02",
     "symbol": "MNQ",
@@ -3549,13 +3596,14 @@
     "exitPrice": 20958.75,
     "quantity": 15,
     "pnl": 480,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-ja6riaqx6",
+    "id": "trade-1731470303837-qf8ogzan7",
     "date": "2024-11-07",
     "time": "04:48:41",
     "symbol": "MNQ",
@@ -3570,7 +3618,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-9k5pvzdj0",
+    "id": "trade-1731470303837-1iupcpjye",
     "date": "2024-11-07",
     "time": "04:54:00",
     "symbol": "MNQ",
@@ -3585,7 +3633,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-shg3ix4my",
+    "id": "trade-1731470303837-2c0mqjbpm",
     "date": "2024-11-07",
     "time": "05:01:53",
     "symbol": "MNQ",
@@ -3600,7 +3648,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-jnpuak7pg",
+    "id": "trade-1731470303837-3tbpbzpx0",
     "date": "2024-11-07",
     "time": "05:09:27",
     "symbol": "MNQ",
@@ -3615,7 +3663,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-bly9ci27z",
+    "id": "trade-1731470303837-1fvg0xv2x",
     "date": "2024-11-07",
     "time": "05:24:38",
     "symbol": "MNQ",
@@ -3624,13 +3672,14 @@
     "exitPrice": 20976.25,
     "quantity": 15,
     "pnl": 37.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-05g7c2x67",
+    "id": "trade-1731470303837-axdpos9l7",
     "date": "2024-11-07",
     "time": "05:27:13",
     "symbol": "MNQ",
@@ -3645,7 +3694,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4184xxzne",
+    "id": "trade-1731470303837-43yky605p",
     "date": "2024-11-07",
     "time": "05:39:45",
     "symbol": "MNQ",
@@ -3660,7 +3709,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-j0i9hfxoo",
+    "id": "trade-1731470303837-vrb7qzc1u",
     "date": "2024-11-07",
     "time": "05:39:47",
     "symbol": "NQ",
@@ -3675,7 +3724,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-wm0f6lugc",
+    "id": "trade-1731470303837-n0k8enlis",
     "date": "2024-11-07",
     "time": "06:25:03",
     "symbol": "MNQ",
@@ -3690,7 +3739,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-x303145e3",
+    "id": "trade-1731470303837-7sb0tmn7z",
     "date": "2024-11-07",
     "time": "06:30:04",
     "symbol": "MNQ",
@@ -3705,7 +3754,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-yolsx1abn",
+    "id": "trade-1731470303837-iekhb9pf5",
     "date": "2024-11-07",
     "time": "06:40:04",
     "symbol": "MNQ",
@@ -3720,7 +3769,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-f1rl7hrtd",
+    "id": "trade-1731470303837-24cjy3807",
     "date": "2024-11-07",
     "time": "06:42:34",
     "symbol": "MNQ",
@@ -3735,7 +3784,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-jumisupte",
+    "id": "trade-1731470303837-defuczw9v",
     "date": "2024-11-07",
     "time": "06:55:04",
     "symbol": "MNQ",
@@ -3750,7 +3799,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8b0t28vi8",
+    "id": "trade-1731470303837-7bhk0xffo",
     "date": "2024-11-07",
     "time": "07:07:34",
     "symbol": "MNQ",
@@ -3759,13 +3808,14 @@
     "exitPrice": 21112,
     "quantity": 15,
     "pnl": -172.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-zspdld1q5",
+    "id": "trade-1731470303837-7732s51yl",
     "date": "2024-11-07",
     "time": "07:20:04",
     "symbol": "MNQ",
@@ -3780,7 +3830,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rgze12qon",
+    "id": "trade-1731470303837-u4wv7mdju",
     "date": "2024-11-07",
     "time": "07:25:04",
     "symbol": "MNQ",
@@ -3795,7 +3845,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-w0yuhzqhi",
+    "id": "trade-1731470303837-ka8chq2ow",
     "date": "2024-11-07",
     "time": "07:32:34",
     "symbol": "MNQ",
@@ -3810,7 +3860,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-3lkin2pax",
+    "id": "trade-1731470303837-wosg30b3w",
     "date": "2024-11-07",
     "time": "07:55:04",
     "symbol": "MNQ",
@@ -3825,7 +3875,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ktfqk5bb1",
+    "id": "trade-1731470303837-6e2nz0786",
     "date": "2024-11-07",
     "time": "08:10:04",
     "symbol": "MNQ",
@@ -3834,13 +3884,14 @@
     "exitPrice": 21138,
     "quantity": 15,
     "pnl": 7.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-dj3jshtgc",
+    "id": "trade-1731470303837-23mtbcmqv",
     "date": "2024-11-07",
     "time": "08:10:05",
     "symbol": "MNQ",
@@ -3855,7 +3906,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ffs44cxk7",
+    "id": "trade-1731470303837-h8f0r1emr",
     "date": "2024-11-07",
     "time": "08:22:34",
     "symbol": "MNQ",
@@ -3870,7 +3921,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ipbkpxfwd",
+    "id": "trade-1731470303837-8wr2plnhh",
     "date": "2024-11-07",
     "time": "08:25:04",
     "symbol": "MNQ",
@@ -3885,7 +3936,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-zortlsjh8",
+    "id": "trade-1731470303837-zqfqro78s",
     "date": "2024-11-07",
     "time": "08:47:36",
     "symbol": "MNQ",
@@ -3900,7 +3951,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-76eidh2sr",
+    "id": "trade-1731470303837-6fjatt70d",
     "date": "2024-11-07",
     "time": "09:00:06",
     "symbol": "MNQ",
@@ -3915,7 +3966,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-l45xf969e",
+    "id": "trade-1731470303837-ywyydua2x",
     "date": "2024-11-07",
     "time": "09:10:05",
     "symbol": "MNQ",
@@ -3930,7 +3981,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-vv0mhf3wr",
+    "id": "trade-1731470303837-ycyq4rsx7",
     "date": "2024-11-07",
     "time": "09:12:37",
     "symbol": "MNQ",
@@ -3945,7 +3996,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-bwlh47eeo",
+    "id": "trade-1731470303837-p8x2538wi",
     "date": "2024-11-07",
     "time": "09:25:07",
     "symbol": "MNQ",
@@ -3960,7 +4011,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1ujy8ail6",
+    "id": "trade-1731470303837-qtzsm663p",
     "date": "2024-11-07",
     "time": "09:37:38",
     "symbol": "MNQ",
@@ -3975,7 +4026,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i5ych0bq4",
+    "id": "trade-1731470303837-1gmu5537i",
     "date": "2024-11-07",
     "time": "10:02:47",
     "symbol": "MNQ",
@@ -3984,13 +4035,14 @@
     "exitPrice": 21171,
     "quantity": 15,
     "pnl": -525,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-pga4758go",
+    "id": "trade-1731470303837-nkh3usfat",
     "date": "2024-11-07",
     "time": "10:10:19",
     "symbol": "MNQ",
@@ -4005,7 +4057,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-v2evzytl5",
+    "id": "trade-1731470303837-298p3td2i",
     "date": "2024-11-07",
     "time": "10:25:26",
     "symbol": "MNQ",
@@ -4020,7 +4072,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gczjrf9yb",
+    "id": "trade-1731470303837-nayko62ql",
     "date": "2024-11-07",
     "time": "10:40:23",
     "symbol": "MNQ",
@@ -4035,7 +4087,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8qwn84obo",
+    "id": "trade-1731470303837-h40m7j4al",
     "date": "2024-11-07",
     "time": "10:52:55",
     "symbol": "MNQ",
@@ -4050,7 +4102,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-dtcgezjb0",
+    "id": "trade-1731470303837-rzxeqko5m",
     "date": "2024-11-07",
     "time": "10:55:26",
     "symbol": "MNQ",
@@ -4065,7 +4117,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ac9tktt2a",
+    "id": "trade-1731470303837-1nwehz5r6",
     "date": "2024-11-07",
     "time": "11:05:27",
     "symbol": "MNQ",
@@ -4080,7 +4132,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-z4c09y4vk",
+    "id": "trade-1731470303837-mqnn50kn1",
     "date": "2024-11-07",
     "time": "11:14:38",
     "symbol": "MNQ",
@@ -4095,7 +4147,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i3acfydyf",
+    "id": "trade-1731470303837-ubrwz6rbm",
     "date": "2024-11-07",
     "time": "11:14:39",
     "symbol": "MNQ",
@@ -4110,7 +4162,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-svsw903qi",
+    "id": "trade-1731470303837-szv5zpqfi",
     "date": "2024-11-07",
     "time": "11:14:40",
     "symbol": "NQ",
@@ -4125,7 +4177,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-16gcplfkk",
+    "id": "trade-1731470303837-jvhwkugzj",
     "date": "2024-11-07",
     "time": "11:20:55",
     "symbol": "MNQ",
@@ -4140,7 +4192,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-mohmd40zs",
+    "id": "trade-1731470303837-o7n439rrk",
     "date": "2024-11-07",
     "time": "11:20:56",
     "symbol": "NQ",
@@ -4155,7 +4207,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-hbruzh9gl",
+    "id": "trade-1731470303837-jhkxgemg6",
     "date": "2024-11-07",
     "time": "11:25:57",
     "symbol": "MNQ",
@@ -4170,7 +4222,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-qcebzur52",
+    "id": "trade-1731470303837-9adw9d7m2",
     "date": "2024-11-07",
     "time": "11:25:58",
     "symbol": "NQ",
@@ -4179,13 +4231,14 @@
     "exitPrice": 21199.5,
     "quantity": 1,
     "pnl": 315,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-397hal7ba",
+    "id": "trade-1731470303837-9r0n7bw7v",
     "date": "2024-11-07",
     "time": "11:40:56",
     "symbol": "MNQ",
@@ -4200,7 +4253,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7fhyqaaya",
+    "id": "trade-1731470303837-u7k2oe3zp",
     "date": "2024-11-07",
     "time": "11:40:57",
     "symbol": "NQ",
@@ -4215,7 +4268,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fd171nic1",
+    "id": "trade-1731470303837-d07bjr0gg",
     "date": "2024-11-07",
     "time": "11:40:58",
     "symbol": "MNQ",
@@ -4230,7 +4283,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-rvcfjk1cx",
+    "id": "trade-1731470303837-r47k0ff3u",
     "date": "2024-11-07",
     "time": "11:40:59",
     "symbol": "NQ",
@@ -4239,13 +4292,14 @@
     "exitPrice": 21178.5,
     "quantity": 1,
     "pnl": 165,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-stppjcjw7",
+    "id": "trade-1731470303837-g1patx2wq",
     "date": "2024-11-07",
     "time": "12:00:58",
     "symbol": "NQ",
@@ -4260,7 +4314,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-o32dxwejq",
+    "id": "trade-1731470303837-9574se7nz",
     "date": "2024-11-07",
     "time": "12:00:57",
     "symbol": "MNQ",
@@ -4275,7 +4329,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-hhp3gufpb",
+    "id": "trade-1731470303837-0qiv7ogbn",
     "date": "2024-11-07",
     "time": "12:41:00",
     "symbol": "MNQ",
@@ -4290,7 +4344,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-2a1e2nk2c",
+    "id": "trade-1731470303837-6phyhmp4r",
     "date": "2024-11-07",
     "time": "12:41:01",
     "symbol": "NQ",
@@ -4305,7 +4359,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-qnlr1lvpp",
+    "id": "trade-1731470303837-hei2ft2hi",
     "date": "2024-11-07",
     "time": "12:41:03",
     "symbol": "MNQ",
@@ -4314,13 +4368,14 @@
     "exitPrice": 21239.25,
     "quantity": 15,
     "pnl": -352.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-3hp7hbsc9",
+    "id": "trade-1731470303837-hzaslzg2e",
     "date": "2024-11-07",
     "time": "12:41:03",
     "symbol": "NQ",
@@ -4335,7 +4390,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gwfzcp8or",
+    "id": "trade-1731470303837-uo4m3x78m",
     "date": "2024-11-07",
     "time": "13:11:09",
     "symbol": "NQ",
@@ -4350,7 +4405,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-sufpuj6jx",
+    "id": "trade-1731470303837-fjp0a3eer",
     "date": "2024-11-07",
     "time": "13:11:09",
     "symbol": "MNQ",
@@ -4365,7 +4420,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7tclyju3l",
+    "id": "trade-1731470303837-gd4c31qys",
     "date": "2024-11-07",
     "time": "13:21:32",
     "symbol": "MNQ",
@@ -4380,7 +4435,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7gnegega7",
+    "id": "trade-1731470303837-3dv6c4y2r",
     "date": "2024-11-07",
     "time": "13:21:33",
     "symbol": "NQ",
@@ -4395,7 +4450,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-taxy7dn5e",
+    "id": "trade-1731470303837-b92u5uedq",
     "date": "2024-11-07",
     "time": "13:26:55",
     "symbol": "NQ",
@@ -4410,7 +4465,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7mb3xgznl",
+    "id": "trade-1731470303837-tu1lvt6qv",
     "date": "2024-11-07",
     "time": "13:26:54",
     "symbol": "MNQ",
@@ -4425,7 +4480,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-l8y6u53j0",
+    "id": "trade-1731470303837-i4n1l3udt",
     "date": "2024-11-07",
     "time": "13:43:02",
     "symbol": "NQ",
@@ -4434,13 +4489,14 @@
     "exitPrice": 21222.25,
     "quantity": 1,
     "pnl": -50,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-1u7aayijd",
+    "id": "trade-1731470303837-njouhe8kk",
     "date": "2024-11-07",
     "time": "15:17:39",
     "symbol": "NQ",
@@ -4455,7 +4511,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-kdz9or0pf",
+    "id": "trade-1731470303837-2gkdwhy7g",
     "date": "2024-11-07",
     "time": "15:17:38",
     "symbol": "MNQ",
@@ -4470,7 +4526,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-wlckeveth",
+    "id": "trade-1731470303837-dku7x1tp1",
     "date": "2024-11-07",
     "time": "15:29:50",
     "symbol": "MNQ",
@@ -4485,7 +4541,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-2d40agyh7",
+    "id": "trade-1731470303837-2wu6bo1k3",
     "date": "2024-11-07",
     "time": "15:29:50",
     "symbol": "NQ",
@@ -4500,7 +4556,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-duikm0n7m",
+    "id": "trade-1731470303837-h30el8cgf",
     "date": "2024-11-07",
     "time": "16:30:00",
     "symbol": "MNQ",
@@ -4509,13 +4565,14 @@
     "exitPrice": 21227.5,
     "quantity": 15,
     "pnl": -75,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-4hrmcfafw",
+    "id": "trade-1731470303837-d1iqjsv5g",
     "date": "2024-11-07",
     "time": "16:47:55",
     "symbol": "MNQ",
@@ -4530,7 +4587,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-0gqw6fk2j",
+    "id": "trade-1731470303837-xd1bqvobj",
     "date": "2024-11-07",
     "time": "16:41:42",
     "symbol": "NQ",
@@ -4545,7 +4602,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-dx325cu49",
+    "id": "trade-1731470303837-8pui9p7uj",
     "date": "2024-11-07",
     "time": "17:04:54",
     "symbol": "MNQ",
@@ -4560,7 +4617,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-v88d2lbw0",
+    "id": "trade-1731470303837-f2u6tuz0e",
     "date": "2024-11-07",
     "time": "17:21:36",
     "symbol": "MNQ",
@@ -4575,7 +4632,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-u68j2e8xj",
+    "id": "trade-1731470303837-q6ybbqsq9",
     "date": "2024-11-07",
     "time": "17:39:27",
     "symbol": "MNQ",
@@ -4590,7 +4647,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-uc83pl8bw",
+    "id": "trade-1731470303837-eijvkkwjs",
     "date": "2024-11-07",
     "time": "17:56:38",
     "symbol": "MNQ",
@@ -4605,7 +4662,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-8b5m4ot3h",
+    "id": "trade-1731470303837-yl8qmzbx6",
     "date": "2024-11-07",
     "time": "17:50:58",
     "symbol": "NQ",
@@ -4614,13 +4671,14 @@
     "exitPrice": 21236.25,
     "quantity": 1,
     "pnl": 215,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-tbqkndnag",
+    "id": "trade-1731470303837-56tv8ij5t",
     "date": "2024-11-07",
     "time": "18:31:18",
     "symbol": "MNQ",
@@ -4635,7 +4693,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-innyogs91",
+    "id": "trade-1731470303837-li21bggua",
     "date": "2024-11-07",
     "time": "18:37:08",
     "symbol": "NQ",
@@ -4650,7 +4708,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-hgdpyccoh",
+    "id": "trade-1731470303837-r6xx1mz23",
     "date": "2024-11-07",
     "time": "19:17:48",
     "symbol": "MNQ",
@@ -4665,7 +4723,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-vgjli3k84",
+    "id": "trade-1731470303837-efec2go7l",
     "date": "2024-11-07",
     "time": "19:17:50",
     "symbol": "MNQ",
@@ -4680,7 +4738,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ld2mm77zc",
+    "id": "trade-1731470303837-509sm1frx",
     "date": "2024-11-07",
     "time": "19:17:50",
     "symbol": "NQ",
@@ -4695,7 +4753,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-zob4uq4zs",
+    "id": "trade-1731470303837-qinjfttdx",
     "date": "2024-11-07",
     "time": "19:22:27",
     "symbol": "MNQ",
@@ -4710,7 +4768,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-2po1npj93",
+    "id": "trade-1731470303837-geyom1dj6",
     "date": "2024-11-07",
     "time": "19:22:29",
     "symbol": "NQ",
@@ -4725,7 +4783,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i9b9weogo",
+    "id": "trade-1731470303837-cybi5c8gd",
     "date": "2024-11-07",
     "time": "19:37:08",
     "symbol": "NQ",
@@ -4734,13 +4792,14 @@
     "exitPrice": 21228.5,
     "quantity": 1,
     "pnl": -20,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 20,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-7r1f7j8bg",
+    "id": "trade-1731470303837-34nx4tmnl",
     "date": "2024-11-07",
     "time": "19:37:08",
     "symbol": "MNQ",
@@ -4755,7 +4814,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-cki60xve8",
+    "id": "trade-1731470303837-15qn9j03d",
     "date": "2024-11-07",
     "time": "19:42:16",
     "symbol": "NQ",
@@ -4770,7 +4829,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ztv1jhnst",
+    "id": "trade-1731470303837-2j5bud2ns",
     "date": "2024-11-07",
     "time": "20:05:27",
     "symbol": "MNQ",
@@ -4785,7 +4844,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fbwu3qqbr",
+    "id": "trade-1731470303837-0rqvs6akx",
     "date": "2024-11-07",
     "time": "20:26:40",
     "symbol": "MNQ",
@@ -4800,7 +4859,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-i4816rnhj",
+    "id": "trade-1731470303837-6ezx3o5ls",
     "date": "2024-11-07",
     "time": "20:30:27",
     "symbol": "MNQ",
@@ -4815,7 +4874,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4pbxvkcs7",
+    "id": "trade-1731470303837-lixh9xsic",
     "date": "2024-11-07",
     "time": "20:30:32",
     "symbol": "MNQ",
@@ -4824,13 +4883,14 @@
     "exitPrice": 21224.5,
     "quantity": 15,
     "pnl": -240,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-qy10xwlvy",
+    "id": "trade-1731470303837-7rrf1dz1r",
     "date": "2024-11-07",
     "time": "20:41:13",
     "symbol": "MNQ",
@@ -4845,7 +4905,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-fqxg31qcd",
+    "id": "trade-1731470303837-z3xizqz29",
     "date": "2024-11-07",
     "time": "20:58:19",
     "symbol": "MNQ",
@@ -4860,7 +4920,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5dpxk487e",
+    "id": "trade-1731470303837-l3j6wf5l0",
     "date": "2024-11-07",
     "time": "21:38:29",
     "symbol": "MNQ",
@@ -4875,7 +4935,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-muwg1iaxq",
+    "id": "trade-1731470303837-02x1jvfnz",
     "date": "2024-11-07",
     "time": "21:38:31",
     "symbol": "MNQ",
@@ -4890,7 +4950,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-urhqq6gt5",
+    "id": "trade-1731470303837-shlxmtsi3",
     "date": "2024-11-07",
     "time": "22:09:53",
     "symbol": "MNQ",
@@ -4905,7 +4965,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5r6w4cbv0",
+    "id": "trade-1731470303837-gnsdh365i",
     "date": "2024-11-07",
     "time": "22:23:41",
     "symbol": "MNQ",
@@ -4914,13 +4974,14 @@
     "exitPrice": 21230.75,
     "quantity": 15,
     "pnl": -30,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-6sebsmsgl",
+    "id": "trade-1731470303837-mmctzn1ps",
     "date": "2024-11-07",
     "time": "23:18:04",
     "symbol": "MNQ",
@@ -4935,7 +4996,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-lj49ppmkt",
+    "id": "trade-1731470303837-mnm9i80ax",
     "date": "2024-11-08",
     "time": "00:02:11",
     "symbol": "MNQ",
@@ -4950,7 +5011,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-p39ejktb3",
+    "id": "trade-1731470303837-jp4rgwn0a",
     "date": "2024-11-08",
     "time": "00:23:25",
     "symbol": "MNQ",
@@ -4965,7 +5026,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1dk2o0axe",
+    "id": "trade-1731470303837-p78quod4x",
     "date": "2024-11-08",
     "time": "00:46:54",
     "symbol": "MNQ",
@@ -4980,7 +5041,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5tkind3qn",
+    "id": "trade-1731470303837-xw40sksvk",
     "date": "2024-11-08",
     "time": "01:29:33",
     "symbol": "MNQ",
@@ -4995,7 +5056,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-2idfxu9pk",
+    "id": "trade-1731470303837-m6kta1kn1",
     "date": "2024-11-08",
     "time": "01:34:37",
     "symbol": "MNQ",
@@ -5010,7 +5071,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-3lf2ef88z",
+    "id": "trade-1731470303837-qqm78ybf0",
     "date": "2024-11-08",
     "time": "02:03:24",
     "symbol": "MNQ",
@@ -5025,7 +5086,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-k0xcpbrcz",
+    "id": "trade-1731470303837-82z3chw0l",
     "date": "2024-11-08",
     "time": "02:20:45",
     "symbol": "MNQ",
@@ -5034,13 +5095,14 @@
     "exitPrice": 21150.5,
     "quantity": 15,
     "pnl": 1672.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-xk042f9xl",
+    "id": "trade-1731470303837-09zmwoe25",
     "date": "2024-11-08",
     "time": "03:32:51",
     "symbol": "MNQ",
@@ -5055,7 +5117,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-ukln4i0c3",
+    "id": "trade-1731470303837-darpplqc6",
     "date": "2024-11-08",
     "time": "03:45:38",
     "symbol": "MNQ",
@@ -5070,7 +5132,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-c6nwom9xp",
+    "id": "trade-1731470303837-euwlq9imz",
     "date": "2024-11-08",
     "time": "05:12:47",
     "symbol": "MNQ",
@@ -5085,7 +5147,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7inoz32go",
+    "id": "trade-1731470303837-biy6f9113",
     "date": "2024-11-08",
     "time": "05:34:03",
     "symbol": "NQ",
@@ -5100,7 +5162,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-4gnapwr6s",
+    "id": "trade-1731470303837-1100j7u2b",
     "date": "2024-11-08",
     "time": "06:33:05",
     "symbol": "MNQ",
@@ -5115,7 +5177,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gqtln5acq",
+    "id": "trade-1731470303837-fpxxwdunk",
     "date": "2024-11-08",
     "time": "06:37:15",
     "symbol": "MNQ",
@@ -5130,7 +5192,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-7ndn5mxrm",
+    "id": "trade-1731470303837-w4czzus30",
     "date": "2024-11-08",
     "time": "07:02:15",
     "symbol": "MNQ",
@@ -5145,7 +5207,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-y06bjt5hf",
+    "id": "trade-1731470303837-yty9mtnoo",
     "date": "2024-11-08",
     "time": "07:18:55",
     "symbol": "MNQ",
@@ -5160,7 +5222,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-5ekrsmgtj",
+    "id": "trade-1731470303837-sg31awv42",
     "date": "2024-11-08",
     "time": "08:00:35",
     "symbol": "MNQ",
@@ -5169,13 +5231,14 @@
     "exitPrice": 21210.25,
     "quantity": 15,
     "pnl": -517.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-qxsogl2gm",
+    "id": "trade-1731470303837-1te9tvys8",
     "date": "2024-11-08",
     "time": "08:29:45",
     "symbol": "MNQ",
@@ -5184,13 +5247,14 @@
     "exitPrice": 21201.25,
     "quantity": 15,
     "pnl": -255,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-49a5rgv3r",
+    "id": "trade-1731470303837-mpgxef4ot",
     "date": "2024-11-08",
     "time": "09:23:58",
     "symbol": "MNQ",
@@ -5205,7 +5269,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gjhb73o39",
+    "id": "trade-1731470303837-v4dhrsc68",
     "date": "2024-11-08",
     "time": "09:28:08",
     "symbol": "MNQ",
@@ -5220,7 +5284,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-p1sx5tl77",
+    "id": "trade-1731470303837-a41w6xwg3",
     "date": "2024-11-08",
     "time": "09:57:25",
     "symbol": "MNQ",
@@ -5235,7 +5299,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-1l9xhcbmg",
+    "id": "trade-1731470303837-iz2san96w",
     "date": "2024-11-08",
     "time": "10:05:54",
     "symbol": "MNQ",
@@ -5244,13 +5308,14 @@
     "exitPrice": 21247.5,
     "quantity": 15,
     "pnl": 757.5,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   },
   {
-    "id": "trade-1731461980673-llgwh3ikp",
+    "id": "trade-1731470303837-9yoashveb",
     "date": "2024-11-08",
     "time": "11:29:32",
     "symbol": "MNQ",
@@ -5265,7 +5330,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-gsfpwgihu",
+    "id": "trade-1731470303837-ucaogjudw",
     "date": "2024-11-08",
     "time": "11:54:40",
     "symbol": "MNQ",
@@ -5280,7 +5345,7 @@
     "brokerage": "tradeovate"
   },
   {
-    "id": "trade-1731461980673-o1927s7pw",
+    "id": "trade-1731470303837-bnriqg699",
     "date": "2024-11-08",
     "time": "12:31:58",
     "symbol": "MNQ",
@@ -5289,9 +5354,10 @@
     "exitPrice": 21226.5,
     "quantity": 15,
     "pnl": -135,
-    "strategy": "N/A",
+    "strategy": "zigzag",
     "notes": "",
     "contractMultiplier": 2,
-    "brokerage": "tradeovate"
+    "brokerage": "tradeovate",
+    "playbookId": "zigzag"
   }
 ]

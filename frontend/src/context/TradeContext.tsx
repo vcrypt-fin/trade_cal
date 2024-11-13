@@ -15,6 +15,7 @@ export interface Trade {
   exitPrice?: number;
   quantity: number;
   strategy: string;
+  playbookId?: string;
   notes: string;
   pnl: number;
 }
