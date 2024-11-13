@@ -62,7 +62,7 @@ const FilterBar: React.FC = () => {
   }
 
   return (
-    <div className="absolute top-full left-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-6 z-20">
+    <div className="absolute top-full left-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-5 z-20">
       <h4 className="text-xl font-semibold mb-4">Filter by:</h4>
 
       {/* Symbols Dropdown */}
@@ -99,25 +99,26 @@ const FilterBar: React.FC = () => {
         />
       </div>
 
-      {/* Date Range Picker */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-        <div className="flex items-center gap-2">
-          <input
-            type="date"
-            value={localStartDate}
-            onChange={(e) => setLocalStartDate(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span>to</span>
-          <input
-            type="date"
-            value={localEndDate}
-            onChange={(e) => setLocalEndDate(e.target.value)}
-            className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
+    {/* Date Range Picker */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+      <div className="flex items-center gap-2">
+        <input
+          type="date"
+          value={localStartDate}
+          onChange={(e) => setLocalStartDate(e.target.value)}
+          className="flex-1 min-w-0 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <span>to</span>
+        <input
+          type="date"
+          value={localEndDate}
+          onChange={(e) => setLocalEndDate(e.target.value)}
+          className="flex-1 min-w-0 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
       </div>
+    </div>
+
 
     {/* Action Buttons */}
     <div className="flex justify-end mt-4">

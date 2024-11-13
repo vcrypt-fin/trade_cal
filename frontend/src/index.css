@@ -100,3 +100,41 @@ body {
   outline-offset: 2px;
   @apply ring-2 ring-offset-2 ring-blue-500;
 }
+
+/* Add these styles to your existing CSS */
+.select__control {
+  min-height: 32px !important;
+}
+
+.select__value-container {
+  padding: 0 8px !important;
+}
+
+.select__input-container {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.select__menu {
+  font-size: 0.875rem !important;
+}
+
+/* Add these styles for react-select */
+.select__control {
+  min-height: 36px !important;
+  border-color: #e5e7eb !important;
+}
+
+.select__control:hover {
+  border-color: #d1d5db !important;
+}
+
+.select__control--is-focused {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 1px #2563eb !important;
+}
+
+.select__menu {
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
