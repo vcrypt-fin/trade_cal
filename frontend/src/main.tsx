@@ -13,16 +13,10 @@ const AUTH_DOMAIN = 'dev-gm2ulqzpf2ztt7zm.us.auth0.com'
 const AUTH_CID = 'tOHodsS0hxlDQOW8gDednsxIe0hecKMV'
 
 createRoot(rootElement).render(
-  <Auth0Provider
-    domain={AUTH_DOMAIN}
-    clientId={AUTH_CID}
-    authorizationParams={{
-      redirect_uri: window.location.origin
-    }}
-  >
-    <StrictMode>
-      <AuthChecker />
-      <App />
-    </StrictMode>
-  </Auth0Provider>
+<>    
+  <StrictMode>
+    <AuthChecker />
+    <App />
+  </StrictMode>
+</>
 );
