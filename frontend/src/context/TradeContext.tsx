@@ -1,7 +1,14 @@
 // src/context/TradeContext.tsx
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { supabase } from './SupabaseClient';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { supabase } from "./SupabaseClient";
 
 export interface Trade {
   id: string;
@@ -9,7 +16,7 @@ export interface Trade {
   time: string;
   timestamp?: string;
   symbol: string;
-  side: 'LONG' | 'SHORT';
+  side: "LONG" | "SHORT";
   brokerage: string;
   contractMultiplier: number;
   entryPrice: number;
@@ -23,6 +30,7 @@ export interface Trade {
 
 export interface Playbook {
   id: string;
+  userId: string;
   name: string;
   description?: string;
   createdAt: string;
@@ -38,9 +46,9 @@ interface Filters {
 interface TradeContextType {
   trades: Trade[];
   playbooks: Playbook[];
-  addTrade: (trade: Omit<Trade, 'id'>) => Promise<void>;
+  addTrade: (trade: Omit<Trade, "id">) => Promise<void>;
   editTrade: (updatedTrade: Trade) => Promise<void>;
-  addPlaybook: (playbook: Omit<Playbook, 'id' | 'createdAt'>) => Promise<void>;
+  addPlaybook: (playbook: Omit<Playbook, "id" | "createdAt">) => Promise<void>;
   addBulkTrades: (newTrades: Trade[]) => Promise<void>;
   getPlaybookById: (id: string) => Playbook | undefined;
   clearAllTrades: () => Promise<void>;
@@ -57,7 +65,7 @@ const TradeContext = createContext<TradeContextType | undefined>(undefined);
 export function useTrades() {
   const context = useContext(TradeContext);
   if (!context) {
-    throw new Error('useTrades must be used within a TradeProvider');
+    throw new Error("useTrades must be used within a TradeProvider");
   }
   return context;
 }
@@ -68,158 +76,219 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [filters, setFiltersState] = useState<Filters>({
-    startDate: new Date(new Date().setDate(1)).toISOString().split('T')[0],
-    endDate: new Date().toISOString().split('T')[0],
+    startDate: new Date(new Date().setDate(1)).toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
     symbols: [],
     strategies: [],
   });
 
   const setFilters = useCallback((newFilters: Filters) => {
-    console.log('TradeContext: Setting new filters:', newFilters);
-    setFiltersState(prevFilters => {
-      console.log('TradeContext: Previous filters:', prevFilters);
+    console.log("TradeContext: Setting new filters:", newFilters);
+    setFiltersState((prevFilters) => {
+      console.log("TradeContext: Previous filters:", prevFilters);
       return newFilters;
     });
   }, []);
 
   const resetFilters = useCallback(() => {
     const defaultFilters = {
-      startDate: new Date(new Date().setDate(1)).toISOString().split('T')[0],
-      endDate: new Date().toISOString().split('T')[0],
+      startDate: new Date(new Date().setDate(1)).toISOString().split("T")[0],
+      endDate: new Date().toISOString().split("T")[0],
       symbols: [],
       strategies: [],
     };
-    console.log('Resetting filters to:', defaultFilters);
+    console.log("Resetting filters to:", defaultFilters);
     setFiltersState(defaultFilters);
   }, []);
 
   const fetchPlaybooks = useCallback(async () => {
-    console.log('Fetching playbooks from Supabase...');
+    console.log("Fetching playbooks from Supabase...");
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) throw new Error("User is not logged in");
+
     const { data, error } = await supabase
-      .from('playbooks')
-      .select('*')
-      .order('createdAt', { ascending: true });
+      .from("playbooks")
+      .select("*")
+      .eq("userId", session.user.id)
+      .order("createdAt", { ascending: true });
 
     if (error) {
-      console.error('Failed to fetch playbooks:', error);
+      console.error("Failed to fetch playbooks:", error);
       return;
     }
 
     if (data) {
       setPlaybooks(data as Playbook[]);
-      console.log('Fetched playbooks:', data);
+      console.log("Fetched playbooks:", data);
     }
   }, []);
 
   const fetchTrades = useCallback(async () => {
-    console.log('Fetching trades from Supabase...');
+    console.log("Fetching trades from Supabase...");
     setIsLoading(true);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    if (!session) throw new Error("User is not logged in");
+
     const { data, error } = await supabase
-      .from('trades')
-      .select('*')
-      .order('date', { ascending: false })
-      .order('time', { ascending: false });
+      .from("trades")
+      .select("*")
+      .eq("userId", session.user.id)
+      .order("date", { ascending: false })
+      .order("time", { ascending: false });
 
     if (error) {
-      console.error('Failed to fetch trades:', error);
+      console.error("Failed to fetch trades:", error);
     } else if (data) {
       setTrades(data as Trade[]);
-      console.log('Fetched trades:', data);
+      console.log("Fetched trades:", data);
     }
 
     setIsLoading(false);
   }, []);
 
-  const addTrade = useCallback(async (trade: Omit<Trade, 'id'>) => {
-    console.log('Inserting trade into Supabase:', trade);
-    const { error } = await supabase
-      .from('trades')
-      .insert([trade]);
+  const addTrade = useCallback(
+    async (trade: Omit<Trade, "id">) => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-    if (error) {
-      console.error('Error adding trade:', error);
-      throw error;
-    }
+      const tradeData = {
+        ...trade,
+        userId: session.user.id,
+      };
 
-    await fetchTrades();
-  }, [fetchTrades]);
+      console.log("Inserting trade into Supabase:", tradeData);
+      const { error } = await supabase.from("trades").insert([tradeData]);
 
-  const editTrade = useCallback(async (updatedTrade: Trade) => {
-    console.log('Updating trade in Supabase:', updatedTrade);
-    const { error } = await supabase
-      .from('trades')
-      .update(updatedTrade)
-      .match({ id: updatedTrade.id });
+      if (error) {
+        console.error("Error adding trade:", error);
+        throw error;
+      }
 
-    if (error) {
-      console.error('Failed to edit trade:', error);
-    } else {
-      await fetchTrades();
-    }
-  }, [fetchTrades]);
+      await fetchTrades(); // Refresh trades
+    },
+    [fetchTrades]
+  );
 
-  const addPlaybook = useCallback(async (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
-    const newPlaybook: Playbook = {
-      ...playbook,
-      id: crypto.randomUUID(),
-      name: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      createdAt: new Date().toISOString(),
-    };
+  const editTrade = useCallback(
+    async (updatedTrade: Trade) => {
+      console.log("Updating trade in Supabase:", updatedTrade);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-    console.log('Inserting playbook into Supabase:', newPlaybook);
-    const { error } = await supabase
-      .from('playbooks')
-      .insert([newPlaybook]);
+      const { error } = await supabase
+        .from("trades")
+        .update(updatedTrade)
+        .match({ id: updatedTrade.id, userId: session.user.id });
 
-    if (error) {
-      console.error('Failed to add playbook:', error);
-    } else {
-      await fetchPlaybooks();
-    }
-  }, [fetchPlaybooks]);
+      if (error) {
+        console.error("Failed to edit trade:", error);
+      } else {
+        await fetchTrades();
+      }
+    },
+    [fetchTrades]
+  );
 
-  const addBulkTrades = useCallback(async (newTrades: Trade[]) => {
-    console.log('Bulk inserting trades into Supabase:', newTrades);
-    const { error } = await supabase
-      .from('trades')
-      .insert(newTrades);
+  const addPlaybook = useCallback(
+    async (playbook: Omit<Playbook, "id" | "createdAt">) => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-    if (error) {
-      console.error('Failed to add bulk trades:', error);
-    } else {
-      await fetchTrades();
-    }
-  }, [fetchTrades]);
+      const newPlaybook = {
+        ...playbook,
+        userId: session.user.id,
+        name: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+        createdAt: new Date().toISOString(),
+      };
 
-  const getPlaybookById = useCallback((id: string) => {
-    return playbooks.find(p => p.id === id);
-  }, [playbooks]);
+      console.log("Inserting playbook into Supabase:", newPlaybook);
+      const { error } = await supabase.from("playbooks").insert([newPlaybook]);
+
+      if (error) {
+        console.error("Failed to add playbook:", error);
+      } else {
+        await fetchPlaybooks();
+      }
+    },
+    [fetchPlaybooks]
+  );
+
+  const addBulkTrades = useCallback(
+    async (newTrades: Trade[]) => {
+      console.log("Bulk inserting trades into Supabase:", newTrades);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
+
+      const tradesData = newTrades.map((trade) => ({
+        ...trade,
+        userId: session.user.id,
+      }));
+
+      const { error } = await supabase.from("trades").insert(tradesData);
+
+      if (error) {
+        console.error("Failed to add bulk trades:", error);
+      } else {
+        await fetchTrades();
+      }
+    },
+    [fetchTrades]
+  );
+
+  const getPlaybookById = useCallback(
+    (id: string) => {
+      return playbooks.find((p) => p.id === id);
+    },
+    [playbooks]
+  );
 
   const clearAllTrades = useCallback(async () => {
-    console.log('Clearing all trades and playbooks from Supabase...');
+    console.log("Clearing all trades and playbooks from Supabase...");
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      throw new Error("User is not logged in or session error occurred.");
+    }
+
     const { error: tradesError } = await supabase
-      .from('trades')
+      .from("trades")
       .delete()
-      .neq('id', '');
+      .eq("userId", session.user.id);
 
     if (tradesError) {
-      console.error('Error clearing trades:', tradesError);
+      console.error("Error clearing trades:", tradesError);
       return;
     }
 
     const { error: playbooksError } = await supabase
-      .from('playbooks')
+      .from("playbooks")
       .delete()
-      .neq('id', '');
+      .eq("userId", session.user.id);
 
     if (playbooksError) {
-      console.error('Error clearing playbooks:', playbooksError);
+      console.error("Error clearing playbooks:", playbooksError);
       return;
     }
 
     setTrades([]);
     setPlaybooks([]);
-    console.log('All data cleared successfully');
+    console.log("All data cleared successfully");
   }, []);
 
   useEffect(() => {
@@ -232,37 +301,40 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     initializeData();
   }, [fetchTrades, fetchPlaybooks]);
 
-  const contextValue = useMemo(() => ({
-    trades,
-    playbooks,
-    addTrade,
-    editTrade,
-    addPlaybook,
-    addBulkTrades,
-    getPlaybookById,
-    clearAllTrades,
-    fetchTrades,
-    fetchPlaybooks,
-    isLoading,
-    filters,
-    setFilters,
-    resetFilters,
-  }), [
-    trades,
-    playbooks,
-    addTrade,
-    editTrade,
-    addPlaybook,
-    addBulkTrades,
-    getPlaybookById,
-    clearAllTrades,
-    fetchTrades,
-    fetchPlaybooks,
-    isLoading,
-    filters,
-    setFilters,
-    resetFilters,
-  ]);
+  const contextValue = useMemo(
+    () => ({
+      trades,
+      playbooks,
+      addTrade,
+      editTrade,
+      addPlaybook,
+      addBulkTrades,
+      getPlaybookById,
+      clearAllTrades,
+      fetchTrades,
+      fetchPlaybooks,
+      isLoading,
+      filters,
+      setFilters,
+      resetFilters,
+    }),
+    [
+      trades,
+      playbooks,
+      addTrade,
+      editTrade,
+      addPlaybook,
+      addBulkTrades,
+      getPlaybookById,
+      clearAllTrades,
+      fetchTrades,
+      fetchPlaybooks,
+      isLoading,
+      filters,
+      setFilters,
+      resetFilters,
+    ]
+  );
 
   return (
     <TradeContext.Provider value={contextValue}>
