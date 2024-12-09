@@ -1,6 +1,6 @@
 // src/App.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -18,10 +18,22 @@ import { TradeProvider } from './context/TradeContext';
 import { JournalProvider } from './context/JournalContext';
 import EditTradeForm from './components/EditTradeForm';
 import DashboardLayout from './components/DashboardLayout'; // Ensure correct import
+import Login from './components/LoginPage.tsx';
+import Register from './components/RegisterPage.tsx';
+import AuthChecker from './context/AuthHandler.tsx';
+
+import { GitHubCallback } from './components/AuthCallbacks';
 
 function App() {
+
+  // Load env keys at startup
+  useEffect(() => {
+    //require('dotenv').config();
+  }, []);
+
   return (
     <Router>
+      <AuthChecker />
       <TradeProvider>
         <JournalProvider>
           <Routes>
@@ -35,6 +47,9 @@ function App() {
             <Route path="/trades" element={<Trades />} />
             <Route path="/reports" element={<Reports />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/github/callback" element={<GitHubCallback />} />
           </Routes>
         </JournalProvider>
       </TradeProvider>

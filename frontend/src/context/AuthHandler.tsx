@@ -1,37 +1,58 @@
-import React, { useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import Cookies from 'js-cookie';
+import React, { useEffect, useState } from 'react';
+import { createClient } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
+import LoginPage from '../components/LoginPage';
 
-const AuthChecker: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0();
+const AuthHandler: React.FC = () => {
+  const supabaseUrl: string | undefined = import.meta.env.VITE_REACT_APP_SB_URL;
+  const supabaseKey: string | undefined = import.meta.env.VITE_REACT_APP_SB_KEY;
+  let supabase: any = null;
+
+  if (supabaseUrl && supabaseKey) {
+    supabase = createClient(supabaseUrl, supabaseKey);
+  }
+
+  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuthToken = async () => {
-      // Check if the auth token is in cookies
-      let token = Cookies.get('auth_token');
+    const session = supabase?.auth.session();
+    setUser(session?.user || null);
 
-      if (!token) {
-        // If not authenticated, redirect to Auth0 login
-        if (!isAuthenticated) {
-          await loginWithRedirect();
-        } else {
-          // Get the token silently from Auth0 if authenticated
-          token = await getAccessTokenSilently();
+    const authStateChange = supabase?.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
+    });
+    const subscription = authStateChange?.data;
 
-          console.log('Token fetched from Auth0:', token);
-
-          // Store the token in cookies
-          Cookies.set('auth_token', token, { secure: true, sameSite: 'strict' });
-        }
-      } else {
-        console.log('Token found in cookies:', token);
-      }
+    return () => {
+      subscription?.unsubscribe();
     };
+  }, [supabase]); 
 
-    checkAuthToken();
-  }, [isAuthenticated, loginWithRedirect, getAccessTokenSilently]);
+  useEffect(() => {
+  
+    if (!user && localStorage.getItem('auth_in_prog') == false.toString()) {
+      navigate('/login');
+    }
+  }, [user, history]);
 
-  return <></>
+  const signIn = async () => {
+    const { user, error } = await supabase.auth.signIn({ provider: 'github' });
+    if (error) console.error('Error signing in:', error.message);
+    else setUser(user);
+  };
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('Error signing out:', error.message);
+    else setUser(null);
+  };
+
+  return (
+    <div>
+   
+    </div>
+  );
 };
 
-export default AuthChecker;
+export default AuthHandler;
