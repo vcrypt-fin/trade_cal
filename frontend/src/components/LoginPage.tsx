@@ -29,27 +29,7 @@ const LoginPage: React.FC = () => {
   };
 
    const handleSubmit = async (event: React.FormEvent) => {
-  //   event.preventDefault();
-  //   setLoading(true);
-  //   setError('');
-
-
-
-  //   try {
-  //     const { data, error } = await supabase.auth.signInWithPassword({
-  //       email,
-  //       password,
-  //     });
-
-  //     if (error) throw error;
-  //     if (data.user) {
-  //       navigate('/');
-  //     }
-  //   } catch (err) {
-  //     setError(err.message);
-  //   } finally {
-  //     setLoading(false);
-  //   }
+   //  Handle normla login
    };
 
   return (
