@@ -54,7 +54,15 @@ export default function Sidebar() {
 
       <div className="absolute bottom-4 left-4 right-4">
         <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-white/10">
-          <span>Trading Queen</span>
+          <span>Log Out</span>
+        <div
+          onClick={() => {
+            localStorage.removeItem('authToken');
+            window.location.href = '/login';
+          }}
+        >
+          <span>Log Out</span>
+        </div>
         </div>
       </div>
     </div>
