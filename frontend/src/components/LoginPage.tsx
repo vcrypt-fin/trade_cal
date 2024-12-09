@@ -11,7 +11,10 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [error, setError] = useState('');
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
 
   const handleOAuthLogin = async (provider: Provider) => {
     localStorage.setItem('auth_in_prog', true.toString());
