@@ -1,20 +1,27 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../context/SupabaseClient';
 
-// https://your-site.com/github/callback?code=AUTHORIZATION_CODE
 export const GitHubCallback = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        console.log("GitHubCallback", hashParams);
-        const token = hashParams.get('access_token');
+        const handleCallback = async () => {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (session) {
+                    localStorage.setItem('authToken', session.access_token);
+                    localStorage.setItem('auth_in_prog', 'false');
+                    navigate('/');
+                }
+            } catch (error) {
+                navigate('/login');
+            }
+        };
 
-        if (token) {
-            localStorage.setItem('authToken', token);
-            navigate('/');
-        }
-    }, []);
+        handleCallback();
+    }, [navigate]);
 
     return null;
 };

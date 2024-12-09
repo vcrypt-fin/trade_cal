@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { EyeFilledIcon } from "./icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "./icons/EyeSlashFilledIcon";
+import { supabase } from '../context/SupabaseClient';
 
 const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -27,22 +28,53 @@ const RegisterPage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        console.log('Starting registration process...', { email: form.email, username: form.username });
+        
         if (form.password !== form.confirmPassword) {
+            console.log('Password mismatch detected');
             setError('Passwords do not match');
             return;
         }
+
         setLoading(true);
         try {
-            // Replace with your registration API call
-            await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(form),
+            console.log('Attempting to register with Supabase...');
+            
+            // Register with Supabase
+            const { data, error } = await supabase.auth.signUp({
+                email: form.email,
+                password: form.password,
+                options: {
+                    data: {
+                        username: form.username,
+                    },
+                },
             });
-            navigate('/login');
+
+            if (error) {
+                console.error('Registration error:', error);
+                setError(error.message);
+                return;
+            }
+
+            console.log('Registration successful:', {
+                user: data.user?.id,
+                email: data.user?.email,
+                username: data.user?.user_metadata.username
+            });
+
+            // Check if email confirmation is required
+            if (data.user?.identities?.length === 0) {
+                console.log('Email confirmation required');
+                setError('Please check your email to confirm your registration');
+            } else {
+                console.log('Redirecting to login page...');
+                navigate('/login');
+            }
         } catch (error) {
-            setError('Registration failed. Please try again.');
-            console.error('Registration failed', error);
+            const errorMessage = error instanceof Error ? error.message : 'Registration failed';
+            console.error('Unexpected registration error:', error);
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -116,8 +148,9 @@ const RegisterPage: React.FC = () => {
                             color="primary"
                             isLoading={loading}
                             className="w-full"
+                            disabled={!form.email || !form.password || !form.username || loading}
                         >
-                            Register
+                            {loading ? 'Creating Account...' : 'Register'}
                         </Button>
                         <p className="text-center text-sm text-gray-500">
                             Already have an account?{' '}

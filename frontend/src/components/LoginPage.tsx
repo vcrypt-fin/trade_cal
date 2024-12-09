@@ -8,6 +8,7 @@ import { supabase } from '../context/SupabaseClient';
 import { Provider } from '@supabase/supabase-js';
 
 const LoginPage: React.FC = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,27 +17,74 @@ const LoginPage: React.FC = () => {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
+  const getCallbackUrl = () => {
+    const baseUrl = import.meta.env.PROD 
+      ? 'https://tradecal.netlify.app/'  // Replace with your actual Netlify domain
+      : 'http://localhost:5173';
+    return `${baseUrl}/github/callback`;
+  };
+
   const handleOAuthLogin = async (provider: Provider) => {
-    localStorage.setItem('auth_in_prog', true.toString());
+    try {
+        setLoading(true);
+        localStorage.setItem('auth_in_prog', 'true');
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: provider,
-      options: {
-        redirectTo: 'http://localhost:5173/github/callback',
-      },
-    });
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: provider,
+            options: {
+                redirectTo: getCallbackUrl(),
+            },
+        });
 
-    if (error || !data) {
-      console.log("Error: ", error);
-      setError('Failed to login');
-      localStorage.setItem('auth_in_prog', false.toString());
-    } else {
-      window.location.href = data.url;
+        if (error) {
+            console.error("Auth error:", error);
+            setError(error.message);
+            localStorage.setItem('auth_in_prog', 'false');
+            return;
+        }
+
+        if (data?.url) {
+            window.location.href = data.url;
+        } else {
+            setError('Failed to get authentication URL');
+            localStorage.setItem('auth_in_prog', 'false');
+        }
+    } catch (err) {
+        console.error("Login error:", err);
+        setError('An unexpected error occurred');
+        localStorage.setItem('auth_in_prog', 'false');
+    } finally {
+        setLoading(false);
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    try {
+        setLoading(true);
+        setError('');
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            console.error('Login error:', error);
+            setError(error.message);
+            return;
+        }
+
+        if (data?.session) {
+            localStorage.setItem('authToken', data.session.access_token);
+            navigate('/');
+        }
+    } catch (err) {
+        console.error('Unexpected error:', err);
+        setError('An unexpected error occurred');
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
@@ -83,6 +131,7 @@ const LoginPage: React.FC = () => {
               color="primary"
               isLoading={loading}
               className="w-full"
+              disabled={!email || !password || loading}
             >
               {loading ? 'Logging in...' : 'Login'}
             </Button>
