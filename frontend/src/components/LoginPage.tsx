@@ -4,38 +4,36 @@ import axios from 'axios';
 import { Input, Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
 import { EyeFilledIcon } from "./icons/EyeFilledIcon";
 import { EyeSlashFilledIcon } from "./icons/EyeSlashFilledIcon";
+import { supabase } from '../context/SupabaseClient';
+import { Provider } from '@supabase/supabase-js';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isVisible, setIsVisible] = useState(false);
-  const navigate = useNavigate();
 
-  const server_url = "https://wxvmssqfidodxyoxjtju.supabase.co/functions/v1";
-
-  const toggleVisibility = () => setIsVisible(!isVisible);
-
-  const handleOAuthLogin = async (provider: string) => {
+  const handleOAuthLogin = async (provider: Provider) => {
     localStorage.setItem('auth_in_prog', true.toString());
-    try {
-      const response = await axios.post(`${server_url}/auth`, { type: provider });
-      if (response.status === 200) {
-        window.location.href = response.data.url;
-      } else {
-        setError('Failed to login');
-        localStorage.setItem('auth_in_prog', false.toString());
-      }
-    } catch (error) {
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: provider,
+      options: {
+        redirectTo: 'http://localhost:5173/github/callback',
+      },
+    });
+
+    if (error || !data) {
+      console.log("Error: ", error);
       setError('Failed to login');
       localStorage.setItem('auth_in_prog', false.toString());
+    } else {
+      window.location.href = data.url;
     }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle normal login
   };
 
   return (

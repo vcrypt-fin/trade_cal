@@ -1,6 +1,7 @@
 // src/context/TradeContext.tsx
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { supabase } from './SupabaseClient';
 
 export interface Trade {
   id: string;
@@ -37,7 +38,7 @@ interface Filters {
 interface TradeContextType {
   trades: Trade[];
   playbooks: Playbook[];
-  addTrade: (trade: Trade) => Promise<void>;
+  addTrade: (trade: Omit<Trade, 'id'>) => Promise<void>;
   editTrade: (updatedTrade: Trade) => Promise<void>;
   addPlaybook: (playbook: Omit<Playbook, 'id' | 'createdAt'>) => Promise<void>;
   addBulkTrades: (newTrades: Trade[]) => Promise<void>;
@@ -60,31 +61,6 @@ export function useTrades() {
   }
   return context;
 }
-
-const LOCAL_STORAGE_TRADES_KEY = 'trades';
-const LOCAL_STORAGE_PLAYBOOKS_KEY = 'playbooks';
-const SERVER_URL = 'http://localhost:3000/api';
-
-const loadFromLocalStorage = <T,>(key: string): T[] => {
-  const data = localStorage.getItem(key);
-  if (data) {
-    try {
-      return JSON.parse(data) as T[];
-    } catch (error) {
-      console.error(`Error parsing localStorage key "${key}":`, error);
-      return [];
-    }
-  }
-  return [];
-};
-
-const saveToLocalStorage = <T,>(key: string, data: T[]) => {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (error) {
-    console.error(`Error saving to localStorage key "${key}":`, error);
-  }
-};
 
 export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -118,138 +94,100 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchPlaybooks = useCallback(async () => {
-    console.log('Fetching playbooks from backend...');
-    try {
-      const response = await fetch(`${SERVER_URL}/playbooks`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+    console.log('Fetching playbooks from Supabase...');
+    const { data, error } = await supabase
+      .from('playbooks')
+      .select('*')
+      .order('createdAt', { ascending: true });
 
-      if (response.ok) {
-        const data = await response.json();
-        setPlaybooks(data);
-        saveToLocalStorage<Playbook>(LOCAL_STORAGE_PLAYBOOKS_KEY, data);
-        console.log('Fetched playbooks:', data);
-      } else {
-        console.error('Failed to fetch playbooks:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching playbooks:', error);
+    if (error) {
+      console.error('Failed to fetch playbooks:', error);
+      return;
+    }
+
+    if (data) {
+      setPlaybooks(data as Playbook[]);
+      console.log('Fetched playbooks:', data);
     }
   }, []);
 
   const fetchTrades = useCallback(async () => {
-    console.log('Fetching trades...');
-    try {
-      const response = await fetch(`${SERVER_URL}/trades`, {
-        method: 'GET',
-        credentials: 'include',
-      });
+    console.log('Fetching trades from Supabase...');
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('trades')
+      .select('*')
+      .order('date', { ascending: false })
+      .order('time', { ascending: false });
 
-      if (response.ok) {
-        const data = await response.json();
-        const formattedTrades = Array.isArray(data) ? data : [];
-        setTrades(formattedTrades);
-        saveToLocalStorage<Trade>(LOCAL_STORAGE_TRADES_KEY, formattedTrades);
-        console.log('Fetched trades:', formattedTrades);
-      } else {
-        console.error('Failed to fetch trades:', response.status);
-      }
-    } catch (error) {
-      console.error('Error fetching trades:', error);
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      console.error('Failed to fetch trades:', error);
+    } else if (data) {
+      setTrades(data as Trade[]);
+      console.log('Fetched trades:', data);
     }
+
+    setIsLoading(false);
   }, []);
 
   const addTrade = useCallback(async (trade: Omit<Trade, 'id'>) => {
-    try {
-      console.log('Sending trade data:', trade);
-      
-      const response = await fetch(`${SERVER_URL}/trades`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(trade),
-      });
+    console.log('Inserting trade into Supabase:', trade);
+    const { error } = await supabase
+      .from('trades')
+      .insert([trade]);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-        throw new Error(errorData.error || 'Failed to add trade');
-      }
-
-      const newTrade = await response.json();
-      setTrades(prev => [...prev, newTrade]);
-      await fetchTrades(); // Refresh trades after adding
-    } catch (error) {
+    if (error) {
       console.error('Error adding trade:', error);
       throw error;
     }
+
+    await fetchTrades();
   }, [fetchTrades]);
 
   const editTrade = useCallback(async (updatedTrade: Trade) => {
-    try {
-      const response = await fetch(`${SERVER_URL}/trades/${updatedTrade.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedTrade),
-        credentials: 'include',
-      });
+    console.log('Updating trade in Supabase:', updatedTrade);
+    const { error } = await supabase
+      .from('trades')
+      .update(updatedTrade)
+      .match({ id: updatedTrade.id });
 
-      if (response.ok) {
-        await fetchTrades(); // Refresh trades after editing
-      } else {
-        console.error('Failed to edit trade:', response.status);
-      }
-    } catch (error) {
-      console.error('Error editing trade:', error);
+    if (error) {
+      console.error('Failed to edit trade:', error);
+    } else {
+      await fetchTrades();
     }
   }, [fetchTrades]);
 
   const addPlaybook = useCallback(async (playbook: Omit<Playbook, 'id' | 'createdAt'>) => {
     const newPlaybook: Playbook = {
       ...playbook,
-      id: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      id: crypto.randomUUID(),
+      name: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
       createdAt: new Date().toISOString(),
     };
 
-    try {
-      const response = await fetch(`${SERVER_URL}/playbooks`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPlaybook),
-        credentials: 'include',
-      });
+    console.log('Inserting playbook into Supabase:', newPlaybook);
+    const { error } = await supabase
+      .from('playbooks')
+      .insert([newPlaybook]);
 
-      if (response.ok) {
-        await fetchPlaybooks(); // Refresh playbooks after adding
-      } else {
-        console.error('Failed to add playbook:', response.status);
-      }
-    } catch (error) {
-      console.error('Error adding playbook:', error);
+    if (error) {
+      console.error('Failed to add playbook:', error);
+    } else {
+      await fetchPlaybooks();
     }
   }, [fetchPlaybooks]);
 
   const addBulkTrades = useCallback(async (newTrades: Trade[]) => {
-    try {
-      const response = await fetch(`${SERVER_URL}/trades/bulk`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newTrades),
-        credentials: 'include',
-      });
+    console.log('Bulk inserting trades into Supabase:', newTrades);
+    const { error } = await supabase
+      .from('trades')
+      .insert(newTrades);
 
-      if (response.ok) {
-        await fetchTrades(); // Refresh trades after bulk add
-      } else {
-        console.error('Failed to add bulk trades:', response.status);
-      }
-    } catch (error) {
-      console.error('Error adding bulk trades:', error);
+    if (error) {
+      console.error('Failed to add bulk trades:', error);
+    } else {
+      await fetchTrades();
     }
   }, [fetchTrades]);
 
@@ -258,24 +196,30 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   }, [playbooks]);
 
   const clearAllTrades = useCallback(async () => {
-    try {
-      const response = await fetch(`${SERVER_URL}/clear`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
+    console.log('Clearing all trades and playbooks from Supabase...');
+    const { error: tradesError } = await supabase
+      .from('trades')
+      .delete()
+      .neq('id', '');
 
-      if (response.ok) {
-        setTrades([]);
-        setPlaybooks([]);
-        saveToLocalStorage<Trade>(LOCAL_STORAGE_TRADES_KEY, []);
-        saveToLocalStorage<Playbook>(LOCAL_STORAGE_PLAYBOOKS_KEY, []);
-        console.log('All data cleared successfully');
-      } else {
-        console.error('Failed to clear data:', response.status);
-      }
-    } catch (error) {
-      console.error('Error clearing data:', error);
+    if (tradesError) {
+      console.error('Error clearing trades:', tradesError);
+      return;
     }
+
+    const { error: playbooksError } = await supabase
+      .from('playbooks')
+      .delete()
+      .neq('id', '');
+
+    if (playbooksError) {
+      console.error('Error clearing playbooks:', playbooksError);
+      return;
+    }
+
+    setTrades([]);
+    setPlaybooks([]);
+    console.log('All data cleared successfully');
   }, []);
 
   useEffect(() => {
