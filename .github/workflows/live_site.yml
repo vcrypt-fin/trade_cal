@@ -1,10 +1,10 @@
-name: Build and Deploy to GitHub Pages
+name: Build and Deploy to Netlify
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -27,9 +27,18 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
         with:
-          github_token: ${{ secrets.PAT }}
-          publish_dir: ./frontend/build
-          publish_branch: live
+          publish-dir: './frontend/dist'
+          production-branch: master
+          github-token: ${{ secrets.PAT }}
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: false  # Avoid commit comments to bypass permission error
+          enable-commit-comment: false        # Disable commit comment to prevent the 403 error
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+    timeout-minutes: 10
