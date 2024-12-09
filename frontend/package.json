@@ -11,10 +11,12 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
+    "@nextui-org/react": "^2.6.5",
     "@supabase/supabase-js": "^2.47.2",
     "axios": "^1.7.9",
     "date-fns": "^2.30.0",
     "dotenv": "^16.4.7",
+    "framer-motion": "^11.13.1",
     "js-cookie": "^3.0.5",
     "lightweight-charts": "^4.2.1",
     "lucide-react": "^0.344.0",
