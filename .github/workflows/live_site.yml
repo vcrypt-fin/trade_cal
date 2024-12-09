@@ -1,10 +1,10 @@
-name: Build and Deploy to Netlify
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -27,18 +27,10 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v3.0
+      - name: Build and Deploy React app to GitHub Pages
+        uses: omkartapale/react-deployment-gh-pages@v1.0.0
         with:
-          publish-dir: './frontend/dist'
-          production-branch: master
-          github-token: ${{ secrets.PAT }}
-          deploy-message: "Deploy from GitHub Actions"
-          enable-pull-request-comment: false  # Avoid commit comments to bypass permission error
-          enable-commit-comment: false        # Disable commit comment to prevent the 403 error
-          overwrites-pull-request-comment: true
+          build_dir: './frontend/build'
+          branch: 'live'
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-    timeout-minutes: 10
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
