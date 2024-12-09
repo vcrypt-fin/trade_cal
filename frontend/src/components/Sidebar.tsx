@@ -1,6 +1,7 @@
 // src/components/Sidebar.tsx
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../context/SupabaseClient';
 import {
   LayoutDashboard,
   BookOpen,
@@ -8,7 +9,8 @@ import {
   Notebook,
   BookMarked,
   BarChart2,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  LogOut
 } from 'lucide-react';
 
 const menuItems = [
@@ -23,6 +25,24 @@ const menuItems = [
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      // Sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      // Clear all auth-related items from localStorage
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('auth_in_prog');
+      
+      // Use navigate instead of window.location for better routing
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
 
   return (
     <div className="w-64 bg-[#0B1A33] h-screen fixed left-0 text-white p-4">
@@ -53,17 +73,13 @@ export default function Sidebar() {
       </nav>
 
       <div className="absolute bottom-4 left-4 right-4">
-        <div className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-white/10">
-          <span>Log Out</span>
-        <div
-          onClick={() => {
-            localStorage.removeItem('authToken');
-            window.location.href = '/login';
-          }}
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-white/10 text-red-400 hover:text-red-300"
         >
+          <LogOut size={20} />
           <span>Log Out</span>
-        </div>
-        </div>
+        </button>
       </div>
     </div>
   );

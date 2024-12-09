@@ -21,25 +21,28 @@ const AuthHandler: React.FC = () => {
 
         const { data: { session }, error } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error('Auth error:', error);
+        if (error || !session) {
+          console.error('Auth error or no session:', error);
           setIsAuthenticated(false);
+          localStorage.removeItem('authToken'); // Clear any stale token
           if (!PUBLIC_ROUTES.includes(location.pathname)) {
             navigate('/login');
           }
           return;
         }
 
-        if (session) {
-          setIsAuthenticated(true);
-          localStorage.setItem('authToken', session.access_token);
-        } else {
+        // Verify the token is still valid
+        if (session.expires_at && session.expires_at * 1000 < Date.now()) {
+          console.log('Session expired');
           setIsAuthenticated(false);
           localStorage.removeItem('authToken');
           if (!PUBLIC_ROUTES.includes(location.pathname)) {
             navigate('/login');
           }
+          return;
         }
+
+        setIsAuthenticated(true);
       } catch (error) {
         console.error('Auth check failed:', error);
         setIsAuthenticated(false);

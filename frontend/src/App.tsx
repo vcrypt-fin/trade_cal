@@ -22,7 +22,7 @@ import Login from './components/LoginPage.tsx';
 import Register from './components/RegisterPage.tsx';
 import AuthChecker from './context/AuthHandler.tsx';
 
-import { GitHubCallback } from './components/AuthCallbacks';
+import { GitHubCallback } from './components/AuthCallbacks.tsx';
 
 function App() {
 
