@@ -9,24 +9,7 @@ import React, {
   useMemo,
 } from "react";
 import { supabase } from "./SupabaseClient";
-
-export interface Trade {
-  id: string;
-  date: string; // 'YYYY-MM-DD'
-  time: string;
-  timestamp?: string;
-  symbol: string;
-  side: "LONG" | "SHORT";
-  brokerage: string;
-  contractMultiplier: number;
-  entryPrice: number;
-  exitPrice?: number;
-  quantity: number;
-  strategy: string;
-  playbookId?: string;
-  notes: string;
-  pnl: number;
-}
+import { Trade } from '../types/trade';
 
 export interface Playbook {
   id: string;
@@ -60,15 +43,29 @@ interface TradeContextType {
   resetFilters: () => void;
 }
 
-const TradeContext = createContext<TradeContextType | undefined>(undefined);
+export const TradeContext = createContext<TradeContextType>({
+  trades: [],
+  playbooks: [],
+  addTrade: async () => {},
+  editTrade: async () => {},
+  addPlaybook: async () => {},
+  addBulkTrades: async () => {},
+  getPlaybookById: () => undefined,
+  clearAllTrades: async () => {},
+  fetchTrades: async () => {},
+  fetchPlaybooks: async () => {},
+  isLoading: true,
+  filters: {
+    startDate: new Date(new Date().setDate(1)).toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
+    symbols: [],
+    strategies: [],
+  },
+  setFilters: () => {},
+  resetFilters: () => {},
+});
 
-export function useTrades() {
-  const context = useContext(TradeContext);
-  if (!context) {
-    throw new Error("useTrades must be used within a TradeProvider");
-  }
-  return context;
-}
+export const useTrades = () => useContext(TradeContext);
 
 export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [trades, setTrades] = useState<Trade[]>([]);

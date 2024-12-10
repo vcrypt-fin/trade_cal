@@ -14,9 +14,14 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  Cell
 } from 'recharts';
 import { format, parseISO } from 'date-fns';
+import TagsSection from './sections/TagsSection';
+import SetupsSection from './sections/SetupsSection';
+import WinsVsLossesSection from './sections/WinsVsLossesSection';
+import { Trade, MonthlyTrades, MonthlyPnL, DailyPnLData, CumulativePnLData } from '../../types/trade';
 
 const Reports: React.FC = () => {
   const { trades } = useTrades();
@@ -45,7 +50,7 @@ const Reports: React.FC = () => {
     }
 
     // Group trades by month
-    const monthlyTrades = trades.reduce((acc, trade) => {
+    const monthlyTrades = (trades as Trade[]).reduce<MonthlyTrades>((acc, trade) => {
       const monthKey = format(parseISO(trade.date), 'yyyy-MM');
       if (!acc[monthKey]) {
         acc[monthKey] = [];
@@ -55,22 +60,22 @@ const Reports: React.FC = () => {
     }, {});
 
     // Calculate monthly P&Ls
-    const monthlyPnLs = Object.entries(monthlyTrades).map(([month, monthTrades]) => ({
+    const monthlyPnLs: MonthlyPnL[] = Object.entries(monthlyTrades).map(([month, monthTrades]) => ({
       month,
-      pnl: monthTrades.reduce((sum, trade) => sum + trade.pnl, 0)
+      pnl: monthTrades.reduce((sum: number, trade: Trade) => sum + trade.pnl, 0)
     }));
 
     // Find best and worst months
-    const bestMonth = monthlyPnLs.reduce((best, current) => 
+    const bestMonth = monthlyPnLs.length ? monthlyPnLs.reduce((best, current) => 
       current.pnl > best.pnl ? current : best, monthlyPnLs[0]
-    );
+    ) : { month: '-', pnl: 0 };
 
-    const lowestMonth = monthlyPnLs.reduce((worst, current) => 
+    const lowestMonth = monthlyPnLs.length ? monthlyPnLs.reduce((worst, current) => 
       current.pnl < worst.pnl ? current : worst, monthlyPnLs[0]
-    );
+    ) : { month: '-', pnl: 0 };
 
     // Calculate daily P&L data
-     const dailyPnLData = trades.reduce((acc, trade) => {
+    const dailyPnLData: DailyPnLData[] = trades.reduce<DailyPnLData[]>((acc, trade) => {
       const existingDay = acc.find(day => day.date === trade.date);
       if (existingDay) {
         existingDay.pnl += trade.pnl;
@@ -78,7 +83,7 @@ const Reports: React.FC = () => {
         acc.push({ 
           date: trade.date, 
           pnl: trade.pnl, 
-          fill: trade.pnl >= 0 ? '#4CAF50' : trade.pnl < 0 ? '#EF4444' : '#000000' // Green, Red, or Black for positive, negative, or zero
+          fill: trade.pnl >= 0 ? '#4CAF50' : '#EF4444'
         });
       }
       return acc;
@@ -95,25 +100,37 @@ const Reports: React.FC = () => {
     const winningTrades = trades.filter(t => t.pnl > 0);
     const losingTrades = trades.filter(t => t.pnl < 0);
 
+    const avgWinningTrade = winningTrades.length ? 
+      winningTrades.reduce((sum, trade) => sum + trade.pnl, 0) / winningTrades.length : 
+      0;
+
+    const avgLosingTrade = losingTrades.length ? 
+      losingTrades.reduce((sum, trade) => sum + trade.pnl, 0) / losingTrades.length : 
+      0;
+
+    const averageMonthly = monthlyPnLs.length ? 
+      monthlyPnLs.reduce((sum, month) => sum + month.pnl, 0) / monthlyPnLs.length : 
+      0;
+
     return {
       bestMonth: {
         value: bestMonth.pnl,
-        date: format(parseISO(bestMonth.month + '-01'), 'MMM yyyy')
+        date: bestMonth.month === '-' ? '-' : format(parseISO(bestMonth.month + '-01'), 'MMM yyyy')
       },
       lowestMonth: {
         value: lowestMonth.pnl,
-        date: format(parseISO(lowestMonth.month + '-01'), 'MMM yyyy')
+        date: lowestMonth.month === '-' ? '-' : format(parseISO(lowestMonth.month + '-01'), 'MMM yyyy')
       },
-      averageMonthly: monthlyPnLs.reduce((sum, month) => sum + month.pnl, 0) / monthlyPnLs.length,
+      averageMonthly: isNaN(averageMonthly) ? 0 : averageMonthly,
       totalPnL: trades.reduce((sum, trade) => sum + trade.pnl, 0),
       totalTrades: trades.length,
-      avgDailyVolume: trades.length / dailyPnLData.length,
+      avgDailyVolume: dailyPnLData.length ? trades.length / dailyPnLData.length : 0,
       winningTrades: winningTrades.length,
       losingTrades: losingTrades.length,
-      avgWinningTrade: winningTrades.reduce((sum, trade) => sum + trade.pnl, 0) / winningTrades.length,
-      avgLosingTrade: losingTrades.reduce((sum, trade) => sum + trade.pnl, 0) / losingTrades.length,
-      largestProfit: Math.max(...trades.map(t => t.pnl)),
-      largestLoss: Math.min(...trades.map(t => t.pnl)),
+      avgWinningTrade: isNaN(avgWinningTrade) ? 0 : avgWinningTrade,
+      avgLosingTrade: isNaN(avgLosingTrade) ? 0 : avgLosingTrade,
+      largestProfit: winningTrades.length ? Math.max(...trades.map(t => t.pnl)) : 0,
+      largestLoss: losingTrades.length ? Math.min(...trades.map(t => t.pnl)) : 0,
       charts: {
         cumulativePnLData,
         dailyPnLData
@@ -197,7 +214,19 @@ const Reports: React.FC = () => {
                 contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #E0E0E0', color: '#333' }}
                 formatter={(value: number) => [formatCurrency(value), 'P&L']}
               />
-              <Bar dataKey="pnl" fill={(entry) => entry.fill} />
+              <Bar 
+                dataKey="pnl"
+                fill="#4CAF50"
+              >
+                {stats.charts.dailyPnLData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`}
+                    fill={entry.pnl >= 0 ? '#4CAF50' : '#EF4444'}
+                    stroke={entry.pnl >= 0 ? '#2E7D32' : '#DC2626'}
+                    strokeWidth={1}
+                  />
+                ))}
+              </Bar>
             </BarChart>
 
           </ResponsiveContainer>
@@ -254,6 +283,12 @@ const Reports: React.FC = () => {
       case 'rMultiple':
       case 'positionSize':
         return <RiskSection view={selectedView} />;
+      case 'tags':
+        return <TagsSection />;
+      case 'setups':
+        return <SetupsSection />;
+      case 'winsVsLosses':
+        return <WinsVsLossesSection />;
       default:
         return <div>Section under development</div>;
     }
