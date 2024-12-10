@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, MoreHorizontal, TrendingUp, BarChart2 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import { useTrades } from '../context/TradeContext';
 
-// Custom Modal Component
-function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }) {
+// Add proper types for CustomModal
+interface CustomModalProps {
+  isOpen: boolean;
+  onRequestClose: () => void;
+  title: string;
+  onConfirm: () => void;
+  children: React.ReactNode;
+}
+
+function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }: CustomModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -34,10 +42,18 @@ function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }) {
 
 export function Playbook() {
   const navigate = useNavigate();
-  const { trades, playbooks, addPlaybook } = useTrades();
+  const { trades, playbooks, addPlaybook, fetchTrades, fetchPlaybooks, isLoading } = useTrades();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPlaybookName, setNewPlaybookName] = useState('');
   const [newPlaybookDescription, setNewPlaybookDescription] = useState('');
+
+  // Fetch data when component mounts
+  useEffect(() => {
+    const loadData = async () => {
+      await Promise.all([fetchTrades(), fetchPlaybooks()]);
+    };
+    loadData();
+  }, [fetchTrades, fetchPlaybooks]);
 
   // Calculate summary stats for each playbook
   const playbookSummaries = playbooks.map(playbook => {
@@ -64,15 +80,21 @@ export function Playbook() {
     setIsModalOpen(true);
   };
 
-  const handleModalConfirm = () => {
+  const handleModalConfirm = async () => {
     if (newPlaybookName) {
-      addPlaybook({
-        name: newPlaybookName,
-        description: newPlaybookDescription
-      });
-      setIsModalOpen(false);
-      setNewPlaybookName('');
-      setNewPlaybookDescription('');
+      try {
+        await addPlaybook({
+          name: newPlaybookName,
+          description: newPlaybookDescription,
+          userId: '' // This will be set by the backend
+        });
+        setIsModalOpen(false);
+        setNewPlaybookName('');
+        setNewPlaybookDescription('');
+      } catch (error) {
+        console.error('Error creating playbook:', error);
+        // Add error handling UI feedback here
+      }
     }
   };
 
@@ -81,6 +103,20 @@ export function Playbook() {
 
   const formatPercent = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1 }).format(value / 100);
+
+  // Add loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Sidebar />
+        <div className="ml-64 p-8">
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

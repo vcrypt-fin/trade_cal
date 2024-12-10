@@ -74,6 +74,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [playbooks, setPlaybooks] = useState<Playbook[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   const [filters, setFiltersState] = useState<Filters>({
     startDate: new Date(new Date().setDate(1)).toISOString().split("T")[0],
@@ -102,53 +103,46 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchPlaybooks = useCallback(async () => {
-    console.log("Fetching playbooks from Supabase...");
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) throw new Error("User is not logged in");
+    try {
+      setIsFetching(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-    const { data, error } = await supabase
-      .from("playbooks")
-      .select("*")
-      .eq("userId", session.user.id)
-      .order("createdAt", { ascending: true });
+      const { data, error } = await supabase
+        .from("playbooks")
+        .select("*")
+        .eq("userId", session.user.id)
+        .order("createdAt", { ascending: true });
 
-    if (error) {
+      if (error) throw error;
+      setPlaybooks(data || []);
+    } catch (error) {
       console.error("Failed to fetch playbooks:", error);
-      return;
-    }
-
-    if (data) {
-      setPlaybooks(data as Playbook[]);
-      console.log("Fetched playbooks:", data);
+    } finally {
+      setIsFetching(false);
     }
   }, []);
 
   const fetchTrades = useCallback(async () => {
-    console.log("Fetching trades from Supabase...");
-    setIsLoading(true);
+    try {
+      setIsFetching(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) throw new Error("User is not logged in");
+      const { data, error } = await supabase
+        .from("trades")
+        .select("*")
+        .eq("userId", session.user.id)
+        .order("date", { ascending: false })
+        .order("time", { ascending: false });
 
-    const { data, error } = await supabase
-      .from("trades")
-      .select("*")
-      .eq("userId", session.user.id)
-      .order("date", { ascending: false })
-      .order("time", { ascending: false });
-
-    if (error) {
+      if (error) throw error;
+      setTrades(data || []);
+    } catch (error) {
       console.error("Failed to fetch trades:", error);
-    } else if (data) {
-      setTrades(data as Trade[]);
-      console.log("Fetched trades:", data);
+    } finally {
+      setIsFetching(false);
     }
-
-    setIsLoading(false);
   }, []);
 
   const addTrade = useCallback(
@@ -291,15 +285,26 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     console.log("All data cleared successfully");
   }, []);
 
+  // Initial data load
   useEffect(() => {
-    const initializeData = async () => {
+    const loadInitialData = async () => {
       setIsLoading(true);
-      await Promise.all([fetchTrades(), fetchPlaybooks()]);
-      setIsLoading(false);
+      try {
+        await Promise.all([fetchTrades(), fetchPlaybooks()]);
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    initializeData();
+    loadInitialData();
   }, [fetchTrades, fetchPlaybooks]);
+
+  // Update loading state based on fetching status
+  useEffect(() => {
+    setIsLoading(isFetching);
+  }, [isFetching]);
 
   const contextValue = useMemo(
     () => ({
