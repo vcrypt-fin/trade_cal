@@ -27,6 +27,8 @@ import Profile from './components/Profile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UpdatePassword from './components/UpdatePassword';
+import { NotebookProvider } from './context/NotebookContext';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
 
@@ -37,29 +39,33 @@ function App() {
 
   return (
     <Router>
-      <AuthChecker />
-      <TradeProvider>
-        <JournalProvider>
-          <Routes>
-            <Route path="/" element={<DashboardLayout />} />
-            <Route path="/add-trade" element={<AddTradeForm />} />
-            <Route path="/edit-trade/:id" element={<EditTradeForm />} />
-            <Route path="/notebook" element={<Notebook />} />
-            <Route path="/journal" element={<Journal />} />
-            <Route path="/playbook" element={<Playbook />} />
-            <Route path="/playbook/:id" element={<PlaybookDetail />} />
-            <Route path="/trades" element={<Trades />} />
-            <Route path="/reports" element={<Reports />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/github/callback" element={<GitHubCallback />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/update-password" element={<UpdatePassword />} />
-          </Routes>
-        </JournalProvider>
-      </TradeProvider>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <AuthProvider>
+        <AuthChecker />
+        <TradeProvider>
+          <JournalProvider>
+            <NotebookProvider>
+              <Routes>
+                <Route path="/" element={<DashboardLayout />} />
+                <Route path="/add-trade" element={<AddTradeForm />} />
+                <Route path="/edit-trade/:id" element={<EditTradeForm />} />
+                <Route path="/notebook" element={<Notebook />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/playbook" element={<Playbook />} />
+                <Route path="/playbook/:id" element={<PlaybookDetail />} />
+                <Route path="/trades" element={<Trades />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/github/callback" element={<GitHubCallback />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/update-password" element={<UpdatePassword />} />
+              </Routes>
+            </NotebookProvider>
+          </JournalProvider>
+        </TradeProvider>
+        <ToastContainer position="top-right" autoClose={3000} />
+      </AuthProvider>
     </Router>
   );
 }

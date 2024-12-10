@@ -5,16 +5,18 @@ import CustomModal from './CustomModal';
 import ReactQuill from 'react-quill';
 import { useTrades } from '../context/TradeContext';
 import 'react-quill/dist/quill.snow.css';
+import { useNotebook } from '../context/NotebookContext';
+import { format } from 'date-fns';
 
-interface Note {
+interface LocalNote {
   id: string;
   title: string;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  folder_id: string;
+  created_at: string;
+  updated_at: string;
   tags: string[];
-  linkedTrades?: string[];
-  folderId: string;
+  linked_trades?: string[];
 }
 
 interface NoteFolder {
@@ -22,23 +24,26 @@ interface NoteFolder {
   name: string;
 }
 
-const initialFolders: NoteFolder[] = [
-  { id: 'daily', name: 'Daily Journal' },
-  { id: 'recap', name: 'Sessions Recap' },
-  { id: 'all', name: 'All Notes' },
-];
-
 const initialTemplates = [
   { name: 'Daily Game Plan', content: 'Market Overview\nTrading Plan\nRecap' },
   { name: 'Post-Trade Analysis', content: 'Entry and Exit Analysis\nLessons Learned' },
 ];
 
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    return format(date, 'MMM d @ h:mm a');
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return dateString;
+  }
+};
+
 export default function Notebook() {
+  const { notes, folders, isLoading, addNote, updateNote, deleteNote, addFolder } = useNotebook();
   const { trades } = useTrades();
-  const [folders, setFolders] = useState<NoteFolder[]>(initialFolders);
-  const [notes, setNotes] = useState<Note[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<NoteFolder | null>(null);
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [selectedNote, setSelectedNote] = useState<LocalNote | null>(null);
   const [draftContent, setDraftContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'folder' | 'note' | 'template' | null>(null);
@@ -51,7 +56,7 @@ export default function Notebook() {
     if (selectedFolder.id === 'all') {
       return true;
     }
-    return note.folderId === selectedFolder.id;
+    return note.folder_id === selectedFolder.id;
   });
 
   const handleFolderSelect = (folder: NoteFolder) => {
@@ -60,10 +65,10 @@ export default function Notebook() {
     setDraftContent('');
   };
 
-  const handleNoteSelect = (note: Note) => {
+  const handleNoteSelect = (note: LocalNote) => {
     setSelectedNote(note);
     setDraftContent(note.content);
-    setSelectedTrades(note.linkedTrades || []);
+    setSelectedTrades(note.linked_trades || []);
   };
 
   const handleAddFolder = () => {
@@ -80,25 +85,31 @@ export default function Notebook() {
     setIsModalOpen(true);
   };
 
-  const handleDeleteNote = () => {
+  const handleDeleteNote = async () => {
     if (selectedNote) {
-      setNotes(prev => prev.filter(note => note.id !== selectedNote.id));
-      setSelectedNote(null);
-      setDraftContent('');
+      try {
+        await deleteNote(selectedNote.id);
+        setSelectedNote(null);
+        setDraftContent('');
+      } catch (error) {
+        console.error('Error deleting note:', error);
+        // Add appropriate error handling/user feedback
+      }
     }
   };
 
-  const handleSaveNote = () => {
+  const handleSaveNote = async () => {
     if (selectedNote) {
-      const updatedNote = {
-        ...selectedNote,
-        content: draftContent,
-        updatedAt: new Date().toLocaleDateString()
-      };
-      setSelectedNote(updatedNote);
-      setNotes(prev => prev.map(note =>
-        note.id === selectedNote.id ? updatedNote : note
-      ));
+      try {
+        await updateNote(selectedNote.id, {
+          content: draftContent,
+          tags: selectedNote.tags,
+          linked_trades: selectedTrades
+        });
+      } catch (error) {
+        console.error('Error saving note:', error);
+        // Add appropriate error handling/user feedback
+      }
     }
   };
 
@@ -111,38 +122,34 @@ export default function Notebook() {
     setIsModalOpen(true);
   };
 
-  const handleModalConfirm = (inputValue: string) => {
-    if (modalType === 'folder') {
-      const newFolder: NoteFolder = {
-        id: inputValue.toLowerCase().replace(/\s+/g, '-'),
-        name: inputValue,
-      };
-      setFolders(prev => [...prev, newFolder]);
-    } else if (modalType === 'note' && selectedFolder) {
-      const newNote: Note = {
-        id: crypto.randomUUID(),
-        title: inputValue,
-        content: '',
-        createdAt: new Date().toLocaleDateString(),
-        updatedAt: new Date().toLocaleDateString(),
-        tags: [],
-        linkedTrades: [],
-        folderId: selectedFolder.id
-      };
-
-      setNotes(prev => [...prev, newNote]);
-      setSelectedNote(newNote);
-      setDraftContent('');
-    } else if (modalType === 'template') {
-      const newTemplate = { name: inputValue, content: draftContent };
-      setTemplates(prev => [...prev, newTemplate]);
+  const handleModalConfirm = async (inputValue: string) => {
+    try {
+      if (modalType === 'folder') {
+        await addFolder(inputValue);
+      } else if (modalType === 'note' && selectedFolder) {
+        const newNote = await addNote({
+          title: inputValue,
+          content: '',
+          folder_id: selectedFolder.id,
+          tags: [],
+          linked_trades: []
+        });
+        setSelectedNote(newNote);
+        setDraftContent('');
+      } else if (modalType === 'template') {
+        const newTemplate = { name: inputValue, content: draftContent };
+        setTemplates(prev => [...prev, newTemplate]);
+      }
+    } catch (error) {
+      console.error('Error handling modal confirm:', error);
+      // Add appropriate error handling/user feedback
     }
 
     setIsModalOpen(false);
     setModalType(null);
   };
 
-  const handleTradeLink = (tradeId: string) => {
+  const handleTradeLink = async (tradeId: string) => {
     if (selectedNote) {
       const updatedTrades = selectedTrades.includes(tradeId)
         ? selectedTrades.filter(id => id !== tradeId)
@@ -150,42 +157,40 @@ export default function Notebook() {
       
       setSelectedTrades(updatedTrades);
       
-      const updatedNote = {
-        ...selectedNote,
-        linkedTrades: updatedTrades
-      };
-      
-      setSelectedNote(updatedNote);
-      setNotes(prev => prev.map(note => 
-        note.id === selectedNote.id ? updatedNote : note
-      ));
+      try {
+        await updateNote(selectedNote.id, {
+          linked_trades: updatedTrades
+        });
+      } catch (error) {
+        console.error('Error updating note trades:', error);
+      }
     }
   };
 
-  const handleTagAdd = () => {
+  const handleTagAdd = async () => {
     if (tagInput.trim() && selectedNote) {
-      const updatedNote = {
-        ...selectedNote,
-        tags: [...selectedNote.tags, tagInput.trim()]
-      };
-      setSelectedNote(updatedNote);
-      setNotes(prev => prev.map(note =>
-        note.id === selectedNote.id ? updatedNote : note
-      ));
-      setTagInput('');
+      const updatedTags = [...selectedNote.tags, tagInput.trim()];
+      try {
+        await updateNote(selectedNote.id, {
+          tags: updatedTags
+        });
+        setTagInput('');
+      } catch (error) {
+        console.error('Error updating note tags:', error);
+      }
     }
   };
 
-  const handleTagRemove = (tagToRemove: string) => {
+  const handleTagRemove = async (tagToRemove: string) => {
     if (selectedNote) {
-      const updatedNote = {
-        ...selectedNote,
-        tags: selectedNote.tags.filter(tag => tag !== tagToRemove)
-      };
-      setSelectedNote(updatedNote);
-      setNotes(prev => prev.map(note =>
-        note.id === selectedNote.id ? updatedNote : note
-      ));
+      const updatedTags = selectedNote.tags.filter(tag => tag !== tagToRemove);
+      try {
+        await updateNote(selectedNote.id, {
+          tags: updatedTags
+        });
+      } catch (error) {
+        console.error('Error removing tag:', error);
+      }
     }
   };
 
@@ -194,6 +199,19 @@ export default function Notebook() {
       setDraftContent(prev => `${prev}\n${templateContent}`);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Sidebar />
+        <div className="ml-64 p-8">
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -248,7 +266,9 @@ export default function Notebook() {
                   onClick={() => handleNoteSelect(note)}
                 >
                   <p className="text-sm font-semibold">{note.title}</p>
-                  <p className="text-xs text-gray-500">{note.updatedAt}</p>
+                  <p className="text-xs text-gray-500">
+                    {formatDate(note.updated_at)}
+                  </p>
                 </li>
               ))}
             </ul>
@@ -262,7 +282,8 @@ export default function Notebook() {
                   <div>
                     <h2 className="text-xl font-semibold">{selectedNote.title}</h2>
                     <p className="text-sm text-gray-500">
-                      Created: {selectedNote.createdAt} | Last updated: {selectedNote.updatedAt}
+                      Created: {formatDate(selectedNote.created_at)} | 
+                      Last updated: {formatDate(selectedNote.updated_at)}
                     </p>
                   </div>
                   <div className="flex gap-2">
