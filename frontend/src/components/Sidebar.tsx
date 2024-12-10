@@ -1,5 +1,5 @@
 // src/components/Sidebar.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../context/SupabaseClient';
 import {
@@ -10,8 +10,11 @@ import {
   BookMarked,
   BarChart2,
   Settings as SettingsIcon,
-  LogOut
+  LogOut,
+  User,
+  Key
 } from 'lucide-react';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 const menuItems = [
   { icon: LayoutDashboard, text: 'Dashboard', path: '/' },
@@ -26,21 +29,60 @@ const menuItems = [
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [resetPasswordMessage, setResetPasswordMessage] = useState('');
+
+  useEffect(() => {
+    // Get initial user data
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    fetchUser();
+
+    // Subscribe to auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
-      // Sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      // Clear all auth-related items from localStorage
       localStorage.removeItem('authToken');
       localStorage.removeItem('auth_in_prog');
       
-      // Use navigate instead of window.location for better routing
       navigate('/login');
     } catch (error) {
       console.error('Error logging out:', error);
+    }
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      if (!user?.email) throw new Error('No email found');
+
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) throw error;
+
+      setResetPasswordMessage('Check your email for the password reset link');
+      setTimeout(() => setResetPasswordMessage(''), 5000); // Clear message after 5 seconds
+
+    } catch (error) {
+      console.error('Error resetting password:', error);
+      setResetPasswordMessage('Failed to send reset password email');
+      setTimeout(() => setResetPasswordMessage(''), 5000);
     }
   };
 
@@ -57,7 +99,7 @@ export default function Sidebar() {
         <span className="text-lg">+</span>Add Trade
       </Link>
 
-      <nav>
+      <nav className="mb-6">
         {menuItems.map((item, index) => (
           <Link
             key={index}
@@ -72,6 +114,25 @@ export default function Sidebar() {
         ))}
       </nav>
 
+      {/* Bottom Profile Section */}
+      <div className="absolute bottom-20 left-4 right-4 border-t border-white/10 pt-4">
+        <Link
+          to="/profile"
+          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${
+            location.pathname === '/profile' ? 'bg-blue-600' : 'hover:bg-white/10'
+          }`}
+        >
+          <User size={20} />
+          <div className="flex-1">
+            <div className="font-medium">{user?.email || 'Loading...'}</div>
+            <div className="text-sm text-gray-400">
+              {user?.user_metadata?.username || 'EClinick'}
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Logout Button */}
       <div className="absolute bottom-4 left-4 right-4">
         <button
           onClick={handleLogout}

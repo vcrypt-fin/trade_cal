@@ -23,6 +23,10 @@ import Register from './components/RegisterPage.tsx';
 import AuthChecker from './context/AuthHandler.tsx';
 
 import { GitHubCallback } from './components/AuthCallbacks.tsx';
+import Profile from './components/Profile';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UpdatePassword from './components/UpdatePassword';
 
 function App() {
 
@@ -50,9 +54,12 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/github/callback" element={<GitHubCallback />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/update-password" element={<UpdatePassword />} />
           </Routes>
         </JournalProvider>
       </TradeProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
     </Router>
   );
 }
