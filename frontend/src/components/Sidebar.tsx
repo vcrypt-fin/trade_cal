@@ -126,7 +126,7 @@ export default function Sidebar() {
           <div className="flex-1">
             <div className="font-medium">{user?.email || 'Loading...'}</div>
             <div className="text-sm text-gray-400">
-              {user?.user_metadata?.name || user?.email}
+              {user?.user_metadata?.name || user?.user_metadata?.username || user?.email}
             </div>
           </div>
         </Link>
