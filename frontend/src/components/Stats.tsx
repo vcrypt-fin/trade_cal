@@ -8,10 +8,13 @@ interface StatCardProps {
   value: string | number;
   info?: string;
   type?: 'currency' | 'percent' | 'number';
+  className?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, info, type = 'number' }) => {
+const StatCard: React.FC<StatCardProps> = ({ title, value, info, type = 'number', className }) => {
   const getValueColor = (val: string | number) => {
+    if (className) return className;
+    
     const numValue = typeof val === 'string' ? parseFloat(val.replace(/[^0-9.-]+/g, "")) : val;
     if (numValue > 0) return 'text-green-600';
     if (numValue < 0) return 'text-red-600';
@@ -151,13 +154,23 @@ const Stats: React.FC = () => {
   );
 
   const calculateStreak = () => {
-    if (filteredTrades.length === 0) return { value: 0, type: 'trades' };
+    if (filteredTrades.length === 0) return { value: 0, type: 'none' };
     
+    // Sort trades by date and time to ensure most recent is first
+    const sortedTrades = [...filteredTrades].sort((a, b) => {
+      const dateA = new Date(`${a.date} ${a.time}`);
+      const dateB = new Date(`${b.date} ${b.time}`);
+      return dateB.getTime() - dateA.getTime();
+    });
+    
+    // Get the most recent trade
+    const mostRecentTrade = sortedTrades[0];
+    const isWinning = mostRecentTrade.pnl > 0;
     let streak = 1;
-    let isWinning = filteredTrades[filteredTrades.length - 1].pnl > 0;
     
-    for (let i = filteredTrades.length - 2; i >= 0; i--) {
-      const currentIsWin = filteredTrades[i].pnl > 0;
+    // Count consecutive trades of the same type
+    for (let i = 1; i < sortedTrades.length; i++) {
+      const currentIsWin = sortedTrades[i].pnl > 0;
       if (currentIsWin === isWinning) {
         streak++;
       } else {
@@ -165,7 +178,10 @@ const Stats: React.FC = () => {
       }
     }
     
-    return { value: streak, type: isWinning ? 'winning' : 'losing' };
+    return { 
+      value: streak, 
+      type: isWinning ? 'winning' : 'losing' 
+    };
   };
 
   const streak = calculateStreak();
@@ -195,6 +211,7 @@ const Stats: React.FC = () => {
         value={streak.value}
         info={`Current ${streak.type} streak`}
         type="number"
+        className={streak.type === 'winning' ? 'text-green-600' : 'text-red-600'}
       />
     </div>
   );

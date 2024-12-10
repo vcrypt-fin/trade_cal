@@ -10,6 +10,13 @@ export interface Trade {
   exitPrice: number;
   quantity: number;
   pnl: number;
+  strategy?: string;
+  notes?: string;
+  deleted?: boolean;
+  userId?: string;
+  brokerage?: string;
+  contractMultiplier?: number;
+  playbookId?: string;
 }
 
 export interface DailyPnLData {
