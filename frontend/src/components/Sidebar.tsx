@@ -26,6 +26,21 @@ const menuItems = [
   { icon: SettingsIcon, text: 'Settings', path: '/settings' }
 ];
 
+const cleanUsername = (user: SupabaseUser | null): string => {
+  if (!user) return 'Loading...';
+  
+  // First try to get the username from metadata
+  const username = user.user_metadata?.username || user.user_metadata?.name;
+  
+  if (username) {
+    // Remove Discord discriminator (#1234) if present
+    return username.split('#')[0];
+  }
+  
+  // Fallback to email
+  return user.email || 'Anonymous';
+};
+
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -126,7 +141,7 @@ export default function Sidebar() {
           <div className="flex-1">
             <div className="font-medium">{user?.email || 'Loading...'}</div>
             <div className="text-sm text-gray-400">
-              {user?.user_metadata?.name || user?.user_metadata?.username || user?.email}
+              {cleanUsername(user)}
             </div>
           </div>
         </Link>
