@@ -180,7 +180,7 @@ const Stats: React.FC = () => {
     
     return { 
       value: streak, 
-      type: isWinning ? 'winning' : 'losing' 
+      type: isWinning ? 'winning' : mostRecentTrade.pnl < 0 ? 'losing' : 'none' 
     };
   };
 
@@ -211,7 +211,7 @@ const Stats: React.FC = () => {
         value={streak.value}
         info={`Current ${streak.type} streak`}
         type="number"
-        className={streak.type === 'winning' ? 'text-green-600' : 'text-red-600'}
+        className={streak.value === 0 ? 'text-gray-900' : streak.type === 'winning' ? 'text-green-600' : 'text-red-600'}
       />
     </div>
   );

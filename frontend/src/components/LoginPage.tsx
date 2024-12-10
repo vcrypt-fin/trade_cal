@@ -174,7 +174,7 @@ const LoginPage: React.FC = () => {
               Discord
             </Button>
             
-            <Button
+            {/* <Button
               onClick={() => handleOAuthLogin('apple')}
               variant="bordered"
               startContent={<img src="/apple-icon.svg" className="w-5 h-5" alt="Apple" />}
@@ -182,7 +182,7 @@ const LoginPage: React.FC = () => {
               isLoading={loading}
             >
               Apple
-            </Button>
+            </Button> */}
           </div>
 
           <p className="text-center text-sm text-gray-500">
