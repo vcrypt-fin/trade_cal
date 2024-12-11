@@ -382,7 +382,7 @@ export default function Notebook() {
                           className="mr-2"
                         />
                         <span className="text-sm">
-                          {trade.date} - {trade.symbol} - {trade.side} - ${trade.pnl.toFixed(2)}
+                          {trade.date} - {trade.symbol} - ${trade.pnl.toFixed(2)}
                         </span>
                       </div>
                     ))}

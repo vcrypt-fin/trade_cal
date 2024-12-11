@@ -22,8 +22,8 @@ interface NoteFolder {
 // Define default folders that should exist for every user
 const DEFAULT_FOLDERS = [
   { name: 'Daily Journal' },
-  { name: 'Sessions Recap' },
-  { name: 'All Notes' }
+  { name: 'Sessions Recap' }
+  // Removed 'All Notes' as it should be handled differently
 ];
 
 interface NotebookContextType {
@@ -48,26 +48,46 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Initialize default folders for new users
   const initializeDefaultFolders = async () => {
     try {
-      const { data: existingFolders } = await supabase
+      // First check if user already has folders
+      const { data: existingFolders, error: fetchError } = await supabase
         .from('note_folders')
         .select('*')
         .eq('user_id', user?.id);
 
-      if (!existingFolders || existingFolders.length === 0) {
-        // Insert default folders for the user
-        const { data: newFolders, error } = await supabase
+      if (fetchError) throw fetchError;
+
+      // Only insert default folders if user has NO folders
+      if (existingFolders && existingFolders.length === 0) {
+        const { error: insertError } = await supabase
           .from('note_folders')
           .insert(
             DEFAULT_FOLDERS.map(folder => ({
               name: folder.name,
               user_id: user?.id
             }))
-          )
-          .select();
+          );
 
-        if (error) throw error;
-        setFolders(newFolders || []);
+        if (insertError) throw insertError;
       }
+
+      // Fetch folders again after potential insert
+      const { data: finalFolders, error: finalFetchError } = await supabase
+        .from('note_folders')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: true });
+
+      if (finalFetchError) throw finalFetchError;
+
+      // Add virtual "All Notes" folder
+      const allNotesFolder = {
+        id: 'all',
+        name: 'All Notes',
+        created_at: new Date().toISOString()
+      };
+
+      setFolders([...(finalFolders || []), allNotesFolder]);
+
     } catch (error) {
       console.error('Error initializing default folders:', error);
     }
@@ -79,7 +99,7 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setIsLoading(true);
         try {
           await initializeDefaultFolders();
-          await Promise.all([fetchNotes(), fetchFolders()]);
+          await fetchNotes();
         } catch (error) {
           console.error('Error loading notebook data:', error);
         } finally {
@@ -115,7 +135,15 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setFolders(data || []);
+      
+      // Add virtual "All Notes" folder at the end
+      const allNotesFolder = {
+        id: 'all',
+        name: 'All Notes',
+        created_at: new Date().toISOString()
+      };
+      
+      setFolders([...(data || []), allNotesFolder]);
     } catch (error) {
       console.error('Error fetching folders:', error);
     }

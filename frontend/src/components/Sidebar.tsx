@@ -15,6 +15,7 @@ import {
   Key
 } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import { Avatar } from "@nextui-org/react";
 
 const menuItems = [
   { icon: LayoutDashboard, text: 'Dashboard', path: '/' },
@@ -39,6 +40,16 @@ const cleanUsername = (user: SupabaseUser | null): string => {
   
   // Fallback to email
   return user.email || 'Anonymous';
+};
+
+const getAvatarUrl = (user: SupabaseUser | null): string | null => {
+  if (!user) return null;
+  
+  // Check various possible locations for avatar URL
+  return user.user_metadata?.avatar_url || // OAuth providers usually store here
+         user.user_metadata?.picture ||     // Some providers use 'picture'
+         user.user_metadata?.profile_picture || // Custom uploads might be here
+         null;
 };
 
 export default function Sidebar() {
@@ -137,10 +148,18 @@ export default function Sidebar() {
             location.pathname === '/profile' ? 'bg-blue-600' : 'hover:bg-white/10'
           }`}
         >
-          <User size={20} />
-          <div className="flex-1">
-            <div className="font-medium">{user?.email || 'Loading...'}</div>
-            <div className="text-sm text-gray-400">
+          {getAvatarUrl(user) ? (
+            <Avatar
+              src={getAvatarUrl(user)!}
+              size="sm"
+              className="flex-shrink-0"
+            />
+          ) : (
+            <User size={20} />
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="font-medium truncate">{user?.email || 'Loading...'}</div>
+            <div className="text-sm text-gray-400 truncate">
               {cleanUsername(user)}
             </div>
           </div>
