@@ -202,7 +202,7 @@ const Stats: React.FC = () => {
       />
       <StatCard
         title="Profit Factor"
-        value={profitFactor}
+        value={profitFactor.toFixed(2)}
         info="Ratio of gross profit to gross loss"
         type="number"
       />
