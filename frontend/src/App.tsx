@@ -30,6 +30,7 @@ import { NotebookProvider } from './context/NotebookContext';
 import { AuthProvider } from './context/AuthContext';
 import PaymentPage from './components/PaymentPage';
 import StripeCallback from './components/StripeCallback';
+import Demo from './Demo.tsx';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <NotebookProvider>
               <Routes>
                 <Route path="/" element={<DashboardLayout />} />
+                <Route path="/demo" element={<Demo />} />
                 <Route path="/add-trade" element={<AddTradeForm />} />
                 <Route path="/edit-trade/:id" element={<EditTradeForm />} />
                 <Route path="/notebook" element={<Notebook />} />
