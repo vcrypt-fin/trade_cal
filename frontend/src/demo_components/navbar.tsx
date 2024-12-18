@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button"
-import { LineChart } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { LineChart } from 'lucide-react';
 
 export function Navbar() {
   return (
@@ -31,6 +31,6 @@ export function Navbar() {
         </nav>
       </div>
     </header>
-  )
+  );
 }
 

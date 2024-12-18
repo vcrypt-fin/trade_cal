@@ -3,29 +3,40 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function Testimonials() {
   return (
-    <section className="py-20 bg-purple-950/20" id="testimonials">
-      <div className="container">
-        <h2 className="text-3xl font-bold text-center mb-12 text-purple-100">
+    <section className="py-20 bg-gradient-to-r from-purple-900/90 to-purple-700/50" id="testimonials">
+      <div className="container mx-auto px-4">
+        <h2 className="text-4xl font-bold text-center mb-12 text-purple-100">
           What Our Traders Say
         </h2>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((testimonial, index) => (
-            <Card key={index} className="bg-purple-900/20 border-purple-700/50">
-              <CardContent className="p-6">
-                <p className="text-purple-100 mb-4">{testimonial.quote}</p>
-                <div className="flex items-center">
-                  <Avatar className="h-10 w-10 mr-4">
-                    <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
-                    <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-purple-100 font-semibold">{testimonial.name}</p>
-                    <p className="text-purple-300 text-sm">{testimonial.title}</p>
+        <div className="flex justify-center">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl w-full">
+            {testimonials.map((testimonial, index) => (
+              <Card
+                key={index}
+                className="bg-purple-300/20 border border-purple-700/50 shadow-lg"
+              >
+                <CardContent className="p-8">
+                  <p className="text-purple-100 mb-6 italic">"{testimonial.quote}"</p>
+                  <div className="flex items-center">
+                    <Avatar className="h-12 w-12 mr-4">
+                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} />
+                      <AvatarFallback>
+                        {testimonial.name
+                          .split(' ')
+                          .map(n => n[0])
+                          .join('')
+                          .toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-purple-100 font-semibold">{testimonial.name}</p>
+                      <p className="text-purple-300 text-sm">{testimonial.title}</p>
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -52,4 +63,3 @@ const testimonials = [
     avatar: "/placeholder.svg?height=40&width=40"
   }
 ]
-

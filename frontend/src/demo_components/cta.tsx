@@ -11,13 +11,13 @@ export function CTA() {
           </h2>
         </div>
         <p className="mx-auto max-w-[600px] text-purple-200/70 md:text-xl">
-          Join thousands of traders using Bluenotes to achieve consistent profitability
+          Join thousands of traders using Bluenotes to achieve consistent profiftability
         </p>
         <div className="flex flex-col gap-2 min-[400px]:flex-row">
           <Button size="lg" className="bg-purple-600 text-white hover:bg-purple-500 shadow-lg shadow-purple-500/20">
             Start Free Trial
           </Button>
-          <Button variant="outline" size="lg" className="border-purple-700 text-purple-300 hover:bg-purple-900/50">
+          <Button variant="outline" size="lg" className="border-purple-700 text-purple-300 bg-purple-900/50 hover:bg-purple-900/80 hover:text-purple-200">
             Watch Demo
           </Button>
         </div>

@@ -77,19 +77,19 @@ const showcaseItems = [
     title: "Dashboard Overview",
     description: "Get a comprehensive view of your trading performance",
     icon: LineChart,
-    content: <img src="/images/dashboard-demo.png" alt="Dashboard Overview" className="w-full rounded-lg shadow-lg" />,
+    content: <img src="hotdog.gif" alt="Dashboard Overview" className="w-3/4 rounded-lg shadow-lg mx-auto" />,
   },
   {
-    title: "Daily Journal",
+    title: "Daily Journal", 
     description: "Record and review your daily trading activities",
     icon: BookOpen,
-    content: <img src="/images/daily-journal-demo.png" alt="Daily Journal" className="w-full rounded-lg shadow-lg" />,
+    content: <img src="hotdog.gif" alt="Daily Journal" className="w-3/4 rounded-lg shadow-lg mx-auto" />,
   },
   {
     title: "Trade Log",
     description: "Detailed log of all your trades with advanced filtering",
     icon: Table,
-    content: <img src="/images/trade-log-demo.png" alt="Trade Log" className="w-full rounded-lg shadow-lg" />,
+    content: <img src="hotdog.gif" alt="Trade Log" className="w-3/4 rounded-lg shadow-lg object-contain mx-auto" />,
   },
 ]
 
