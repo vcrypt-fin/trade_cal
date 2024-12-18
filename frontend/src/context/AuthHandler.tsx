@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './SupabaseClient';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/github/callback'];
+const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback'];
 
 const AuthHandler: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);

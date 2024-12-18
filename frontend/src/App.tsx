@@ -17,11 +17,10 @@ import Settings from './components/Settings';
 import { TradeProvider } from './context/TradeContext';
 import { JournalProvider } from './context/JournalContext';
 import EditTradeForm from './components/EditTradeForm';
-import DashboardLayout from './components/DashboardLayout'; // Ensure correct import
+import DashboardLayout from './components/DashboardLayout';
 import Login from './components/LoginPage.tsx';
 import Register from './components/RegisterPage.tsx';
 import AuthChecker from './context/AuthHandler.tsx';
-
 import { GitHubCallback } from './components/AuthCallbacks.tsx';
 import Profile from './components/Profile';
 import { ToastContainer } from 'react-toastify';
@@ -29,14 +28,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import UpdatePassword from './components/UpdatePassword';
 import { NotebookProvider } from './context/NotebookContext';
 import { AuthProvider } from './context/AuthContext';
+import PaymentPage from './components/PaymentPage';
+import StripeCallback from './components/StripeCallback';
 
 function App() {
-
-  // Load env keys at startup
-  useEffect(() => {
-    //require('dotenv').config();
-  }, []);
-
   return (
     <Router>
       <AuthProvider>
@@ -60,6 +55,8 @@ function App() {
                 <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/update-password" element={<UpdatePassword />} />
+                <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/stripe/callback" element={<StripeCallback />} />
               </Routes>
             </NotebookProvider>
           </JournalProvider>
