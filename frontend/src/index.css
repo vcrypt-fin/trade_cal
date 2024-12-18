@@ -137,3 +137,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+.inter {
+  font-family: "Inter", serif;
+}
