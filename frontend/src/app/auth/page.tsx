@@ -22,6 +22,26 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
+  const checkSubscription = async (userId: string) => {
+    try {
+      const { data: subscription, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return false;
+      }
+
+      return subscription && subscription.status === 'active';
+    } catch (err) {
+      console.error('Error checking subscription:', err);
+      return false;
+    }
+  };
+
   const getCallbackUrl = () => {
     const baseUrl = window.location.origin;
     return `${baseUrl}`;
@@ -96,11 +116,8 @@ export default function AuthPage() {
 
         if (data?.user) {
           toast.success('Account created successfully! Please check your email for verification.');
-          setIsLogin(true);
-          setName('');
-          setEmail('');
-          setPassword('');
-          setConfirmPassword('');
+          // After successful signup, redirect to subscription page
+          navigate('/subscription');
         }
       } else {
         // Login logic
@@ -117,7 +134,17 @@ export default function AuthPage() {
 
         if (data?.session) {
           localStorage.setItem('authToken', data.session.access_token);
-          navigate('/');
+          
+          // Check subscription status
+          const hasSubscription = await checkSubscription(data.session.user.id);
+          
+          if (!hasSubscription) {
+            // If no active subscription, redirect to subscription page
+            navigate('/subscription');
+          } else {
+            // If has active subscription, redirect to dashboard
+            navigate('/');
+          }
         }
       }
     } catch (err) {

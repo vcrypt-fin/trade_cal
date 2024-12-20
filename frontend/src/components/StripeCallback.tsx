@@ -1,131 +1,96 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../context/SupabaseClient';
 import { useAuth } from '../context/AuthContext';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 
 export const StripeCallback = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const [searchParams] = useSearchParams();
     const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const handleStripeCallback = async () => {
-            console.log('Starting Stripe callback handler');
-            console.log('Current URL:', window.location.href);
-            console.log('User:', user);
-
-            // If already processing or no user, return
+            console.log("Starting callback processing...");
             if (isProcessing || !user?.id) {
-                console.log('Waiting for user data...');
+                console.log("No user or already processing");
                 return;
             }
 
             setIsProcessing(true);
 
             try {
-                // Get the session ID from the URL
-                const sessionId = searchParams.get('session_id');
-                if (!sessionId) {
-                    throw new Error('No session ID found');
+                const pendingSubscriptionStr = localStorage.getItem('pendingSubscription');
+                if (!pendingSubscriptionStr) {
+                    throw new Error('No pending subscription found');
                 }
 
-                // Verify the session with Stripe
-                const response = await fetch('/api/verify-stripe-session', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sessionId,
-                    }),
-                });
+                const pendingSubscription = JSON.parse(pendingSubscriptionStr);
+                console.log("Pending subscription:", pendingSubscription);
 
-                if (!response.ok) {
-                    throw new Error('Failed to verify session');
-                }
-
-                const { customerId, subscriptionId } = await response.json();
-
-                // Update subscription in Supabase
+                // Create subscription data matching exactly the Supabase schema
                 const subscriptionData = {
+                    id: crypto.randomUUID(), // Generate a UUID for the subscription
                     user_id: user.id,
                     status: 'active',
-                    plan_id: 'monthly',
-                    current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                    stripe_customer_id: customerId,
-                    stripe_subscription_id: subscriptionId,
-                    cancel_at_period_end: false
+                    plan_id: pendingSubscription.planName.toLowerCase(),
+                    current_period_end: new Date(Date.now() + (pendingSubscription.interval === 'year' ? 365 : 30) * 24 * 60 * 60 * 1000),
+                    cancel_at_period_end: false,
+                    stripe_customer_id: user.id,
+                    created_at: new Date()
                 };
 
-                console.log('Attempting to update subscription in Supabase:', subscriptionData);
+                console.log("Attempting to insert subscription:", subscriptionData);
 
-                // First check if a subscription already exists
-                const { data: existingSubscription, error: fetchError } = await supabase
+                // First, check if a subscription exists
+                const { data: existingSub, error: fetchError } = await supabase
                     .from('subscriptions')
                     .select('*')
                     .eq('user_id', user.id)
                     .single();
 
-                console.log('Existing subscription:', existingSubscription);
-                if (fetchError) console.log('Fetch error:', fetchError);
-
-                let result;
-                if (existingSubscription) {
+                let error;
+                if (existingSub) {
                     // Update existing subscription
-                    result = await supabase
+                    const { error: updateError } = await supabase
                         .from('subscriptions')
                         .update(subscriptionData)
-                        .eq('user_id', user.id)
-                        .select();
-                    console.log('Update result:', result);
+                        .eq('user_id', user.id);
+                    error = updateError;
                 } else {
                     // Insert new subscription
-                    result = await supabase
+                    const { error: insertError } = await supabase
                         .from('subscriptions')
-                        .insert([subscriptionData])
-                        .select();
-                    console.log('Insert result:', result);
+                        .insert([subscriptionData]);
+                    error = insertError;
                 }
 
-                if (result.error) {
-                    console.error('Supabase operation error:', result.error);
-                    throw result.error;
+                if (error) {
+                    console.error("Supabase error:", error);
+                    throw error;
                 }
 
-                console.log('Subscription updated successfully:', result.data);
+                console.log("Subscription updated successfully");
+                localStorage.removeItem('pendingSubscription');
                 toast.success('Subscription activated successfully!');
-                navigate('/profile');
+                navigate('/');
             } catch (error) {
-                console.error('Error processing Stripe callback:', error);
+                console.error('Error processing subscription:', error);
                 toast.error('Failed to process subscription. Please contact support.');
-                navigate('/profile');
+                navigate('/subscription');
             } finally {
                 setIsProcessing(false);
             }
         };
 
         handleStripeCallback();
-    }, [navigate, user, isProcessing, searchParams]);
-
-    // If no user yet, show loading
-    if (!user) {
-        return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-                    <p className="mt-4 text-gray-600">Authenticating...</p>
-                </div>
-            </div>
-        );
-    }
+    }, [navigate, user, isProcessing]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0A0A0A] via-[#1A0E2E] to-[#0A0A0A]">
             <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto" />
-                <p className="mt-4 text-gray-600">Processing your subscription...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto" />
+                <p className="mt-4 text-purple-300">Processing your subscription...</p>
             </div>
         </div>
     );

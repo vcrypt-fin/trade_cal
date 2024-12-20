@@ -33,6 +33,7 @@ import LandingPage from './app/page.tsx';
 import AuthPage from './app/auth/page.tsx';
 import WatchDemo from './app/watch-demo/page.tsx';
 import PaymentPage from './components/payment';
+import SubscriptionPage from './app/subscription/page';
 // import PaymentPage from './components/PaymentPage.tsx';
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
                 <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/stripe/callback" element={<StripeCallback />} />
                 <Route path="/payment" element={<PaymentPage />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
 
                 {/* Protected routes */}
                 <Route path="/" element={<DashboardLayout />} />
