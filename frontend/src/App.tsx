@@ -28,9 +28,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import UpdatePassword from './components/UpdatePassword';
 import { NotebookProvider } from './context/NotebookContext';
 import { AuthProvider } from './context/AuthContext';
-import PaymentPage from './components/PaymentPage';
 import StripeCallback from './components/StripeCallback';
-import Demo from './Demo.tsx';
+import LandingPage from './app/page.tsx';
+// import AuthPage from './app/auth/page.tsx';
+import PaymentPage from './components/payment';
+import PaymentPage from './components/PaymentPage.tsx';
 
 function App() {
   return (
@@ -42,17 +44,19 @@ function App() {
             <NotebookProvider>
               <Routes>
                 <Route path="/" element={<DashboardLayout />} />
-                <Route path="/demo" element={<Demo />} />
+                <Route path="/demo" element={<LandingPage />} />
                 <Route path="/add-trade" element={<AddTradeForm />} />
                 <Route path="/edit-trade/:id" element={<EditTradeForm />} />
                 <Route path="/notebook" element={<Notebook />} />
                 <Route path="/journal" element={<Journal />} />
                 <Route path="/playbook" element={<Playbook />} />
                 <Route path="/playbook/:id" element={<PlaybookDetail />} />
-                <Route path="/trades" element={<Trades />} />
+                <Route path="/trades" element={<Trades />} /> 
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login />} /> 
+                <Route path="/payment" element={<PaymentPage />} />
+                {/* <Route path="/login" element={<AuthPage />} /> */}
                 <Route path="/register" element={<Register />} />
                 <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/profile" element={<Profile />} />
