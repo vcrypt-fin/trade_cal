@@ -18,11 +18,11 @@ const LoginPage: React.FC = () => {
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   const getCallbackUrl = () => {
-    const baseUrl = import.meta.env.PROD 
-      ? 'https://tradecal.netlify.app/'  // Replace with your actual Netlify domain
-      : 'http://localhost:5173';
-    return `${baseUrl}/github/callback`;
+    const baseUrl = 'http://localhost:5173';
+    return `${baseUrl}`;
   };
+
+  console.log(getCallbackUrl())
 
   const handleOAuthLogin = async (provider: Provider) => {
     try {

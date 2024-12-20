@@ -86,7 +86,7 @@ export default function Sidebar() {
       localStorage.removeItem('authToken');
       localStorage.removeItem('auth_in_prog');
       
-      navigate('/login');
+      navigate('/demo');
     } catch (error) {
       console.error('Error logging out:', error);
     }

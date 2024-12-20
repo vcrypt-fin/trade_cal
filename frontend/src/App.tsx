@@ -28,8 +28,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import UpdatePassword from './components/UpdatePassword';
 import { NotebookProvider } from './context/NotebookContext';
 import { AuthProvider } from './context/AuthContext';
-import PaymentPage from './components/PaymentPage';
 import StripeCallback from './components/StripeCallback';
+import LandingPage from './app/page.tsx';
+import AuthPage from './app/auth/page.tsx';
+import WatchDemo from './app/watch-demo/page.tsx';
+import PaymentPage from './components/payment';
+// import PaymentPage from './components/PaymentPage.tsx';
 
 function App() {
   return (
@@ -40,6 +44,16 @@ function App() {
           <JournalProvider>
             <NotebookProvider>
               <Routes>
+                {/* Public routes */}
+                <Route path="/demo" element={<LandingPage />} />
+                <Route path="/watch-demo" element={<WatchDemo />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/github/callback" element={<GitHubCallback />} />
+                <Route path="/stripe/callback" element={<StripeCallback />} />
+                <Route path="/payment" element={<PaymentPage />} />
+
+                {/* Protected routes */}
                 <Route path="/" element={<DashboardLayout />} />
                 <Route path="/add-trade" element={<AddTradeForm />} />
                 <Route path="/edit-trade/:id" element={<EditTradeForm />} />
@@ -47,16 +61,11 @@ function App() {
                 <Route path="/journal" element={<Journal />} />
                 <Route path="/playbook" element={<Playbook />} />
                 <Route path="/playbook/:id" element={<PlaybookDetail />} />
-                <Route path="/trades" element={<Trades />} />
+                <Route path="/trades" element={<Trades />} /> 
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/update-password" element={<UpdatePassword />} />
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/stripe/callback" element={<StripeCallback />} />
               </Routes>
             </NotebookProvider>
           </JournalProvider>
