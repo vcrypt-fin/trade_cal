@@ -1,39 +1,118 @@
 'use client'
 
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, DiscIcon as Discord, Github, TrendingUp, BarChart2, CandlestickChart } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { supabase } from '../../context/SupabaseClient';
+import { Provider } from '@supabase/supabase-js';
 import { toast, Toaster } from 'react-hot-toast'
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
+  const [loading, setLoading] = useState(false);
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
+  const [error, setError] = useState('');
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+
+  const getCallbackUrl = () => {
+    const baseUrl = 'http://localhost:5173';
+    return `${baseUrl}`;
+  };
+
+  console.log(getCallbackUrl())
+
+  const handleOAuthLogin = async (provider: Provider) => {
+    try {
+      setLoading(true);
+      localStorage.setItem('auth_in_prog', 'true');
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: {
+          redirectTo: getCallbackUrl(),
+        },
+      });
+
+      if (error) {
+        console.error("Auth error:", error);
+        setError(error.message);
+        localStorage.setItem('auth_in_prog', 'false');
+        return;
+      }
+
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        setError('Failed to get authentication URL');
+        localStorage.setItem('auth_in_prog', 'false');
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError('An unexpected error occurred');
+      localStorage.setItem('auth_in_prog', 'false');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      setLoading(true);
+      setError('');
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        console.error('Login error:', error);
+        setError(error.message);
+        return;
+      }
+
+      if (data?.session) {
+        localStorage.setItem('authToken', data.session.access_token);
+        navigate('/');
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!name || !email || !password || !confirmPassword) {
-      toast.error('Please fill in all fields')
-      return
-    }
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-    // Here you would typically make an API call to create the account
-    // For this example, we'll just simulate a successful sign-up
-    toast.success('Account created successfully! You can now log in.')
-    setIsLogin(true)
-    setName('')
-    setEmail('')
-    setPassword('')
-    setConfirmPassword('')
+    // e.preventDefault()
+    // if (!name || !email || !password || !confirmPassword) {
+    //   toast.error('Please fill in all fields')
+    //   return
+    // }
+    // if (password !== confirmPassword) {
+    //   toast.error('Passwords do not match')
+    //   return
+    // }
+    // // Here you would typically make an API call to create the account
+    // // For this example, we'll just simulate a successful sign-up
+    // toast.success('Account created successfully! You can now log in.')
+    // setIsLogin(true)
+    // setName('')
+    // setEmail('')
+    // setPassword('')
+    // setConfirmPassword('')
   }
 
   return (
@@ -42,10 +121,10 @@ export default function AuthPage() {
       <div className="absolute inset-0 overflow-hidden">
         {/* Animated gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-gray-900 to-pink-900 opacity-50" />
-        
+
         {/* Grid overlay */}
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:50px_50px]" />
-        
+
         {/* Glowing orbs */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
         <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse delay-1000" />
@@ -101,7 +180,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -142,7 +221,7 @@ export default function AuthPage() {
               : 'Join the trading revolution today'}
           </p>
 
-          <form className="space-y-6" onSubmit={isLogin ? undefined : handleSignUp}>
+          <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-purple-200">Full Name</Label>
@@ -155,7 +234,7 @@ export default function AuthPage() {
                 />
               </div>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="email" className="text-purple-200">Email</Label>
               <Input
@@ -233,12 +312,16 @@ export default function AuthPage() {
               <Button
                 variant="outline"
                 className="bg-gray-700 bg-opacity-50 border-purple-600 text-purple-200 hover:bg-purple-800"
+                onClick={() => handleOAuthLogin('discord')}
+                isLoading={loading}
               >
                 <Discord className="w-5 h-5" />
               </Button>
               <Button
                 variant="outline"
                 className="bg-gray-700 bg-opacity-50 border-purple-600 text-purple-200 hover:bg-purple-800"
+                onClick={() => handleOAuthLogin('google')}
+                isLoading={loading}
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -262,6 +345,8 @@ export default function AuthPage() {
               <Button
                 variant="outline"
                 className="bg-gray-700 bg-opacity-50 border-purple-600 text-purple-200 hover:bg-purple-800"
+                onClick={() => handleOAuthLogin('github')}
+                isLoading={loading}
               >
                 <Github className="w-5 h-5" />
               </Button>

@@ -30,9 +30,9 @@ import { NotebookProvider } from './context/NotebookContext';
 import { AuthProvider } from './context/AuthContext';
 import StripeCallback from './components/StripeCallback';
 import LandingPage from './app/page.tsx';
-// import AuthPage from './app/auth/page.tsx';
+import AuthPage from './app/auth/page.tsx';
 import PaymentPage from './components/payment';
-import PaymentPage from './components/PaymentPage.tsx';
+// import PaymentPage from './components/PaymentPage.tsx';
 
 function App() {
   return (
@@ -54,9 +54,9 @@ function App() {
                 <Route path="/trades" element={<Trades />} /> 
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/login" element={<Login />} /> 
+                {/* <Route path="/login" element={<Login />} />  */}
                 <Route path="/payment" element={<PaymentPage />} />
-                {/* <Route path="/login" element={<AuthPage />} /> */}
+                <Route path="/login" element={<AuthPage />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/profile" element={<Profile />} />
