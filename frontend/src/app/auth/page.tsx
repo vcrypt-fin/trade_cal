@@ -67,20 +67,58 @@ export default function AuthPage() {
       setLoading(true);
       setError('');
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+      if (!isLogin) {
+        // Sign up logic
+        if (!name || !email || !password || !confirmPassword) {
+          setError('Please fill in all fields');
+          return;
+        }
+        if (password !== confirmPassword) {
+          setError('Passwords do not match');
+          return;
+        }
 
-      if (error) {
-        console.error('Login error:', error);
-        setError(error.message);
-        return;
-      }
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+            }
+          }
+        });
 
-      if (data?.session) {
-        localStorage.setItem('authToken', data.session.access_token);
-        navigate('/');
+        if (error) {
+          console.error('Sign up error:', error);
+          setError(error.message);
+          return;
+        }
+
+        if (data?.user) {
+          toast.success('Account created successfully! Please check your email for verification.');
+          setIsLogin(true);
+          setName('');
+          setEmail('');
+          setPassword('');
+          setConfirmPassword('');
+        }
+      } else {
+        // Login logic
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) {
+          console.error('Login error:', error);
+          setError(error.message);
+          return;
+        }
+
+        if (data?.session) {
+          localStorage.setItem('authToken', data.session.access_token);
+          navigate('/');
+        }
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -307,14 +345,17 @@ export default function AuthPage() {
             <div className="text-center text-sm text-purple-300">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
               <Button
+                type="button"
                 variant="link"
                 className="text-pink-400 hover:text-pink-300 p-0"
-                onClick={() => {
-                  setIsLogin(!isLogin)
-                  setName('')
-                  setEmail('')
-                  setPassword('')
-                  setConfirmPassword('')
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsLogin(!isLogin);
+                  setName('');
+                  setEmail('');
+                  setPassword('');
+                  setConfirmPassword('');
+                  setError('');
                 }}
               >
                 {isLogin ? 'Sign up' : 'Log in'}
