@@ -31,6 +31,7 @@ import { AuthProvider } from './context/AuthContext';
 import StripeCallback from './components/StripeCallback';
 import LandingPage from './app/page.tsx';
 import AuthPage from './app/auth/page.tsx';
+import WatchDemo from './app/watch-demo/page.tsx';
 import PaymentPage from './components/payment';
 // import PaymentPage from './components/PaymentPage.tsx';
 
@@ -43,8 +44,17 @@ function App() {
           <JournalProvider>
             <NotebookProvider>
               <Routes>
-                <Route path="/" element={<DashboardLayout />} />
+                {/* Public routes */}
                 <Route path="/demo" element={<LandingPage />} />
+                <Route path="/watch-demo" element={<WatchDemo />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/github/callback" element={<GitHubCallback />} />
+                <Route path="/stripe/callback" element={<StripeCallback />} />
+                <Route path="/payment" element={<PaymentPage />} />
+
+                {/* Protected routes */}
+                <Route path="/" element={<DashboardLayout />} />
                 <Route path="/add-trade" element={<AddTradeForm />} />
                 <Route path="/edit-trade/:id" element={<EditTradeForm />} />
                 <Route path="/notebook" element={<Notebook />} />
@@ -54,15 +64,8 @@ function App() {
                 <Route path="/trades" element={<Trades />} /> 
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/settings" element={<Settings />} />
-                {/* <Route path="/login" element={<Login />} />  */}
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/login" element={<AuthPage />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/github/callback" element={<GitHubCallback />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/update-password" element={<UpdatePassword />} />
-                <Route path="/payment" element={<PaymentPage />} />
-                <Route path="/stripe/callback" element={<StripeCallback />} />
               </Routes>
             </NotebookProvider>
           </JournalProvider>

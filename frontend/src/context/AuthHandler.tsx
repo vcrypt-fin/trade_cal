@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './SupabaseClient';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback'];
+const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback', '/demo', '/watch-demo', '/auth'];
 
 const AuthHandler: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -26,7 +26,7 @@ const AuthHandler: React.FC = () => {
           setIsAuthenticated(false);
           localStorage.removeItem('authToken'); // Clear any stale token
           if (!PUBLIC_ROUTES.includes(location.pathname)) {
-            navigate('/login');
+            navigate('/demo');
           }
           return;
         }
@@ -37,14 +37,14 @@ const AuthHandler: React.FC = () => {
           setIsAuthenticated(false);
           localStorage.removeItem('authToken');
           if (!PUBLIC_ROUTES.includes(location.pathname)) {
-            navigate('/login');
+            navigate('/demo');
           }
           return;
         }
 
         setIsAuthenticated(true);
-      } catch (error) {
-        console.error('Auth check failed:', error);
+      } catch (err) {
+        console.error('Auth check failed:', err);
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -67,7 +67,7 @@ const AuthHandler: React.FC = () => {
         setIsAuthenticated(false);
         localStorage.removeItem('authToken');
         if (!PUBLIC_ROUTES.includes(location.pathname)) {
-          navigate('/login');
+          navigate('/demo');
         }
       }
     });
