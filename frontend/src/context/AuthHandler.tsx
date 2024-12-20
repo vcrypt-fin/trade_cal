@@ -1,20 +1,97 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './SupabaseClient';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback', '/demo', '/watch-demo', '/auth'];
+const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback', '/demo', '/watch-demo', '/auth', '/subscription'];
+
+// Create context for auth token
+interface AuthContextType {
+  token: string | null;
+  setToken: (token: string | null) => void;
+}
+
+export const AuthTokenContext = createContext<AuthContextType>({
+  token: null,
+  setToken: () => {},
+});
+
+const LoadingScreen: React.FC = () => (
+  <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] via-[#1A0E2E] to-[#0A0A0A] text-white py-20">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto" />
+      <p className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Verifying subscription...</p>
+      <p className="text-lg text-purple-300">Please wait while we verify your subscription.</p>
+    </div>
+  </div>
+);
+
+export const AuthTokenProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [token, setToken] = useState<string | null>(null);
+
+  return (
+    <AuthTokenContext.Provider value={{ token, setToken }}>
+      {children}
+    </AuthTokenContext.Provider>
+  );
+};
 
 const AuthHandler: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState<boolean>(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { setToken } = useContext(AuthTokenContext);
+
+  const clearAuth = () => {
+    setToken(null);
+    setIsAuthenticated(false);
+  };
+
+  const checkSubscription = async (userId: string) => {
+    try {
+      setIsCheckingSubscription(true);
+      const { data: subscription, error } = await supabase
+        .from('subscriptions')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
+        .throwOnError();
+
+      console.log('Subscription check result:', { subscription, error });
+
+      if (error) {
+        console.error('Error checking subscription:', error);
+        return false;
+      }
+
+      return subscription && subscription.status === 'active';
+    } catch (err) {
+      console.error('Error checking subscription:', err);
+      return false;
+    } finally {
+      setIsCheckingSubscription(false);
+    }
+  };
+
+  // Effect to handle cleanup when leaving subscription page
+  useEffect(() => {
+    const wasOnSubscriptionPage = location.pathname === '/subscription';
+    
+    return () => {
+      if (wasOnSubscriptionPage && !isAuthenticated) {
+        clearAuth();
+        supabase.auth.signOut();
+      }
+    };
+  }, [location.pathname, isAuthenticated]);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Don't redirect if auth is in progress
-        if (localStorage.getItem('auth_in_prog') === 'true') {
+        setIsLoading(true);
+        // Don't check auth if we're on a public route
+        if (PUBLIC_ROUTES.includes(location.pathname)) {
           setIsLoading(false);
           return;
         }
@@ -23,29 +100,33 @@ const AuthHandler: React.FC = () => {
         
         if (error || !session) {
           console.error('Auth error or no session:', error);
-          setIsAuthenticated(false);
-          localStorage.removeItem('authToken'); // Clear any stale token
-          if (!PUBLIC_ROUTES.includes(location.pathname)) {
-            navigate('/demo');
-          }
+          clearAuth();
+          navigate('/demo');
           return;
         }
 
         // Verify the token is still valid
         if (session.expires_at && session.expires_at * 1000 < Date.now()) {
           console.log('Session expired');
-          setIsAuthenticated(false);
-          localStorage.removeItem('authToken');
-          if (!PUBLIC_ROUTES.includes(location.pathname)) {
-            navigate('/demo');
-          }
+          clearAuth();
+          navigate('/demo');
           return;
         }
 
+        // Check subscription status for protected routes
+        const hasSubscription = await checkSubscription(session.user.id);
+        if (!hasSubscription) {
+          console.log('No active subscription found, redirecting to subscription page');
+          navigate('/subscription');
+          return;
+        }
+
+        setToken(session.access_token);
         setIsAuthenticated(true);
       } catch (err) {
         console.error('Auth check failed:', err);
-        setIsAuthenticated(false);
+        clearAuth();
+        navigate('/demo');
       } finally {
         setIsLoading(false);
       }
@@ -58,14 +139,28 @@ const AuthHandler: React.FC = () => {
       console.log('Auth state changed:', event, session);
       
       if (session) {
+        setToken(session.access_token);
         setIsAuthenticated(true);
-        localStorage.setItem('authToken', session.access_token);
-        if (location.pathname === '/login') {
-          navigate('/');
+        
+        // Only check subscription if we're actively authenticating
+        if (localStorage.getItem('auth_in_prog') === 'true') {
+          setIsCheckingSubscription(true);
+          const hasSubscription = await checkSubscription(session.user.id);
+          console.log('Subscription check completed:', hasSubscription);
+          
+          // Clear the auth in progress flag
+          localStorage.setItem('auth_in_prog', 'false');
+          
+          if (!hasSubscription) {
+            console.log('No active subscription found, redirecting to subscription page');
+            navigate('/subscription');
+          } else {
+            console.log('Active subscription found, redirecting to dashboard');
+            navigate('/');
+          }
         }
       } else {
-        setIsAuthenticated(false);
-        localStorage.removeItem('authToken');
+        clearAuth();
         if (!PUBLIC_ROUTES.includes(location.pathname)) {
           navigate('/demo');
         }
@@ -77,8 +172,9 @@ const AuthHandler: React.FC = () => {
     };
   }, [navigate, location.pathname]);
 
-  if (isLoading) {
-    return null;
+  // Show loading screen when checking auth or subscription status for protected routes
+  if ((isLoading || isCheckingSubscription) && !PUBLIC_ROUTES.includes(location.pathname)) {
+    return <LoadingScreen />;
   }
 
   return null;
