@@ -5,6 +5,8 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import Stats from './Stats';
 import Calendar from './Calendar';
+import { TickerBar } from './TickerBar';
+import { cn } from '../utils/cn';
 
 const DashboardLayout: React.FC = () => {
   const [dateRange, setDateRange] = useState({
@@ -13,6 +15,8 @@ const DashboardLayout: React.FC = () => {
   });
   const [selectedSymbols, setSelectedSymbols] = useState<string[]>([]);
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isTickerCollapsed, setIsTickerCollapsed] = useState(false);
 
   const handleDateRangeChange = (startDate: string, endDate: string) => {
     setDateRange({ startDate, endDate });
@@ -27,30 +31,42 @@ const DashboardLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar />
-      <div className="ml-64 p-8 flex-1">
-        <Header
-          dateRange={dateRange}
-          setDateRange={setDateRange}
-          selectedSymbols={selectedSymbols}
-          setSelectedSymbols={setSelectedSymbols}
-          selectedStrategies={selectedStrategies}
-          setSelectedStrategies={setSelectedStrategies}
-          onDateRangeChange={handleDateRangeChange}
-          onSymbolChange={handleSymbolChange}
-          onStrategyChange={handleStrategyChange}
-        />
-        <Stats
-          dateRange={dateRange}
-          symbols={selectedSymbols}
-          strategies={selectedStrategies}
-        />
-        <Calendar
-          dateRange={dateRange}
-          symbols={selectedSymbols}
-          strategies={selectedStrategies}
-        />
+    <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] flex">
+      <Sidebar 
+        isCollapsed={isCollapsed} 
+        onToggle={() => setIsCollapsed(!isCollapsed)} 
+      />
+      <TickerBar
+        isCollapsed={isCollapsed}
+        isTickerCollapsed={isTickerCollapsed}
+        onTickerToggle={() => setIsTickerCollapsed(!isTickerCollapsed)}
+      />
+      <div className={cn(
+        'flex-1 transition-all duration-300 pt-12',
+        isCollapsed ? 'ml-[60px]' : 'ml-[250px]'
+      )}>
+        <div className="p-8">
+          <Header
+            dateRange={dateRange}
+            selectedSymbols={selectedSymbols}
+            selectedStrategies={selectedStrategies}
+            onDateRangeChange={handleDateRangeChange}
+            onSymbolChange={handleSymbolChange}
+            onStrategyChange={handleStrategyChange}
+          />
+          <Stats
+            dateRange={dateRange}
+            symbols={selectedSymbols}
+            strategies={selectedStrategies}
+          />
+          <div className="mt-8">
+            <Calendar
+              dateRange={dateRange}
+              symbols={selectedSymbols}
+              strategies={selectedStrategies}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

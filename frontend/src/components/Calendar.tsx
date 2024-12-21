@@ -1,9 +1,10 @@
 // src/components/Calendar.tsx
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { useTrades } from '../context/TradeContext';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../utils/cn';
 
 interface DayTrade {
   date: string;   // Format: 'YYYY-MM-DD'
@@ -18,18 +19,18 @@ interface TradeInfoProps {
 
 const TradeInfo: React.FC<TradeInfoProps> = ({ trade }) => {
   const isProfit = trade.profit > 0;
-  const bgColor = isProfit ? 'bg-green-100' : 'bg-red-100';
-  const textColor = isProfit ? 'text-green-700' : 'text-red-700';
+  const bgColor = isProfit ? 'bg-green-500/10' : 'bg-red-500/10';
+  const textColor = isProfit ? 'text-green-400' : 'text-red-400';
 
   return (
-    <div className={`${bgColor} p-2 rounded-lg h-full cursor-pointer`}>
+    <div className={`${bgColor} p-2 rounded-lg h-full cursor-pointer hover:bg-white/5`}>
       <div className={`${textColor} font-semibold text-sm`}>
         ${Math.abs(trade.profit).toLocaleString()}
       </div>
-      <div className="text-xs text-gray-600">
+      <div className="text-xs text-white/60">
         {trade.trades} trade{trade.trades > 1 ? 's' : ''}
       </div>
-      <div className="text-xs text-gray-500">{trade.winRate.toFixed(1)}% win</div>
+      <div className="text-xs text-white/50">{trade.winRate.toFixed(1)}% win</div>
     </div>
   );
 };
@@ -41,20 +42,33 @@ interface CalendarDayProps {
 }
 
 const CalendarDay: React.FC<CalendarDayProps> = ({ dayNum, trade, onClick }) => {
+  const navigate = useNavigate();
+  
   if (dayNum === 0) {
-    // Render empty cells for days not in the current month
     return <div className="aspect-square p-1"></div>;
   }
 
   return (
-    <div className="aspect-square p-1" onClick={onClick}>
-      <div className="relative h-full">
-        <div className="absolute top-1 left-1 text-xs text-gray-500">
-          {dayNum}
-        </div>
-        <div className="pt-6">
+    <div 
+      className="aspect-square p-1" 
+      onClick={onClick}
+    >
+      <div className="relative h-full bg-white/5 rounded-md p-1 flex flex-col justify-between">
+        <span className="text-sm text-white/80">{dayNum}</span>
+        <div className="flex-1 pt-2">
           {trade && <TradeInfo trade={trade} />}
         </div>
+        {!trade && (
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/add-trade');
+            }}
+            className="absolute bottom-1 right-1 rounded p-1 hover:bg-white/10"
+          >
+            <Plus className="h-3 w-3 text-white/60" />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -66,7 +80,7 @@ const CalendarHeader: React.FC = () => {
   return (
     <>
       {days.map(day => (
-        <div key={day} className="text-center text-sm font-medium text-gray-600">
+        <div key={day} className="text-center text-sm font-medium text-white/60">
           {day}
         </div>
       ))}
@@ -74,13 +88,31 @@ const CalendarHeader: React.FC = () => {
   );
 };
 
-const Calendar: React.FC = () => {
+const getWeeksInMonth = (date: Date) => {
+  const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  const totalDays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  return Math.ceil((firstDay + totalDays) / 7);
+};
+
+interface CalendarProps {
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  symbols: string[];
+  strategies: string[];
+}
+
+const Calendar: React.FC<CalendarProps> = ({
+  dateRange,
+  symbols,
+  strategies,
+}) => {
   const { trades, filters, fetchTrades, isLoading } = useTrades();
   const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    // Fetch the latest trades when the Calendar component mounts or when filters change
     fetchTrades();
   }, [fetchTrades, filters]);
 
@@ -92,9 +124,8 @@ const Calendar: React.FC = () => {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(dayNum).padStart(2, '0');
-    const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
+    const dayStr = `${year}-${month}-${day}`;
   
-    // Filter trades within the selected date range, symbols, and strategies
     const filteredTrades = trades.filter(trade => {
       const tradeDate = new Date(trade.date);
       const start = new Date(filters.startDate);
@@ -103,8 +134,8 @@ const Calendar: React.FC = () => {
         trade.date === dayStr &&
         tradeDate >= start &&
         tradeDate <= end &&
-        (filters.symbols.length === 0 || filters.symbols.includes(trade.symbol)) &&
-        (filters.strategies.length === 0 || filters.strategies.includes(trade.strategy))
+        (filters.symbols.length === 0 || (trade.symbol && filters.symbols.includes(trade.symbol))) &&
+        (filters.strategies.length === 0 || (trade.strategy && filters.strategies.includes(trade.strategy)))
       );
     });
 
@@ -126,7 +157,7 @@ const Calendar: React.FC = () => {
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(dayNum).padStart(2, '0');
-    const dayStr = `${year}-${month}-${day}`; // 'YYYY-MM-DD'
+    const dayStr = `${year}-${month}-${day}`;
     navigate('/trades', { state: { date: dayStr } });
   };
 
@@ -157,27 +188,31 @@ const Calendar: React.FC = () => {
   const monthYear = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   if (isLoading) {
-    return <div className="bg-white rounded-lg p-6 shadow-sm">Loading calendar...</div>;
+    return (
+      <div className="rounded-lg overflow-hidden bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] p-6 text-white/80">
+        Loading calendar...
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-lg p-6 shadow-sm">
+    <div className="bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] rounded-lg p-6 shadow-sm">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4">
           <button 
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="p-2 hover:bg-white/10 rounded-full"
             onClick={handlePrevMonth}
             aria-label="Previous Month"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft className="h-5 w-5 text-white" />
           </button>
-          <h2 className="text-lg font-semibold">{monthYear}</h2>
+          <h2 className="text-lg font-semibold text-white">{monthYear}</h2>
           <button 
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="p-2 hover:bg-white/10 rounded-full"
             onClick={handleNextMonth}
             aria-label="Next Month"
           >
-            <ChevronRight size={20} />
+            <ChevronRight className="h-5 w-5 text-white" />
           </button>
         </div>
       </div>

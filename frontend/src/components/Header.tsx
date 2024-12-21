@@ -5,7 +5,26 @@ import { Bell, Filter, Calendar } from 'lucide-react';
 import FilterBar from './Dashboard/FilterBar';
 import { useTrades } from '../context/TradeContext';
 
-export default function Header() {
+interface HeaderProps {
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  selectedSymbols: string[];
+  selectedStrategies: string[];
+  onDateRangeChange: (startDate: string, endDate: string) => void;
+  onSymbolChange: (symbols: string[]) => void;
+  onStrategyChange: (strategies: string[]) => void;
+}
+
+export default function Header({
+  dateRange,
+  selectedSymbols,
+  selectedStrategies,
+  onDateRangeChange,
+  onSymbolChange,
+  onStrategyChange,
+}: HeaderProps) {
   const { clearAllTrades } = useTrades(); // If you have a Clear All Trades feature
   const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);

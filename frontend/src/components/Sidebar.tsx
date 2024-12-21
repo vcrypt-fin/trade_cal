@@ -53,13 +53,17 @@ const getAvatarUrl = (user: SupabaseUser | null): string | null => {
          null;
 };
 
-export default function Sidebar() {
+interface SidebarProps {
+  isCollapsed: boolean;
+  onToggle: () => void;
+}
+
+export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [resetPasswordMessage, setResetPasswordMessage] = useState('');
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     // Get initial user data
@@ -125,7 +129,7 @@ export default function Sidebar() {
           <h1 className="text-2xl font-bold">TRADEMIND</h1>
         )}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={onToggle}
           className="rounded-lg p-1 hover:bg-white/10"
           aria-label="Toggle sidebar"
         >

@@ -108,7 +108,20 @@ const getFilteredTrades = (trades: Trade[], filters: any) => {
   return filtered;
 };
 
-const Stats: React.FC = () => {
+interface StatsProps {
+  dateRange: {
+    startDate: string;
+    endDate: string;
+  };
+  symbols: string[];
+  strategies: string[];
+}
+
+const Stats: React.FC<StatsProps> = ({
+  dateRange,
+  symbols,
+  strategies,
+}) => {
   const { trades, filters } = useTrades();
   
   console.log('Stats rendered with filters:', filters);
