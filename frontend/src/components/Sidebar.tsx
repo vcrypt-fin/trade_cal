@@ -12,10 +12,11 @@ import {
   Settings as SettingsIcon,
   LogOut,
   User,
-  Key
+  ChevronLeft
 } from 'lucide-react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { Avatar } from "@nextui-org/react";
+import { cn } from '../utils/cn';
 
 const menuItems = [
   { icon: LayoutDashboard, text: 'Dashboard', path: '/' },
@@ -58,6 +59,7 @@ export default function Sidebar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [resetPasswordMessage, setResetPasswordMessage] = useState('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     // Get initial user data
@@ -113,40 +115,62 @@ export default function Sidebar() {
   };
 
   return (
-    <div className="w-64 bg-[#0B1A33] h-screen fixed left-0 text-white p-4">
-      <div className="flex items-center mb-8 pl-0">
-        <h1 className="text-2xl font-bold">Bluenotes</h1>
+    <div className={cn(
+      'flex flex-col text-white transition-all duration-300 fixed top-0 bottom-0 left-0 z-20',
+      'bg-gradient-to-b from-[#0D0019] via-[#1E002F] via-[#230037] via-[#2A0043] to-[#450050]',
+      isCollapsed ? 'w-[60px]' : 'w-[250px]'
+    )}>
+      <div className="flex h-12 items-center justify-between px-4">
+        {!isCollapsed && (
+          <h1 className="text-2xl font-bold">TRADEMIND</h1>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="rounded-lg p-1 hover:bg-white/10"
+          aria-label="Toggle sidebar"
+        >
+          <ChevronLeft className={cn('h-5 w-5 transition-transform', 
+            isCollapsed && 'rotate-180'
+          )} />
+        </button>
       </div>
 
-      <Link
-        to="/add-trade"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg mb-6 flex items-center justify-center gap-2"
-      >
-        <span className="text-lg">+</span>Add Trade
-      </Link>
+      {!isCollapsed && (
+        <Link
+          to="/add-trade"
+          className="mx-4 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg mb-6 flex items-center justify-center gap-2"
+        >
+          <span className="text-lg">+</span>Add Trade
+        </Link>
+      )}
 
-      <nav className="mb-6">
+      <nav className="flex-1 px-2 overflow-y-auto">
         {menuItems.map((item, index) => (
           <Link
             key={index}
             to={item.path}
-            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${
-              location.pathname === item.path ? 'bg-blue-600' : 'hover:bg-white/10'
-            } mb-1`}
+            className={cn(
+              'flex items-center gap-3 p-3 rounded-lg cursor-pointer mb-1',
+              location.pathname === item.path ? 'bg-white/20' : 'hover:bg-white/10',
+              isCollapsed && 'justify-center'
+            )}
           >
             <item.icon size={20} />
-            <span>{item.text}</span>
+            {!isCollapsed && <span>{item.text}</span>}
           </Link>
         ))}
       </nav>
 
-      {/* Bottom Profile Section */}
-      <div className="absolute bottom-20 left-4 right-4 border-t border-white/10 pt-4">
+      {/* Bottom Section */}
+      <div className="mt-auto">
+        {/* Profile Section */}
         <Link
           to="/profile"
-          className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer ${
-            location.pathname === '/profile' ? 'bg-blue-600' : 'hover:bg-white/10'
-          }`}
+          className={cn(
+            'flex items-center gap-3 p-3 mx-2 rounded-lg cursor-pointer',
+            location.pathname === '/profile' ? 'bg-white/20' : 'hover:bg-white/10',
+            isCollapsed && 'justify-center'
+          )}
         >
           {getAvatarUrl(user) ? (
             <Avatar
@@ -157,23 +181,26 @@ export default function Sidebar() {
           ) : (
             <User size={20} />
           )}
-          <div className="flex-1 min-w-0">
-            <div className="font-medium truncate">{user?.email || 'Loading...'}</div>
-            <div className="text-sm text-gray-400 truncate">
-              {cleanUsername(user)}
+          {!isCollapsed && (
+            <div className="flex-1 min-w-0">
+              <div className="font-medium truncate">{user?.email || 'Loading...'}</div>
+              <div className="text-sm text-gray-400 truncate">
+                {cleanUsername(user)}
+              </div>
             </div>
-          </div>
+          )}
         </Link>
-      </div>
 
-      {/* Logout Button */}
-      <div className="absolute bottom-4 left-4 right-4">
+        {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-white/10 text-red-400 hover:text-red-300"
+          className={cn(
+            'flex items-center gap-3 rounded-lg cursor-pointer hover:bg-white/10 text-red-400 hover:text-red-300 mb-2 mt-2',
+            isCollapsed ? 'justify-center pl-5' : 'mx-2 p-3'
+          )}
         >
           <LogOut size={20} />
-          <span>Log Out</span>
+          {!isCollapsed && <span>Log Out</span>}
         </button>
       </div>
     </div>
