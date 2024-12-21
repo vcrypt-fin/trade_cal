@@ -39,6 +39,7 @@ const AuthHandler: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isCheckingSubscription, setIsCheckingSubscription] = useState<boolean>(false);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
   const { setToken } = useContext(AuthTokenContext);
@@ -46,9 +47,15 @@ const AuthHandler: React.FC = () => {
   const clearAuth = () => {
     setToken(null);
     setIsAuthenticated(false);
+    setHasActiveSubscription(null);
   };
 
   const checkSubscription = async (userId: string) => {
+    // If we already know the subscription status, return it
+    if (hasActiveSubscription !== null) {
+      return hasActiveSubscription;
+    }
+
     try {
       setIsCheckingSubscription(true);
       const { data: subscription, error } = await supabase
@@ -65,7 +72,9 @@ const AuthHandler: React.FC = () => {
         return false;
       }
 
-      return subscription && subscription.status === 'active';
+      const isActive = subscription && subscription.status === 'active';
+      setHasActiveSubscription(isActive);
+      return isActive;
     } catch (err) {
       console.error('Error checking subscription:', err);
       return false;
