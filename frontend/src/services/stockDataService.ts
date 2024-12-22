@@ -205,7 +205,7 @@ class StockDataService {
         try {
           const tradeInfo = tradesData.trades[ticker.symbol];
           if (!tradeInfo) {
-            console.error(`No trade data for ${ticker.symbol}`);
+            console.warn(`No trade data for ${ticker.symbol}`);
             continue;
           }
 
@@ -213,7 +213,8 @@ class StockDataService {
           const previousClose = this.previousClosePrices.get(ticker.symbol);
 
           if (!previousClose) {
-            console.error(`No previous close price for ${ticker.symbol}`);
+            console.warn(`No previous close price for ${ticker.symbol}, using current price`);
+            this.previousClosePrices.set(ticker.symbol, currentPrice);
             continue;
           }
 
@@ -237,7 +238,8 @@ class StockDataService {
       }
 
       if (allMarketUpdates.length > 0) {
-        this.notifySubscribers(Array.from(this.lastMarketData.values()));
+        console.log('Notifying subscribers with updates:', allMarketUpdates);
+        this.notifySubscribers(allMarketUpdates);
       }
     } catch (error) {
       console.error('Error fetching market data:', error);

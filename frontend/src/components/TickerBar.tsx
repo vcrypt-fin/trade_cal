@@ -15,7 +15,7 @@ interface TickerData {
   change: string;
 }
 
-const TICKER_SYMBOLS: Ticker[] = [
+export const TICKER_SYMBOLS: Ticker[] = [
   { symbol: 'SPY', name: 'S&P 500' },
   { symbol: 'DIA', name: 'Dow Jones' },
   { symbol: 'QQQ', name: 'Nasdaq' },
@@ -31,14 +31,15 @@ export function TickerBar({ isCollapsed, isTickerCollapsed, onTickerToggle }: Ti
   const [marketData, setMarketData] = useState<Map<string, { price: number; change: number }>>(new Map());
 
   useEffect(() => {
-    // Connect to Alpaca service with our ticker list
+    console.log('TickerBar: Connecting to stock data service');
     stockDataService.connect(TICKER_SYMBOLS);
 
-    // Subscribe to market data updates
     const unsubscribe = stockDataService.subscribe((data) => {
+      console.log('TickerBar: Received market data update:', data);
       setMarketData(prevData => {
         const newData = new Map(prevData);
         data.forEach(update => {
+          console.log(`TickerBar: Processing update for ${update.symbol}:`, update);
           newData.set(update.symbol, {
             price: update.price,
             change: update.changePercent
@@ -49,6 +50,7 @@ export function TickerBar({ isCollapsed, isTickerCollapsed, onTickerToggle }: Ti
     });
 
     return () => {
+      console.log('TickerBar: Cleaning up stock data service connection');
       unsubscribe();
       stockDataService.disconnect();
     };
