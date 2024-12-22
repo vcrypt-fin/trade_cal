@@ -50,7 +50,7 @@ const StatWidget: React.FC<StatWidgetProps> = ({
       onDrop={(e) => onDrop?.(e, widget)}
       className="bg-[#1A1625] p-4 rounded-lg shadow-sm relative group border border-purple-900/20"
     >
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => onRemove(widget.id)}
           className="p-1 hover:bg-purple-900/20 rounded-full"
@@ -58,17 +58,17 @@ const StatWidget: React.FC<StatWidgetProps> = ({
           <X size={16} className="text-gray-400" />
         </button>
       </div>
-      <div className="absolute top-2 left-2 cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-2 left-1 cursor-move opacity-0 group-hover:opacity-100 transition-opacity">
         <GripVertical size={16} className="text-gray-400" />
       </div>
-      <div className="mt-6">
-        <div className="flex items-center gap-1 mb-1">
-          <h3 className="text-sm text-gray-400">{widget.title}</h3>
+      <div>
+        <div className="flex items-center gap-1 mb-2">
+          <h3 className="text-xl text-gray-100">{widget.title}</h3>
           {data.info && (
             <div className="relative group/info">
               <Info size={14} className="text-gray-400 cursor-help" />
-              <div className="absolute left-1/2 -translate-x-1/2 -top-8 invisible group-hover/info:visible w-48">
-                <div className="bg-[#0B0118] text-gray-200 text-xs rounded p-1.5 shadow-lg">
+              <div className="absolute left-3/4 -translate-x-1/2 -top-8 invisible group-hover/info:visible w-48">
+                <div className="bg-[#0B0118] text-gray-200 text-lg rounded p-1.5 m-1 shadow-lg">
                   {data.info}
                 </div>
               </div>

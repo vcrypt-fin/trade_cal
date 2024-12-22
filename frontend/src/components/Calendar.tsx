@@ -217,7 +217,7 @@ const Calendar: React.FC<CalendarProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-4">
+      <div className="grid grid-cols-7 gap-2">
         <CalendarHeader />
         {renderCalendarDays()}
       </div>

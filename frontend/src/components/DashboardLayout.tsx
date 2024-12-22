@@ -93,7 +93,7 @@ const DashboardLayout: React.FC = () => {
         'flex-1 transition-all duration-300 pt-12',
         isCollapsed ? 'ml-[60px]' : 'ml-[250px]'
       )}>
-        <div className="p-8">
+        <div className="p-4">
           <Header
             dateRange={dateRange}
             selectedSymbols={selectedSymbols}
