@@ -53,23 +53,33 @@ class EconomicCalendarService {
           if (!dayMatch[1]) continue;
           
           try {
-            // Try to parse individual event objects
-            const eventRegex = /{[^{}]*?"name":"[^"]*?"[^{}]*?}/g;
+            // Try to parse individual event objects - make regex more inclusive
+            const eventRegex = /{[^}]*?"name":"[^"]*?"[^}]*?}/g;
             const eventMatches = dayMatch[1].match(eventRegex);
             
             if (!eventMatches) continue;
             
+            console.log(`Found ${eventMatches.length} events in day`);
+            
             for (const eventStr of eventMatches) {
               try {
+                console.log('Raw event string:', eventStr);
                 const event = JSON.parse(eventStr);
-                console.log('Processing event:', {
+                console.log('Parsed event data:', {
                   name: event.name,
                   forecast: event.forecast,
                   previous: event.previous,
-                  actual: event.actual
+                  actual: event.actual,
+                  impact: event.impactClass,
+                  time: event.timeLabel,
+                  currency: event.currency,
+                  dateline: event.dateline
                 });
 
-                if (!event.name) continue;
+                if (!event.name) {
+                  console.log('Skipping event - no name');
+                  continue;
+                }
 
                 // Handle time format
                 let timeStr = event.timeLabel || 'All Day';
@@ -97,7 +107,17 @@ class EconomicCalendarService {
                   description: event.notice || undefined
                 };
 
-                console.log('Created event:', newEvent);
+                console.log('Created formatted event:', {
+                  id: newEvent.id,
+                  title: newEvent.title,
+                  date: newEvent.date,
+                  time: newEvent.time,
+                  impact: newEvent.impact,
+                  actual: newEvent.actual,
+                  forecast: newEvent.forecast,
+                  previous: newEvent.previous
+                });
+
                 events.push(newEvent);
               } catch (eventError) {
                 console.error('Error parsing individual event:', eventError);
@@ -112,6 +132,7 @@ class EconomicCalendarService {
         }
 
         console.log(`Total events processed: ${events.length}`);
+        console.log('All processed events:', events);
 
         // Sort events by date and time
         events.sort((a, b) => {
@@ -137,7 +158,10 @@ class EconomicCalendarService {
   public async fetchEvents(): Promise<EconomicEvent[]> {
     try {
       console.log('Starting calendar fetch...');
-      const dateStr = 'dec31.2024';
+      const today = new Date();
+      const dateStr = this.formatDateForUrl(today);
+      console.log('Using date for URL:', dateStr);
+      
       const targetUrl = `https://www.forexfactory.com/calendar?week=${dateStr}&permalink=true&impacts=3,2,1,0&event_types=1,2,3,4,5,7,8,9,10,11&currencies=9`;
       const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
       console.log('Fetching through proxy:', proxyUrl);

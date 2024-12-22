@@ -1,59 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock } from 'lucide-react';
-
-interface EconomicEvent {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  impact: 'high' | 'medium' | 'low';
-  forecast?: string;
-  previous?: string;
-}
+import economicCalendarService, { EconomicEvent } from '../../services/economicCalendarService';
 
 const EconomicCalendarWidget: React.FC = () => {
   const [events, setEvents] = useState<EconomicEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Implement real API call
-    // For now using mock data
-    const mockEvents: EconomicEvent[] = [
-      {
-        id: '1',
-        title: 'FOMC Meeting Minutes',
-        date: '2024-01-15',
-        time: '14:00',
-        impact: 'high',
-        forecast: 'No Change',
-        previous: '5.50%'
-      },
-      {
-        id: '2',
-        title: 'US CPI m/m',
-        date: '2024-01-16',
-        time: '08:30',
-        impact: 'high',
-        forecast: '0.2%',
-        previous: '0.1%'
-      },
-      {
-        id: '3',
-        title: 'US Retail Sales m/m',
-        date: '2024-01-17',
-        time: '08:30',
-        impact: 'medium',
-        forecast: '0.3%',
-        previous: '0.2%'
-      }
-    ];
+    const unsubscribe = economicCalendarService.subscribe((eventData) => {
+      setEvents(eventData);
+      setLoading(false);
+    });
 
-    setEvents(mockEvents);
-    setLoading(false);
+    economicCalendarService.startPolling();
+
+    return () => {
+      unsubscribe();
+      economicCalendarService.stopPolling();
+    };
   }, []);
 
-  const getImpactColor = (impact: 'high' | 'medium' | 'low') => {
-    switch (impact) {
+  const getImpactColor = (impact: 'High' | 'Medium' | 'Low') => {
+    switch (impact.toLowerCase() as 'high' | 'medium' | 'low') {
       case 'high':
         return 'text-red-400';
       case 'medium':
@@ -85,7 +53,6 @@ const EconomicCalendarWidget: React.FC = () => {
     <div className="h-full flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Economic Calendar</h3>
-        {/* <button className="text-white/60 hover:text-white/80 text-sm">Refresh</button> */}
       </div>
       <div className="flex-1 overflow-y-auto space-y-3">
         {events.map((event) => (
