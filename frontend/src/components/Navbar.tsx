@@ -10,7 +10,7 @@ export function Navbar() {
       <div className="container flex h-14 items-center">
         <div className="flex items-center space-x-2">
           <LineChart className="h-6 w-6 text-purple-500" />
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-200">
+          <span className="text-xl mx-6 font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-200">
             TradeMind
           </span>
         </div>
