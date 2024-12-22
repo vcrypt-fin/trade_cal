@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import economicCalendarService, { EconomicEvent } from '../../services/economicCalendarService';
+import './NewsWidget.css';
 
 const EconomicCalendarWidget: React.FC = () => {
   const [events, setEvents] = useState<EconomicEvent[]>([]);
@@ -54,7 +55,7 @@ const EconomicCalendarWidget: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Economic Calendar</h3>
       </div>
-      <div className="flex-1 overflow-y-auto space-y-3">
+      <div className="flex-1 overflow-y-auto space-y-3 news-scroll">
         {events.map((event) => (
           <div 
             key={event.id}
