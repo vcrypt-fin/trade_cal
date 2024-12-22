@@ -54,11 +54,7 @@ const DashboardLayout: React.FC = () => {
             onSymbolChange={handleSymbolChange}
             onStrategyChange={handleStrategyChange}
           />
-          <Stats
-            dateRange={dateRange}
-            symbols={selectedSymbols}
-            strategies={selectedStrategies}
-          />
+          <Stats />
           <div className="mt-8">
             <Calendar
               dateRange={dateRange}
