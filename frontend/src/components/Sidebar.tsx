@@ -125,16 +125,15 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       isCollapsed ? 'w-[60px]' : 'w-[280px]'
     )}>
       <div className="flex h-30 items-center justify-between p-4">
-        {!isCollapsed && (
-          <>
-            <h1 className="text-3xl mx-auto font-extrabold tracking-wider text-center text-white-600 text-shadow-logo">
+        <div className="flex items-center gap-3">
+          <img src="/logo.png" alt="TradeMind Logo" className="h-8" />
+          {!isCollapsed && (
+            <h1 className="text-2xl font-extrabold tracking-wider text-white-600 text-shadow-logo">
               TRADEMIND
             </h1>
-            <img src="/logo.png" alt="TradeMind Logo" className="h-12" />
-
-          </>
-        )}
-        {/* <button
+          )}
+        </div>
+        <button
           onClick={onToggle}
           className="rounded-lg p-1 hover:bg-white/10"
           aria-label="Toggle sidebar"
@@ -142,7 +141,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           <ChevronLeft className={cn('h-5 w-5 transition-transform', 
             isCollapsed && 'rotate-180'
           )} />
-        </button> */}
+        </button>
       </div>
 
       {!isCollapsed && (
