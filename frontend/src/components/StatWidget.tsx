@@ -75,7 +75,7 @@ const StatWidget: React.FC<StatWidgetProps> = ({
             </div>
           )}
         </div>
-        <p className={`text-2xl font-semibold ${getValueColor(data.value)}`}>
+        <p className={`text-xl font-semibold ${getValueColor(data.value)}`}>
           {formatValue(data.value, data.type)}
         </p>
       </div>

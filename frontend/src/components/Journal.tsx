@@ -11,6 +11,7 @@ const Journal: React.FC = () => {
   const [expandedDays, setExpandedDays] = useState<Record<string, boolean>>({});
   const [activeDate, setActiveDate] = useState<string | null>(null);
   const [activeContent, setActiveContent] = useState<string>('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const tradesByDate = trades.reduce((acc, trade) => {
@@ -99,10 +100,13 @@ const Journal: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
-        <h1 className="text-2xl font-semibold mb-6">Daily Journal</h1>
+    <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`p-8 transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'}`}>
+        <h1 className="text-2xl font-semibold mb-6 text-purple-100">Daily Journal</h1>
         <div className="space-y-6">
           {sortedDates.map(date => {
             const dateTrades = tradesByDate[date];

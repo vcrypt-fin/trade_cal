@@ -4,6 +4,7 @@ export interface Trade {
   time: string;
   exitTime?: string;
   symbol: string;
+  side: 'LONG' | 'SHORT';
   setup?: string;
   tags?: string[];
   entryPrice: number;
