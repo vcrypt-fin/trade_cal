@@ -65,7 +65,7 @@ const quillFormats = [
 ];
 
 export default function Notebook() {
-  const { notes, folders, isLoading, addNote, updateNote, deleteNote, addFolder } = useNotebook();
+  const { notes, folders, isLoading, addNote, updateNote, deleteNote, addFolder, deleteFolder } = useNotebook();
   const { trades } = useTrades();
   const [selectedFolder, setSelectedFolder] = useState<NoteFolder | null>(null);
   const [selectedNote, setSelectedNote] = useState<LocalNote | null>(null);
@@ -225,6 +225,21 @@ export default function Notebook() {
     }
   };
 
+  const handleDeleteFolder = async (folderId: string) => {
+    if (window.confirm('Are you sure you want to delete this folder and all its notes? This action cannot be undone.')) {
+      try {
+        await deleteFolder(folderId);
+        if (selectedFolder?.id === folderId) {
+          setSelectedFolder(null);
+          setSelectedNote(null);
+          setDraftContent('');
+        }
+      } catch (error) {
+        console.error('Error deleting folder:', error);
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
@@ -275,10 +290,25 @@ export default function Notebook() {
                         "flex items-center group p-2 rounded-lg cursor-pointer",
                         selectedFolder?.id === folder.id ? "bg-purple-800/20" : "hover:bg-purple-800/10"
                       )}
-                      onClick={() => handleFolderSelect(folder)}
                     >
-                      <Folder size={16} className="text-purple-400 mr-2" />
-                      <span className="text-purple-100 flex-1">{folder.name}</span>
+                      <div
+                        className="flex items-center flex-1"
+                        onClick={() => handleFolderSelect(folder)}
+                      >
+                        <Folder size={16} className="text-purple-400 mr-2" />
+                        <span className="text-purple-100 flex-1">{folder.name}</span>
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteFolder(folder.id);
+                          }}
+                          className="p-1 hover:bg-purple-800/20 rounded-lg"
+                        >
+                          <Trash2 size={14} className="text-red-400" />
+                        </button>
+                      </div>
                     </div>
                     {selectedFolder?.id === folder.id && (
                       <div className="ml-6 space-y-1">
