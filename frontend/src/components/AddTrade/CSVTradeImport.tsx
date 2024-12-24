@@ -1,7 +1,7 @@
 // src/components/CSVTradeImport.tsx
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 import { parse } from 'papaparse';
@@ -14,12 +14,17 @@ const generateUniqueId = (): string => {
   return `trade-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
 
-const CSVTradeImport: React.FC = () => {
+interface CSVTradeImportProps {
+  onBack: () => void;
+}
+
+export default function CSVTradeImport({ onBack }: CSVTradeImportProps) {
   const navigate = useNavigate();
   const { addBulkTrades } = useTrades();
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [parsingError, setParsingError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const SERVER_URL = `${window.location.origin}/api`;
 
@@ -209,88 +214,108 @@ const CSVTradeImport: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <button
-              onClick={() => navigate(-1)}
-              className="text-gray-600 hover:text-gray-800"
+              onClick={onBack}
+              className="text-purple-400 hover:text-purple-300"
             >
               ← Back
             </button>
-            <h1 className="text-2xl font-semibold">Import Trades from CSV</h1>
+            <h1 className="text-2xl font-semibold text-purple-100">Import Trades from CSV</h1>
           </div>
           
-          <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-purple-200 mb-2">
                 Select CSV File
               </label>
               <input
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-gray-500
+                className="block w-full text-sm text-purple-200
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-md file:border-0
                   file:text-sm file:font-semibold
-                  file:bg-blue-50 file:text-blue-700
-                  hover:file:bg-blue-100"
+                  file:bg-purple-800/20 file:text-purple-100
+                  hover:file:bg-purple-800/30"
               />
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-purple-200">
                 Please upload a CSV file containing your trade data
               </p>
-              <p className="mt-2 text-sm text-gray-500">
-                Don't know how? <a href="https://www.loom.com/share/04414cd4698147eea9ee8bf38915c6d9" target="_blank" rel="noreferrer" className="text-blue-600">Learn more</a>
+              <p className="mt-2 text-sm text-purple-200">
+                Don't know how? <a href="https://www.loom.com/share/04414cd4698147eea9ee8bf38915c6d9" target="_blank" rel="noreferrer" className="text-purple-400 hover:text-purple-300">Learn more</a>
               </p>
               
               {/* Provide Sample CSV Download */}
               <div className="mt-4">
                 <a
-                  href="/sample-trades.csv" // Ensure this path points to your sample CSV file
+                  href="/sample-trades.csv"
                   download
-                  className="text-blue-600 underline"
+                  className="inline-flex items-center text-purple-400 hover:text-purple-300"
                 >
-                  Download Sample CSV Template
+                  <span>Download Sample CSV</span>
                 </a>
               </div>
             </div>
 
             {parsingError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
-                <strong className="font-medium">Error: </strong>
-                <span className="block sm:inline">{parsingError}</span>
+              <div className="p-4 bg-red-900/20 border border-red-800/30 rounded-lg">
+                <p className="text-red-400">{parsingError}</p>
               </div>
             )}
 
-            <div className="flex justify-end">
-              <button
-                onClick={handleImport}
-                disabled={!csvFile || isProcessing}
-                className={`inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg
-                  hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
-                  ${(!csvFile || isProcessing) ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                {isProcessing ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </>
-                ) : (
-                  'Import Trades'
-                )}
-              </button>
+            {csvFile && (
+              <div>
+                <p className="text-purple-200">Selected file: {csvFile.name}</p>
+                <button
+                  onClick={handleImport}
+                  disabled={isProcessing}
+                  className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isProcessing ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Processing...
+                    </div>
+                  ) : (
+                    'Import Trades'
+                  )}
+                </button>
+              </div>
+            )}
+
+            <div className="mt-6">
+              <h2 className="text-lg font-semibold mb-4 text-purple-100">CSV Format Requirements</h2>
+              <div className="bg-[#1A0F2E] p-4 rounded-lg border border-purple-800/30">
+                <p className="text-purple-200 mb-2">Your CSV file should include the following columns:</p>
+                <ul className="list-disc list-inside text-purple-200 space-y-1">
+                  <li>Order ID</li>
+                  <li>Side (Buy/Sell)</li>
+                  <li>Contract</li>
+                  <li>Product</li>
+                  <li>Average Price</li>
+                  <li>Filled Quantity</li>
+                  <li>Fill Time</li>
+                  <li>Status</li>
+                  <li>Limit Price</li>
+                  <li>Stop Price</li>
+                  <li>Quantity</li>
+                  <li>Type</li>
+                  <li>Timestamp</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default CSVTradeImport;
+}

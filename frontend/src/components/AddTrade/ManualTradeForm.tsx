@@ -1,6 +1,6 @@
 // src/components/ManualTradeForm.tsx
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 
@@ -34,10 +34,15 @@ interface Execution {
   fee: string;
 }
 
-const ManualTradeForm: React.FC = () => {
+interface ManualTradeFormProps {
+  onBack: () => void;
+}
+
+export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { addTrade, playbooks } = useTrades();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   // Initialize form data excluding exitPrice and takeProfits
   const [formData, setFormData] = useState({
@@ -184,7 +189,7 @@ const ManualTradeForm: React.FC = () => {
       const tradeData = {
         id: crypto.randomUUID(),
         date: formData.date,
-        time: timeWithSeconds, // Use the formatted time with seconds
+        time: timeWithSeconds,
         timestamp: new Date(`${formData.date}T${timeWithSeconds}`).toISOString(),
         pnl: calculatePnL(formData, executions),
         strategy: formData.strategy,
@@ -194,7 +199,7 @@ const ManualTradeForm: React.FC = () => {
         entryPrice: parseFloat(formData.entryPrice),
         exitPrice: executions.find(exe => exe.type === 'EXIT')?.price ? 
           parseFloat(executions.find(exe => exe.type === 'EXIT')!.price) : 
-          undefined,
+          0,
         quantity: parseFloat(formData.quantity),
         contractMultiplier: contractSpecs[formData.contractType]?.multiplier || 1,
         brokerage: formData.brokerage || '',
@@ -223,20 +228,31 @@ const ManualTradeForm: React.FC = () => {
   // Check if there are strategies (playbooks)
   if (playbooks.length === 0) {
     return (
-      <div className="min-h-screen flex">
-        <Sidebar />
-        <div className="flex-1 flex items-center justify-center p-8">
-          <div className="bg-white p-8 rounded-lg shadow-md max-w-md text-center">
-            <h2 className="text-2xl font-semibold mb-4">No Strategies Available</h2>
-            <p className="text-gray-700 mb-6">
+      <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+        <Sidebar 
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed(!isCollapsed)}
+        />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} flex items-center justify-center p-8`}>
+          <div className="bg-[#120322] p-8 rounded-lg border border-purple-800/30 backdrop-blur-sm max-w-md text-center">
+            <div className="flex items-center gap-4 mb-6">
+              <button
+                onClick={onBack}
+                className="text-purple-400 hover:text-purple-300"
+              >
+                ← Back
+              </button>
+              <h2 className="text-2xl font-semibold text-purple-100">No Strategies Available</h2>
+            </div>
+            <p className="text-purple-200 mb-6">
               You currently have no strategies. Please create a strategy in the Playbooks section to proceed with adding trades.
             </p>
-            <button
-              onClick={() => navigate('/playbook', { state: { from: '/add-trade' } })}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            <Link
+              to="/playbook"
+              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 inline-block"
             >
               Go to Playbooks
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -244,246 +260,194 @@ const ManualTradeForm: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar />
-      <div className="flex-1 p-8">
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <button
-              onClick={() => navigate(-1)}
-              className="text-gray-600 hover:text-gray-800"
+              onClick={onBack}
+              className="text-purple-400 hover:text-purple-300"
             >
               ← Back
             </button>
-            <h1 className="text-2xl font-semibold">Manual Trade Entry</h1>
+            <h1 className="text-2xl font-semibold text-purple-100">Add Trade</h1>
           </div>
-          
-          <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md space-y-6">
-            {/* Date and Time Fields */}
+          <form onSubmit={handleSubmit} className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm space-y-6">
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-purple-200 mb-1">Date</label>
                 <input
                   type="date"
                   name="date"
                   value={formData.date}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
-              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                <label className="block text-sm font-medium text-purple-200 mb-1">Time</label>
                 <input
                   type="time"
                   name="time"
                   value={formData.time}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  step="1"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
                 />
               </div>
             </div>
 
-            {/* Contract Type */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contract Type</label>
-              <select
-                name="contractType"
-                value={formData.contractType}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select contract type</option>
-                {Object.entries(contractSpecs).map(([symbol, spec]) => (
-                  <option key={symbol} value={symbol}>
-                    {symbol} (x{spec.multiplier})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Side */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Side</label>
-              <select
-                name="side"
-                value={formData.side}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Select side</option>
-                <option value="LONG">Long</option>
-                <option value="SHORT">Short</option>
-              </select>
-            </div>
-
-            {/* Entry Price and Quantity */}
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Entry Price</label>
-                <input
-                  type="number"
-                  name="entryPrice"
-                  value={formData.entryPrice}
+                <label className="block text-sm font-medium text-purple-200 mb-1">Contract</label>
+                <select
+                  name="contractType"
+                  value={formData.contractType}
                   onChange={handleChange}
-                  step="0.01"
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
-                />
+                >
+                  <option value="">Select Contract</option>
+                  {Object.keys(contractSpecs).map(contract => (
+                    <option key={contract} value={contract}>{contract}</option>
+                  ))}
+                </select>
               </div>
-              
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  value={formData.quantity}
+                <label className="block text-sm font-medium text-purple-200 mb-1">Side</label>
+                <select
+                  name="side"
+                  value={formData.side}
                   onChange={handleChange}
-                  min="1"
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
-                />
+                >
+                  <option value="">Select Side</option>
+                  <option value="LONG">Long</option>
+                  <option value="SHORT">Short</option>
+                </select>
               </div>
             </div>
 
-            {/* Strategy */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Strategy</label>
+              <label className="block text-sm font-medium text-purple-200 mb-1">Strategy</label>
               <select
                 name="strategy"
                 value={formData.strategy}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 required
               >
-                <option value="">Select strategy</option>
-                {playbooks.map((playbook) => (
-                  <option key={playbook.id} value={playbook.id}>
-                    {playbook.name}
-                  </option>
+                <option value="">Select Strategy</option>
+                {playbooks.map(playbook => (
+                  <option key={playbook.id} value={playbook.id}>{playbook.name}</option>
                 ))}
               </select>
             </div>
 
-            {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-              <textarea
-                name="notes"
-                value={formData.notes}
+              <label className="block text-sm font-medium text-purple-200 mb-1">Brokerage</label>
+              <select
+                name="brokerage"
+                value={formData.brokerage}
                 onChange={handleChange}
-                rows={4}
-                className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              />
+                className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
+              >
+                <option value="">Select Brokerage</option>
+                {brokerages.map(brokerage => (
+                  <option key={brokerage.id} value={brokerage.id}>{brokerage.name}</option>
+                ))}
+              </select>
             </div>
 
-            {/* Executions Section */}
-            <div className="border-t pt-4">
-              <h2 className="text-xl font-semibold mb-4">Executions</h2>
-              {executions.map((exe, index) => (
-                <div key={exe.id} className="border p-4 rounded-lg mb-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-lg font-medium">{exe.type === 'ENTRY' ? 'Entry Execution' : `Exit Execution ${index}`}</h3>
-                    {exe.type !== 'ENTRY' && executions.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeExecution(exe.id)}
-                        className="text-red-500 hover:text-red-700"
-                        title="Remove Execution"
-                      >
-                        &times;
-                      </button>
-                    )}
-                  </div>
-                  
-                  {/* Execution Type (Disabled for Entry) */}
-                  {exe.type === 'EXIT' && (
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <div>
+              <h3 className="text-lg font-medium text-purple-100 mb-4">Executions</h3>
+              {executions.map((execution, index) => (
+                <div key={execution.id} className="mb-4 p-4 bg-[#1A0F2E] rounded-lg border border-purple-800/30">
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-purple-200 mb-1">Type</label>
                       <select
-                        name="type"
-                        value={exe.type}
-                        onChange={(e) => handleExecutionChange(exe.id, 'type', e.target.value)}
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        required
-                        disabled // Type is fixed as EXIT
+                        value={execution.type}
+                        onChange={(e) => handleExecutionChange(execution.id, 'type', e.target.value as 'ENTRY' | 'EXIT')}
+                        className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        disabled={execution.type === 'ENTRY'}
                       >
+                        <option value="ENTRY">Entry</option>
                         <option value="EXIT">Exit</option>
                       </select>
                     </div>
-                  )}
-
-                  {/* Price and Quantity */}
-                  <div className="grid grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                      <label className="block text-sm font-medium text-purple-200 mb-1">Price</label>
                       <input
                         type="number"
-                        value={exe.price}
-                        onChange={(e) => handleExecutionChange(exe.id, 'price', e.target.value)}
                         step="0.01"
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        value={execution.price}
+                        onChange={(e) => handleExecutionChange(execution.id, 'price', e.target.value)}
+                        className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         required
                       />
                     </div>
-                    
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                      <label className="block text-sm font-medium text-purple-200 mb-1">Quantity</label>
                       <input
                         type="number"
-                        value={exe.quantity}
-                        onChange={(e) => handleExecutionChange(exe.id, 'quantity', e.target.value)}
-                        min="1"
-                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        value={execution.quantity}
+                        onChange={(e) => handleExecutionChange(execution.id, 'quantity', e.target.value)}
+                        className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         required
                       />
                     </div>
                   </div>
-
-                  {/* Fee */}
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Fee (Optional)</label>
-                    <input
-                      type="number"
-                      value={exe.fee}
-                      onChange={(e) => handleExecutionChange(exe.id, 'fee', e.target.value)}
-                      step="0.01"
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="0"
-                    />
-                  </div>
+                  {execution.type === 'EXIT' && (
+                    <button
+                      type="button"
+                      onClick={() => removeExecution(execution.id)}
+                      className="mt-2 px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ))}
               <button
                 type="button"
                 onClick={addExecution}
-                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
               >
-                Add Exit Execution
+                Add Exit
               </button>
             </div>
 
-            {/* Display Total PNL */}
-            <div className="bg-gray-100 p-4 rounded-lg">
-              <h3 className="text-lg font-medium">Estimated Total PNL: {calculatePnL(formData, executions).toFixed(2)}</h3>
+            <div>
+              <label className="block text-sm font-medium text-purple-200 mb-1">Notes</label>
+              <textarea
+                name="notes"
+                value={formData.notes}
+                onChange={handleChange}
+                rows={4}
+                className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
             </div>
 
-            {/* Form Actions */}
             <div className="flex justify-end space-x-4">
               <button
                 type="button"
-                onClick={() => navigate('/')}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                onClick={() => navigate('/trades')}
+                className="px-4 py-2 bg-[#2A1A4A] text-purple-100 rounded-lg hover:bg-purple-800/20"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
               >
                 Add Trade
               </button>
@@ -493,6 +457,4 @@ const ManualTradeForm: React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default ManualTradeForm;
+}
