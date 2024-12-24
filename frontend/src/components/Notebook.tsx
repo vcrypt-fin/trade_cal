@@ -5,8 +5,11 @@ import CustomModal from './CustomModal';
 import ReactQuill from 'react-quill';
 import { useTrades } from '../context/TradeContext';
 import 'react-quill/dist/quill.snow.css';
+import '../styles/quill-dark.css';
 import { useNotebook } from '../context/NotebookContext';
 import { format } from 'date-fns';
+import { cn } from '../utils/cn';
+import { File, ChevronRight, ChevronDown, Edit2, Trash2 } from 'lucide-react';
 
 interface LocalNote {
   id: string;
@@ -39,6 +42,28 @@ const formatDate = (dateString: string) => {
   }
 };
 
+// Add custom Quill modules configuration
+const quillModules = {
+  toolbar: [
+    [{ 'header': [1, 2, 3, false] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ['link', 'code-block'],
+    ['clean']
+  ],
+  clipboard: {
+    matchVisual: false
+  }
+};
+
+// Add custom Quill formats
+const quillFormats = [
+  'header',
+  'bold', 'italic', 'underline', 'strike',
+  'list', 'bullet',
+  'link', 'code-block'
+];
+
 export default function Notebook() {
   const { notes, folders, isLoading, addNote, updateNote, deleteNote, addFolder } = useNotebook();
   const { trades } = useTrades();
@@ -50,14 +75,9 @@ export default function Notebook() {
   const [templates, setTemplates] = useState(initialTemplates);
   const [tagInput, setTagInput] = useState('');
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
-
-  const filteredNotes = notes.filter(note => {
-    if (!selectedFolder) return false;
-    if (selectedFolder.id === 'all') {
-      return true;
-    }
-    return note.folder_id === selectedFolder.id;
-  });
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
 
   const handleFolderSelect = (folder: NoteFolder) => {
     setSelectedFolder(folder);
@@ -93,7 +113,6 @@ export default function Notebook() {
         setDraftContent('');
       } catch (error) {
         console.error('Error deleting note:', error);
-        // Add appropriate error handling/user feedback
       }
     }
   };
@@ -108,7 +127,6 @@ export default function Notebook() {
         });
       } catch (error) {
         console.error('Error saving note:', error);
-        // Add appropriate error handling/user feedback
       }
     }
   };
@@ -142,7 +160,6 @@ export default function Notebook() {
       }
     } catch (error) {
       console.error('Error handling modal confirm:', error);
-      // Add appropriate error handling/user feedback
     }
 
     setIsModalOpen(false);
@@ -174,6 +191,10 @@ export default function Notebook() {
         await updateNote(selectedNote.id, {
           tags: updatedTags
         });
+        setSelectedNote({
+          ...selectedNote,
+          tags: updatedTags
+        });
         setTagInput('');
       } catch (error) {
         console.error('Error updating note tags:', error);
@@ -186,6 +207,10 @@ export default function Notebook() {
       const updatedTags = selectedNote.tags.filter(tag => tag !== tagToRemove);
       try {
         await updateNote(selectedNote.id, {
+          tags: updatedTags
+        });
+        setSelectedNote({
+          ...selectedNote,
           tags: updatedTags
         });
       } catch (error) {
@@ -202,11 +227,14 @@ export default function Notebook() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Sidebar />
-        <div className="ml-64 p-8">
+      <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+        <Sidebar 
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed(!isCollapsed)}
+        />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'}`}>
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
           </div>
         </div>
       </div>
@@ -214,200 +242,217 @@ export default function Notebook() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
-        <div className="flex gap-6">
-          {/* Folders Panel */}
-          <div className="w-1/5 bg-white p-4 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Folders</h2>
-              <button
-                className="text-blue-600 hover:text-blue-700"
-                onClick={handleAddFolder}
-              >
-                <Plus size={18} />
-              </button>
-            </div>
-            <ul>
-              {folders.map((folder) => (
-                <li
-                  key={folder.id}
-                  className={`p-2 rounded-md cursor-pointer hover:bg-gray-100 mb-3 ${
-                    selectedFolder?.id === folder.id ? 'bg-blue-100' : ''
-                  }`}
-                  onClick={() => handleFolderSelect(folder)}
-                >
-                  <Folder size={16} className="inline-block mr-2 text-gray-600" />
-                  {folder.name}
-                </li>
-              ))}
-            </ul>
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'}`}>
+        <div className="p-8 space-y-8">
+          {/* Header Section */}
+          <div>
+            <h1 className="text-2xl font-semibold text-purple-100">Notebook</h1>
           </div>
 
-          {/* Notes List Panel */}
-          <div className="w-1/5 bg-white p-4 rounded-lg shadow-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold">Notes</h2>
-              <button
-                className="text-blue-600 hover:text-blue-700"
-                onClick={handleAddNote}
-              >
-                <Plus size={18} />
-              </button>
-            </div>
-            <ul>
-              {filteredNotes.map((note) => (
-                <li
-                  key={note.id}
-                  className={`p-2 rounded-md cursor-pointer hover:bg-gray-100 mb-3 ${
-                    selectedNote?.id === note.id ? 'bg-blue-100' : ''
-                  }`}
-                  onClick={() => handleNoteSelect(note)}
+          <div className="flex gap-6">
+            {/* Folders Panel */}
+            <div className="w-80 bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold text-purple-100">Folders</h2>
+                <button
+                  onClick={handleAddFolder}
+                  className="p-1 hover:bg-purple-800/20 rounded-lg transition-colors duration-300"
                 >
-                  <p className="text-sm font-semibold">{note.title}</p>
-                  <p className="text-xs text-gray-500">
-                    {formatDate(note.updated_at)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  <Plus size={20} className="text-purple-400" />
+                </button>
+              </div>
 
-          {/* Note Editor Panel */}
-          <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
-            {selectedNote ? (
-              <>
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <h2 className="text-xl font-semibold">{selectedNote.title}</h2>
-                    <p className="text-sm text-gray-500">
-                      Created: {formatDate(selectedNote.created_at)} | 
-                      Last updated: {formatDate(selectedNote.updated_at)}
-                    </p>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={handleSaveNote}
-                      className="flex items-center gap-1 px-3 py-1 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700"
+              <div className="space-y-2">
+                {folders.map(folder => (
+                  <div key={folder.id} className="space-y-1">
+                    <div 
+                      className={cn(
+                        "flex items-center group p-2 rounded-lg cursor-pointer",
+                        selectedFolder?.id === folder.id ? "bg-purple-800/20" : "hover:bg-purple-800/10"
+                      )}
+                      onClick={() => handleFolderSelect(folder)}
                     >
-                      <Save size={16} />
-                      Save Note
-                    </button>
-                    <button
-                      onClick={handleSaveTemplate}
-                      className="flex items-center gap-1 px-3 py-1 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
-                    >
-                      <BookTemplate size={16} />
-                      Save Template
-                    </button>
-                    <button
-                      onClick={handleDeleteNote}
-                      className="flex items-center gap-1 px-3 py-1 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-
-                <ReactQuill
-                  value={draftContent}
-                  onChange={setDraftContent}
-                  className="h-64 mb-4"
-                />
-
-                {/* Tags Section */}
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold mb-2">Tags</h3>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {selectedNote.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs cursor-pointer"
-                        onClick={() => handleTagRemove(tag)}
-                      >
-                        {tag} ×
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <input
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyPress={(e) => e.key === 'Enter' && handleTagAdd()}
-                      placeholder="Add a tag"
-                      className="border px-2 py-1 text-sm rounded-md"
-                    />
-                    <button
-                      onClick={handleTagAdd}
-                      className="px-3 py-1 bg-blue-600 text-white rounded-md text-sm"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-
-                {/* Templates Section */}
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold mb-2">Templates</h3>
-                  <div className="flex gap-2">
-                    {templates.map((template, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleTemplateInsert(template.content)}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200"
-                      >
-                        {template.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Linked Trades Section */}
-                <div className="mt-4">
-                  <h3 className="text-sm font-semibold mb-2">Link to Trades</h3>
-                  <div className="border rounded-lg max-h-40 overflow-y-auto">
-                    {trades.map((trade) => (
-                      <div
-                        key={trade.id}
-                        className={`flex items-center p-2 hover:bg-gray-50 cursor-pointer ${
-                          selectedTrades.includes(trade.id) ? 'bg-blue-50' : ''
-                        }`}
-                        onClick={() => handleTradeLink(trade.id)}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedTrades.includes(trade.id)}
-                          onChange={() => {}}
-                          className="mr-2"
-                        />
-                        <span className="text-sm">
-                          {trade.date} - {trade.symbol} - ${trade.pnl.toFixed(2)}
-                        </span>
+                      <Folder size={16} className="text-purple-400 mr-2" />
+                      <span className="text-purple-100 flex-1">{folder.name}</span>
+                    </div>
+                    {selectedFolder?.id === folder.id && (
+                      <div className="ml-6 space-y-1">
+                        {notes
+                          .filter(note => note.folder_id === folder.id)
+                          .map(note => (
+                            <div
+                              key={note.id}
+                              className={cn(
+                                "flex items-center group py-1 px-2 rounded-lg cursor-pointer",
+                                selectedNote?.id === note.id ? "bg-purple-800/20" : "hover:bg-purple-800/10"
+                              )}
+                              onClick={() => handleNoteSelect(note)}
+                            >
+                              <File size={14} className="text-purple-400 mr-2" />
+                              <div className="flex-1">
+                                <div className="text-purple-100">{note.title}</div>
+                                <div className="text-xs text-purple-400">
+                                  {formatDate(note.updated_at)}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        <button
+                          onClick={handleAddNote}
+                          className="flex items-center text-purple-400 hover:text-purple-300 py-1 px-2"
+                        >
+                          <Plus size={14} className="mr-1" />
+                          <span className="text-sm">Add Note</span>
+                        </button>
                       </div>
-                    ))}
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Note Content Panel */}
+            <div className="flex-1 bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+              {selectedNote ? (
+                <div className="h-full flex flex-col">
+                  <div className="flex justify-between items-center mb-4">
+                    <div>
+                      <h2 className="text-lg font-semibold text-purple-100">{selectedNote.title}</h2>
+                      <p className="text-sm text-purple-400">
+                        Last updated: {formatDate(selectedNote.updated_at)}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSaveNote}
+                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700"
+                      >
+                        <Save size={16} />
+                        Save
+                      </button>
+                      <button
+                        onClick={handleSaveTemplate}
+                        className="flex items-center gap-1 px-3 py-1 bg-[#2A1A4A] text-purple-100 rounded-md text-sm hover:bg-purple-800/20"
+                      >
+                        <BookTemplate size={16} />
+                        Template
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 relative">
+                    <ReactQuill
+                      value={draftContent}
+                      onChange={setDraftContent}
+                      modules={quillModules}
+                      formats={quillFormats}
+                      theme="snow"
+                      className="custom-quill"
+                      placeholder="Start writing your note..."
+                    />
+                  </div>
+
+                  {/* Tags Section */}
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold text-purple-100 mb-2">Tags</h3>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {selectedNote.tags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="bg-purple-800/20 text-purple-100 px-2 py-1 rounded-md text-xs cursor-pointer hover:bg-purple-800/30"
+                          onClick={() => handleTagRemove(tag)}
+                        >
+                          {tag} ×
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleTagAdd()}
+                        placeholder="Add a tag"
+                        className="bg-[#2A1A4A] text-purple-100 px-2 py-1 rounded-md focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      />
+                      <button
+                        onClick={handleTagAdd}
+                        className="px-3 py-1 bg-purple-600 text-white rounded-md text-sm hover:bg-purple-700"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Templates Section */}
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold text-purple-100 mb-2">Templates</h3>
+                    <div className="flex gap-2">
+                      {templates.map((template, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleTemplateInsert(template.content)}
+                          className="px-3 py-1 bg-[#2A1A4A] text-purple-100 rounded-md text-sm hover:bg-purple-800/20"
+                        >
+                          {template.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Linked Trades Section */}
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold text-purple-100 mb-2">Link to Trades</h3>
+                    <div className="border border-purple-800/30 rounded-lg max-h-40 overflow-y-auto">
+                      {trades.map((trade) => (
+                        <div
+                          key={trade.id}
+                          className={cn(
+                            "flex items-center p-2 cursor-pointer",
+                            selectedTrades.includes(trade.id) ? "bg-purple-800/20" : "hover:bg-purple-800/10"
+                          )}
+                          onClick={() => handleTradeLink(trade.id)}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedTrades.includes(trade.id)}
+                            onChange={() => {}}
+                            className="mr-2 bg-[#2A1A4A] border-purple-800/30 text-purple-600 rounded focus:ring-purple-500"
+                          />
+                          <span className="text-sm text-purple-100">
+                            {trade.date} - {trade.symbol} - ${trade.pnl.toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </>
-            ) : (
-              <p className="text-gray-500">Select a note to view or edit</p>
-            )}
+              ) : (
+                <div className="h-full flex items-center justify-center text-purple-400">
+                  Select a note to view or edit
+                </div>
+              )}
+            </div>
           </div>
         </div>
-
-        <CustomModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setIsModalOpen(false)}
-          title={
-            modalType === 'folder'
-              ? 'Add New Folder'
-              : modalType === 'note'
-              ? 'Add New Note'
-              : 'Save as Template'
-          }
-          onConfirm={handleModalConfirm}
-        />
       </div>
+
+      <CustomModal
+        isOpen={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+        title={
+          modalType === 'folder'
+            ? 'Add New Folder'
+            : modalType === 'note'
+            ? 'Add New Note'
+            : 'Save as Template'
+        }
+        onConfirm={handleModalConfirm}
+      />
     </div>
   );
 }

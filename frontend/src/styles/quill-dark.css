@@ -1,0 +1,131 @@
+/* Quill Dark Theme Styles */
+.custom-quill {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 450px);
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(168, 85, 247, 0.2) !important;
+  background-color: #2A1A4A;
+}
+
+.custom-quill .ql-toolbar {
+  background-color: #1E1435;
+  border: none !important;
+  border-bottom: 1px solid rgba(168, 85, 247, 0.2) !important;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.custom-quill .ql-container {
+  flex: 1;
+  border: none !important;
+  font-size: 16px;
+  font-family: inherit;
+  background-color: #2A1A4A;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.custom-quill .ql-editor {
+  height: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  color: rgb(243 232 255) !important;
+  background-color: #2A1A4A;
+}
+
+/* Placeholder style */
+.custom-quill .ql-editor.ql-blank::before {
+  color: rgba(216, 180, 254, 0.4) !important;
+  font-style: normal;
+  left: 1rem;
+  right: 1rem;
+}
+
+/* Toolbar button styles */
+.custom-quill .ql-toolbar button {
+  color: rgb(216 180 254) !important;
+}
+
+.custom-quill .ql-toolbar button:hover {
+  color: rgb(216 180 254) !important;
+}
+
+.custom-quill .ql-toolbar .ql-stroke {
+  stroke: rgb(216 180 254) !important;
+}
+
+.custom-quill .ql-toolbar .ql-fill {
+  fill: rgb(216 180 254) !important;
+}
+
+/* Dropdown styles */
+.custom-quill .ql-toolbar .ql-picker {
+  color: rgb(216 180 254) !important;
+}
+
+.custom-quill .ql-toolbar .ql-picker-options {
+  background-color: #1E1435 !important;
+  border: 1px solid rgba(168, 85, 247, 0.2) !important;
+}
+
+.custom-quill .ql-toolbar .ql-picker-item {
+  color: rgb(216 180 254) !important;
+}
+
+/* Text styles */
+.custom-quill .ql-editor p {
+  color: rgb(243 232 255) !important;
+}
+
+.custom-quill .ql-editor a {
+  color: rgb(192 132 252) !important;
+}
+
+.custom-quill .ql-editor code {
+  background-color: rgba(168, 85, 247, 0.1);
+  color: rgb(216 180 254) !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+/* Snow theme overrides */
+.ql-snow .ql-picker-options {
+  background-color: #1E1435 !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.ql-snow .ql-picker-options .ql-picker-item {
+  color: rgb(216 180 254) !important;
+}
+
+.ql-snow .ql-picker-options .ql-picker-item:hover {
+  color: white !important;
+  background-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-label {
+  color: rgb(216 180 254) !important;
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.ql-snow .ql-picker.ql-expanded .ql-picker-options {
+  border-color: rgba(168, 85, 247, 0.2) !important;
+}
+
+.ql-snow .ql-toolbar button.ql-active,
+.ql-snow .ql-toolbar .ql-picker-label.ql-active,
+.ql-snow .ql-toolbar .ql-picker-item.ql-selected {
+  color: rgb(192 132 252) !important;
+}
+
+.ql-snow .ql-toolbar button.ql-active .ql-stroke,
+.ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-stroke {
+  stroke: rgb(192 132 252) !important;
+}
+
+.ql-snow .ql-toolbar button.ql-active .ql-fill,
+.ql-snow .ql-toolbar .ql-picker-label.ql-active .ql-fill {
+  fill: rgb(192 132 252) !important;
+} 
