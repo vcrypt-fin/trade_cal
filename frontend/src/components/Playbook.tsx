@@ -17,20 +17,20 @@ function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }: Cus
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-        <h2 className="text-xl font-semibold mb-4">{title}</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 w-1/3">
+        <h2 className="text-xl font-semibold mb-4 text-purple-100">{title}</h2>
         {children}
         <div className="flex justify-end space-x-4 mt-4">
           <button
             onClick={onRequestClose}
-            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            className="px-4 py-2 bg-[#2A1A4A] text-purple-100 rounded-lg hover:bg-purple-800/20"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Confirm
           </button>
@@ -46,6 +46,7 @@ export function Playbook() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPlaybookName, setNewPlaybookName] = useState('');
   const [newPlaybookDescription, setNewPlaybookDescription] = useState('');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -107,11 +108,14 @@ export function Playbook() {
   // Add loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <Sidebar />
-        <div className="ml-64 p-8">
+      <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+        <Sidebar 
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed(!isCollapsed)}
+        />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'}`}>
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
           </div>
         </div>
       </div>
@@ -119,50 +123,53 @@ export function Playbook() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">Playbook</h1>
+          <h1 className="text-2xl font-semibold text-purple-100">Playbook</h1>
           <button
             onClick={handleCreatePlaybook}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
           >
-            <Plus size={20} className="inline-block mr-2" /> Create Playbook
+            <Plus size={20} /> Create Playbook
           </button>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {playbookSummaries.map((playbook) => (
             <div
               key={playbook.id}
-              className="bg-white p-6 rounded-lg shadow-md cursor-pointer hover:bg-gray-50"
+              className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 cursor-pointer hover:bg-[#2A1A4A] transition-colors duration-300"
               onClick={() => handlePlaybookClick(playbook.id)}
             >
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold">{playbook.name}</h2>
-                <MoreHorizontal size={20} className="text-gray-500" />
+                <h2 className="text-lg font-semibold text-purple-100">{playbook.name}</h2>
+                <MoreHorizontal size={20} className="text-purple-400" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="text-gray-400" size={16} />
+                  <TrendingUp className="text-purple-400" size={16} />
                   <div>
-                    <p className="text-sm text-gray-500">Net P&L</p>
+                    <p className="text-sm text-purple-400">Net P&L</p>
                     <p className={`font-semibold ${
-                      playbook.netPnl >= 0 ? 'text-green-600' : 'text-red-600'
+                      playbook.netPnl >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}>
                       {formatCurrency(playbook.netPnl)}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <BarChart2 className="text-gray-400" size={16} />
+                  <BarChart2 className="text-purple-400" size={16} />
                   <div>
-                    <p className="text-sm text-gray-500">Win Rate</p>
-                    <p className="font-semibold">{formatPercent(playbook.winRate)}</p>
+                    <p className="text-sm text-purple-400">Win Rate</p>
+                    <p className="font-semibold text-purple-100">{formatPercent(playbook.winRate)}</p>
                   </div>
                 </div>
               </div>
-              <div className="mt-4 text-sm text-gray-500">
+              <div className="mt-4 text-sm text-purple-400">
                 {playbook.trades} trade{playbook.trades !== 1 ? 's' : ''}
               </div>
             </div>
@@ -178,23 +185,23 @@ export function Playbook() {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-purple-200 mb-1">
               Playbook Name
             </label>
             <input
               type="text"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Enter playbook name"
               value={newPlaybookName}
               onChange={(e) => setNewPlaybookName(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-purple-200 mb-1">
               Description (optional)
             </label>
             <textarea
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Enter playbook description"
               value={newPlaybookDescription}
               onChange={(e) => setNewPlaybookDescription(e.target.value)}

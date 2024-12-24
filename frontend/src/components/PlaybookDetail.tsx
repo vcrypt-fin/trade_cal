@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTrades, Trade } from '../context/TradeContext';
 import Sidebar from './Sidebar';
@@ -100,6 +100,7 @@ const formatPercent = (value: number) =>
 export default function PlaybookDetail() {
   const { id } = useParams();
   const { trades, getPlaybookById } = useTrades();
+  const [isCollapsed, setIsCollapsed] = useState(false);
   
   const playbook = getPlaybookById(id || '');
   const playbookTrades = trades.filter(trade => trade.strategy === id);
@@ -107,87 +108,100 @@ export default function PlaybookDetail() {
   const chartData = prepareChartData(playbookTrades);
 
   if (!playbook) {
-    return <div>Playbook not found</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+        <Sidebar 
+          isCollapsed={isCollapsed}
+          onToggle={() => setIsCollapsed(!isCollapsed)}
+        />
+        <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
+          <div className="text-purple-100">Playbook not found</div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="flex items-center space-x-2 mb-6">
-          <Link to="/playbook" className="text-blue-600 hover:underline">
+          <Link to="/playbook" className="text-purple-400 hover:text-purple-300">
             Playbook
           </Link>
-          <span>/</span>
-          <span className="text-gray-500">{playbook.name}</span>
+          <span className="text-purple-600">/</span>
+          <span className="text-purple-400">{playbook.name}</span>
         </div>
 
-        <h1 className="text-2xl font-semibold mb-6">{playbook.name} - Overview</h1>
+        <h1 className="text-2xl font-semibold mb-6 text-purple-100">{playbook.name} - Overview</h1>
 
         <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Net P&L</h3>
-            <p className={`text-2xl font-bold ${stats.netPnl >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Net P&L</h3>
+            <p className={`text-2xl font-bold ${stats.netPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
               {formatCurrency(stats.netPnl)}
             </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Total Trades</h3>
-            <p className="text-2xl font-bold">{stats.trades}</p>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Total Trades</h3>
+            <p className="text-2xl font-bold text-purple-100">{stats.trades}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Win Rate</h3>
-            <p className="text-2xl font-bold">{formatPercent(stats.winRate)}</p>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Win Rate</h3>
+            <p className="text-2xl font-bold text-purple-100">{formatPercent(stats.winRate)}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Profit Factor</h3>
-            <p className="text-2xl font-bold">{stats.profitFactor.toFixed(2)}</p>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Profit Factor</h3>
+            <p className="text-2xl font-bold text-purple-100">{stats.profitFactor.toFixed(2)}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Average Winner</h3>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(stats.averageWinner)}</p>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Average Winner</h3>
+            <p className="text-2xl font-bold text-green-400">{formatCurrency(stats.averageWinner)}</p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-sm text-gray-600 mb-1">Largest Profit</h3>
-            <p className="text-2xl font-bold text-green-600">{formatCurrency(stats.largestProfit)}</p>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h3 className="text-sm text-purple-400 mb-1">Largest Profit</h3>
+            <p className="text-2xl font-bold text-green-400">{formatCurrency(stats.largestProfit)}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Cumulative P&L</h2>
+          <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h2 className="text-lg font-semibold mb-4 text-purple-100">Cumulative P&L</h2>
             <div className="h-[400px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 60, bottom: 20 }}>
                   <defs>
                     <linearGradient id="colorPnl" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#4CAF50" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#4CAF50" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#A855F7" stopOpacity={0.2}/>
+                      <stop offset="95%" stopColor="#A855F7" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#2A3042" opacity={0.1} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#2A1A4A" opacity={0.3} />
                   <XAxis 
                     dataKey="date"
-                    stroke="#6B7280"
+                    stroke="#A855F7"
                     fontSize={12}
                     tickLine={false}
                   />
                   <YAxis
-                    stroke="#6B7280"
+                    stroke="#A855F7"
                     fontSize={12}
                     tickLine={false}
                     tickFormatter={(value) => formatCurrency(value)}
                   />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#1F2937', border: 'none', borderRadius: '8px' }}
-                    labelStyle={{ color: '#9CA3AF' }}
+                    contentStyle={{ backgroundColor: '#2A1A4A', border: 'none', borderRadius: '8px', color: '#E9D5FF' }}
+                    labelStyle={{ color: '#A855F7' }}
                     formatter={(value: number) => [formatCurrency(value), 'P&L']}
                     labelFormatter={(label) => `Date: ${label}`}
                   />
                   <Area
                     type="monotone"
                     dataKey="value"
-                    stroke="#4CAF50"
+                    stroke="#A855F7"
                     strokeWidth={2}
                     fill="url(#colorPnl)"
                   />
@@ -197,41 +211,41 @@ export default function PlaybookDetail() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-lg font-semibold mb-4">Recent Trades</h2>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h2 className="text-lg font-semibold mb-4 text-purple-100">Recent Trades</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
                 <tr>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-xs font-medium text-purple-400 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-xs font-medium text-purple-400 uppercase tracking-wider">
                     Time
                   </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-xs font-medium text-purple-400 uppercase tracking-wider">
                     P&L
                   </th>
-                  <th className="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-xs font-medium text-purple-400 uppercase tracking-wider">
                     Notes
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {playbookTrades.map((trade) => (
-                  <tr key={trade.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <tr key={trade.id} className="hover:bg-purple-800/10">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-purple-200">
                       {trade.date}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-purple-200">
                       {trade.time}
                     </td>
                     <td className={`px-6 py-4 whitespace-nowrap text-sm font-medium ${
-                      trade.pnl >= 0 ? 'text-green-600' : 'text-red-600'
+                      trade.pnl >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}>
                       {formatCurrency(trade.pnl)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-purple-200">
                       {trade.notes}
                     </td>
                   </tr>
