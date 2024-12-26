@@ -1,6 +1,6 @@
 import React from 'react';
 import { Info, GripVertical, X } from 'lucide-react';
-import { Widget, WidgetData } from '../types/widget';
+import { Widget, WidgetData } from '../../types/widget';
 
 interface StatWidgetProps {
   widget: Widget;

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTrades } from '../../../context/TradeContext';
+import StatWidget from '../../../components/widgets/StatWidget';
 import {
   XAxis,
   YAxis,
@@ -430,6 +431,14 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
       {renderContent()}
     </div>
   );
+};
+
+export const calculateAverageActualRR = (trades: any[]) => {
+  const tradesWithRR = trades.filter(trade => trade.actual_rr);
+  if (!tradesWithRR.length) return 0;
+  
+  const avgActual = tradesWithRR.reduce((sum, trade) => sum + (trade.actual_rr || 0), 0) / tradesWithRR.length;
+  return avgActual;
 };
 
 export default RiskSection;

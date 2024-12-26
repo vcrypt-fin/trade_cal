@@ -3,8 +3,8 @@ import { Plus } from 'lucide-react';
 import { useTrades } from '../context/TradeContext';
 import { Trade } from '../types/trade';
 import { Widget, StatWidgetType, WidgetData } from '../types/widget';
-import StatWidget from './StatWidget';
-import AddWidgetModal, { AVAILABLE_WIDGETS } from './AddWidgetModal';
+import StatWidget from './widgets/StatWidget';
+import AddWidgetModal, { AVAILABLE_WIDGETS } from './widgets/AddWidgetModal';
 import useWidgets from '../hooks/useWidgets';
 
 const Stats: React.FC = () => {
@@ -161,6 +161,17 @@ const Stats: React.FC = () => {
           : 0;
         return {
           value: avgLoss === 0 ? avgWin : +(avgWin / avgLoss).toFixed(2),
+          info: widgetConfig.description,
+          type: 'number'
+        };
+      }
+      case 'average_rr': {
+        const tradesWithRR = filteredTrades.filter(trade => trade.actual_rr);
+        const avgRR = tradesWithRR.length > 0
+          ? tradesWithRR.reduce((sum, trade) => sum + (trade.actual_rr || 0), 0) / tradesWithRR.length
+          : 0;
+        return {
+          value: `1:${avgRR.toFixed(2)}`,
           info: widgetConfig.description,
           type: 'number'
         };

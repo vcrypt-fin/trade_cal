@@ -2,11 +2,27 @@ export type WidgetType = 'price' | 'volume' | 'change' | 'market-cap' | 'pe-rati
 
 export type LargeWidgetType = 'news' | 'economic-calendar';
 
+export type StatWidgetType = 
+  | 'net_pnl' 
+  | 'win_rate' 
+  | 'profit_factor' 
+  | 'current_streak'
+  | 'gross_profit'
+  | 'gross_loss'
+  | 'total_trades'
+  | 'average_win'
+  | 'average_loss'
+  | 'largest_win'
+  | 'largest_loss'
+  | 'win_loss_ratio'
+  | 'average_rr';
+
 export interface Widget {
   id: string;
-  type: WidgetType;
+  type: StatWidgetType;
   title: string;
-  symbol: string;
+  position: number;
+  visible: boolean;
 }
 
 export interface WidgetData {

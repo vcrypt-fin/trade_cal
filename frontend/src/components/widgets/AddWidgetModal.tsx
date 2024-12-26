@@ -1,6 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { StatWidgetType } from '../types/widget';
+import { StatWidgetType } from '../../types/widget';
+import './AddWidgetModal.css';
 
 interface AddWidgetModalProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export const AVAILABLE_WIDGETS: WidgetOption[] = [
   { type: 'largest_win', title: 'Largest Win', description: 'Largest winning trade' },
   { type: 'largest_loss', title: 'Largest Loss', description: 'Largest losing trade' },
   { type: 'win_loss_ratio', title: 'Win/Loss Ratio', description: 'Ratio of average win to average loss' },
+  { type: 'average_rr', title: 'Average R:R', description: 'Average actual risk-to-reward ratio across all trades' },
 ];
 
 const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
@@ -48,7 +50,7 @@ const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
             <X size={20} className="text-gray-400" />
           </button>
         </div>
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
+        <div className="p-4 max-h-[60vh] overflow-y-auto widget-scroll">
           <div className="grid grid-cols-2 gap-4">
             {AVAILABLE_WIDGETS.map(widget => (
               <button

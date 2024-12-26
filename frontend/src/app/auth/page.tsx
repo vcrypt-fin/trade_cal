@@ -133,8 +133,7 @@ export default function AuthPage() {
         }
 
         if (data?.session) {
-          localStorage.setItem('authToken', data.session.access_token);
-          
+          // Remove manual token storage
           // Check subscription status
           const hasSubscription = await checkSubscription(data.session.user.id);
           
