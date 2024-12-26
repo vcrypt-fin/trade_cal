@@ -242,11 +242,15 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   const renderTradeTime = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Trading Time Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Trading Time Analysis</h3>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <DistributionChart data={timeStats} title="Trade Distribution by Hour" />
-        <PerformanceChart data={timeStats} title="Performance by Hour" />
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <DistributionChart data={timeStats} title="Trade Distribution by Hour" />
+        </div>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <PerformanceChart data={timeStats} title="Performance by Hour" />
+        </div>
       </div>
       <StatsTable data={timeStats} />
     </div>
@@ -255,11 +259,15 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   const renderDays = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Trading Days Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Trading Days Analysis</h3>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <DistributionChart data={dayStats} title="Trade Distribution by Day of Week" />
-        <PerformanceChart data={dayStats} title="Performance by Day of Week" />
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <DistributionChart data={dayStats} title="Trade Distribution by Day of Week" />
+        </div>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <PerformanceChart data={dayStats} title="Performance by Day of Week" />
+        </div>
       </div>
       <StatsTable data={dayStats} />
     </div>
@@ -268,18 +276,21 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   const renderWeek = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Weekly Trading Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Weekly Trading Analysis</h3>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <DistributionChart 
-          data={weekStats} 
-          title="Trade Distribution by Week"
-        />
-        <PerformanceChart 
-          data={weekStats} 
-          title="Performance by Week"
-          
-        />
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <DistributionChart 
+            data={weekStats} 
+            title="Trade Distribution by Week"
+          />
+        </div>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <PerformanceChart 
+            data={weekStats} 
+            title="Performance by Week"
+          />
+        </div>
       </div>
       <StatsTable data={weekStats} />
     </div>
@@ -288,17 +299,21 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   const renderMonth = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Monthly Trading Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Monthly Trading Analysis</h3>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <DistributionChart 
-          data={monthStats} 
-          title="Trade Distribution by Month"
-        />
-        <PerformanceChart 
-          data={monthStats} 
-          title="Performance by Month"
-        />
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <DistributionChart 
+            data={monthStats} 
+            title="Trade Distribution by Month"
+          />
+        </div>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <PerformanceChart 
+            data={monthStats} 
+            title="Performance by Month"
+          />
+        </div>
       </div>
       <StatsTable data={monthStats} />
     </div>
@@ -307,17 +322,21 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   const renderDuration = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Trade Duration Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Trade Duration Analysis</h3>
       </div>
       <div className="grid grid-cols-2 gap-6">
-        <DistributionChart 
-          data={durationStats} 
-          title="Trade Distribution by Duration"
-        />
-        <PerformanceChart 
-          data={durationStats} 
-          title="Performance by Duration"
-        />
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <DistributionChart 
+            data={durationStats} 
+            title="Trade Distribution by Duration"
+          />
+        </div>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <PerformanceChart 
+            data={durationStats} 
+            title="Performance by Duration"
+          />
+        </div>
       </div>
       <StatsTable data={durationStats} />
     </div>
@@ -342,7 +361,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
   };
 
   return (
-    <div className="p-6 bg-gray-50">
+    <div className="p-6">
       {renderContent()}
     </div>
   );

@@ -42,24 +42,36 @@ const PerformanceChart: React.FC<PerformanceChartProps> = ({ data, title, onBarC
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm cursor-pointer">
-      <h4 className="text-sm font-semibold mb-4">{title}</h4>
+    <div>
+      <h4 className="text-sm font-semibold mb-4 text-purple-100">{title}</h4>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             layout="vertical"
-            onClick={handleBarClick} // Attach click handler to the chart
+            onClick={handleBarClick}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" tickFormatter={(value) => formatCurrency(value)} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2A1A4A" />
+            <XAxis 
+              type="number" 
+              tickFormatter={(value) => formatCurrency(value)} 
+              stroke="#A78BFA"
+            />
             <YAxis 
               dataKey="label" 
               type="category" 
               width={50}  
-              style={{ fontSize: '11px' }}  
+              style={{ fontSize: '11px' }}
+              stroke="#A78BFA"
             />
-            <Tooltip formatter={(value: number) => formatCurrency(value)} />
+            <Tooltip 
+              formatter={(value: number) => formatCurrency(value)} 
+              contentStyle={{ 
+                backgroundColor: '#120322', 
+                border: '1px solid #2A1A4A',
+                color: '#E9D5FF'
+              }}
+            />
             <Bar dataKey="pnl">
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={getBarColor(entry.pnl)} />

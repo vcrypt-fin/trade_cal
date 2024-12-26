@@ -21,11 +21,13 @@ import { format, parseISO } from 'date-fns';
 import TagsSection from './sections/TagsSection';
 import SetupsSection from './sections/SetupsSection';
 import WinsVsLossesSection from './sections/WinsVsLossesSection';
+import DateTimeOverview from './sections/DateTimeOverview';
 import { Trade, MonthlyTrades, MonthlyPnL, DailyPnLData, CumulativePnLData } from '../../types/trade';
 
 const Reports: React.FC = () => {
   const { trades } = useTrades();
   const [selectedView, setSelectedView] = useState('overview');
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const stats = useMemo(() => {
     if (!trades.length) {
@@ -149,116 +151,109 @@ const Reports: React.FC = () => {
   const renderOverview = () => (
     <div>
       <div className="grid grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Best Month</h3>
-          <p className={`text-2xl font-semibold ${stats.bestMonth.value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Best Month</h3>
+          <p className={`text-2xl font-semibold ${stats.bestMonth.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {formatCurrency(stats.bestMonth.value)}
           </p>
-          <p className="text-sm text-gray-500">{stats.bestMonth.date}</p>
+          <p className="text-sm text-purple-300">{stats.bestMonth.date}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Lowest Month</h3>
-          <p className={`text-2xl font-semibold ${stats.lowestMonth.value >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Lowest Month</h3>
+          <p className={`text-2xl font-semibold ${stats.lowestMonth.value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {formatCurrency(stats.lowestMonth.value)}
           </p>
-          <p className="text-sm text-gray-500">{stats.lowestMonth.date}</p>
+          <p className="text-sm text-purple-300">{stats.lowestMonth.date}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Average Monthly P&L</h3>
-          <p className={`text-2xl font-semibold ${stats.averageMonthly >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Average Monthly P&L</h3>
+          <p className={`text-2xl font-semibold ${stats.averageMonthly >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {formatCurrency(stats.averageMonthly)}
           </p>
         </div>
       </div>
 
-     <div className="grid grid-cols-2 gap-6 mb-8">
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Daily Net Cumulative P&L</h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={stats.charts.cumulativePnLData}>
-              <defs>
-                <linearGradient id="colorPnl" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#4CAF50" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#4CAF50" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-              <XAxis dataKey="date" stroke="#6B7280" />
-              <YAxis stroke="#6B7280" />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #E0E0E0', color: '#333' }}
-                formatter={(value: number) => [formatCurrency(value), 'P&L']}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#4CAF50"
-                fill="url(#colorPnl)"
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+      <div className="grid grid-cols-2 gap-6 mb-8">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-purple-100 mb-4">Daily Net Cumulative P&L</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.charts.cumulativePnLData}>
+                <defs>
+                  <linearGradient id="colorPnl" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#4CAF50" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#4CAF50" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2A1A4A" />
+                <XAxis dataKey="date" stroke="#A78BFA" />
+                <YAxis stroke="#A78BFA" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#120322', border: '1px solid #2A1A4A', color: '#E9D5FF' }}
+                  formatter={(value: number) => [formatCurrency(value), 'P&L']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#4CAF50"
+                  fill="url(#colorPnl)"
+                  strokeWidth={2}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-lg font-semibold text-purple-100 mb-4">Net Daily P&L</h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.charts.dailyPnLData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#2A1A4A" />
+                <XAxis dataKey="date" stroke="#A78BFA" />
+                <YAxis stroke="#A78BFA" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#120322', border: '1px solid #2A1A4A', color: '#E9D5FF' }}
+                  formatter={(value: number) => [formatCurrency(value), 'P&L']}
+                />
+                <Bar dataKey="pnl" fill="#4CAF50">
+                  {stats.charts.dailyPnLData.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={entry.pnl >= 0 ? '#4CAF50' : '#EF4444'}
+                      stroke={entry.pnl >= 0 ? '#2E7D32' : '#DC2626'}
+                      strokeWidth={1}
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
-    
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Net Daily P&L</h3>
-        <div className="h-64">
-         <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={stats.charts.dailyPnLData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-              <XAxis dataKey="date" stroke="#6B7280" />
-              <YAxis stroke="#6B7280" />
-              <Tooltip
-                contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #E0E0E0', color: '#333' }}
-                formatter={(value: number) => [formatCurrency(value), 'P&L']}
-              />
-              <Bar 
-                dataKey="pnl"
-                fill="#4CAF50"
-              >
-                {stats.charts.dailyPnLData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`}
-                    fill={entry.pnl >= 0 ? '#4CAF50' : '#EF4444'}
-                    stroke={entry.pnl >= 0 ? '#2E7D32' : '#DC2626'}
-                    strokeWidth={1}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-
-          </ResponsiveContainer>
-
-
-        </div>
-      </div>
-    </div>
-
 
       <div className="grid grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Total P&L</h3>
-          <p className={`text-2xl font-semibold ${stats.totalPnL >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Total P&L</h3>
+          <p className={`text-2xl font-semibold ${stats.totalPnL >= 0 ? 'text-green-400' : 'text-red-400'}`}>
             {formatCurrency(stats.totalPnL)}
           </p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Win Rate</h3>
-          <p className="text-2xl font-semibold">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Win Rate</h3>
+          <p className="text-2xl font-semibold text-purple-100">
             {((stats.winningTrades / stats.totalTrades) * 100).toFixed(1)}%
           </p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Average Winner</h3>
-          <p className="text-2xl font-semibold text-green-600">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Average Winner</h3>
+          <p className="text-2xl font-semibold text-green-400">
             {formatCurrency(stats.avgWinningTrade)}
           </p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h3 className="text-sm text-gray-600 mb-2">Average Loser</h3>
-          <p className="text-2xl font-semibold text-red-600">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <h3 className="text-sm text-purple-200 mb-2">Average Loser</h3>
+          <p className="text-2xl font-semibold text-red-400">
             {formatCurrency(stats.avgLosingTrade)}
           </p>
         </div>
@@ -270,6 +265,8 @@ const Reports: React.FC = () => {
     switch (selectedView) {
       case 'overview':
         return renderOverview();
+      case 'dateTimeOverview':
+        return <DateTimeOverview />;
       case 'days':
       case 'weeks':
       case 'months':
@@ -295,12 +292,15 @@ const Reports: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <Sidebar />
-      <div className="flex flex-1 ml-64">
+    <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118] flex">
+      <Sidebar 
+        isCollapsed={isCollapsed}
+        onToggle={() => setIsCollapsed(!isCollapsed)}
+      />
+      <div className={`flex flex-1 ${isCollapsed ? 'ml-[80px]' : 'ml-64'}`}>
         <ReportsSidebar selectedView={selectedView} onViewChange={setSelectedView} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-semibold mb-6">Reports</h1>
+          <h1 className="text-2xl font-semibold mb-6 text-purple-100">Reports</h1>
           {renderSection()}
         </div>
       </div>

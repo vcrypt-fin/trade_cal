@@ -240,7 +240,9 @@ const Trades: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  filteredTrades.map((trade) => (
+                  filteredTrades.map((trade) => {
+                    const playbook = playbooks.find(p => p.id === trade.strategy);
+                    return (
                     <tr key={trade.id} className="hover:bg-purple-800/10">
                       <td className="px-6 py-4 border-b border-purple-800/30">
                         <input
@@ -252,15 +254,9 @@ const Trades: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.date}</td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.time}</td>
-                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm font-bold text-purple-100">
-                        {trade.symbol}
-                      </td>
-                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            trade.side === 'LONG' ? 'bg-green-400/10 text-green-400' : 'bg-red-400/10 text-red-400'
-                          }`}
-                        >
+                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.symbol}</td>
+                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
+                        <span className={`px-2 py-1 rounded ${trade.side === 'LONG' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                           {trade.side}
                         </span>
                       </td>
@@ -278,7 +274,9 @@ const Trades: React.FC = () => {
                       >
                         {formatCurrency(trade.pnl)}
                       </td>
-                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.strategy}</td>
+                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
+                        {playbook ? playbook.name : 'N/A'}
+                      </td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
                         {trade.notes || 'N/A'}
                       </td>
@@ -291,7 +289,8 @@ const Trades: React.FC = () => {
                         </button>
                       </td>
                     </tr>
-                  ))
+                    );
+                  })
                 )}
               </tbody>
             </table>

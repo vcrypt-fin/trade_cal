@@ -1,7 +1,14 @@
 {
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@internationalized/date": "^3.6.0",
+    "@nextui-org/date-picker": "^2.3.8",
+    "@react-aria/i18n": "^3.12.4",
+    "@types/react-datepicker": "^6.2.0",
     "clsx": "^2.1.1",
     "isomorphic-ws": "^5.0.0",
+    "lucide-react": "^0.469.0",
+    "react-datepicker": "^7.5.0",
     "shadcn-ui": "^0.9.4",
     "tailwind-merge": "^2.5.5"
   }

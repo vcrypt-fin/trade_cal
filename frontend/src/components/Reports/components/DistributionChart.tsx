@@ -22,7 +22,7 @@ interface DistributionChartProps {
 }
 
 const DistributionChart: React.FC<DistributionChartProps> = ({ data, title, onBarClick }) => {
-  const colors = ['#4F46E5', '#6366F1', '#818CF8', '#A5B4FC', '#C7D2FE', '#E0E7FF', '#EEF2FF'];
+  const colors = ['#4CAF50']; // Single green color for all bars
 
   const handleBarClick = (data: any) => {
     if (onBarClick) {
@@ -31,24 +31,31 @@ const DistributionChart: React.FC<DistributionChartProps> = ({ data, title, onBa
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm cursor-pointer">
-      <h4 className="text-sm font-semibold mb-4">{title}</h4>
+    <div>
+      <h4 className="text-sm font-semibold mb-4 text-purple-100">{title}</h4>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
             layout="vertical"
-            onClick={handleBarClick} // Attach click handler to the chart
+            onClick={handleBarClick}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2A1A4A" />
+            <XAxis type="number" stroke="#A78BFA" />
             <YAxis 
               dataKey="label" 
               type="category" 
               width={50}  
-              style={{ fontSize: '11px' }}  
+              style={{ fontSize: '11px' }}
+              stroke="#A78BFA"
             />
-            <Tooltip />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#120322', 
+                border: '1px solid #2A1A4A',
+                color: '#E9D5FF'
+              }} 
+            />
             <Bar dataKey="trades">
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />

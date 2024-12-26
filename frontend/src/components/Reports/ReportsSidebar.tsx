@@ -23,6 +23,7 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
       id: 'dateTime',
       label: 'Date & Time',
       icon: Clock,
+      link: 'dateTimeOverview',
       subItems: [
         { id: 'days', label: 'Days' },
         { id: 'weeks', label: 'Weeks' },
@@ -31,26 +32,26 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
         { id: 'tradeDuration', label: 'Trade duration' },
       ]
     },
-    {
-      id: 'priceQuantity',
-      label: 'Price & Quantity',
-      icon: TrendingUp,
-      subItems: [
-        { id: 'price', label: 'Price' },
-        { id: 'volume', label: 'Volume' },
-        { id: 'instrument', label: 'Instrument' },
-      ]
-    },
-    {
-      id: 'risk',
-      label: 'Risk',
-      icon: AlertTriangle,
-      subItems: [
-        { id: 'rMultiple', label: 'R-Multiple' },
-        { id: 'positionSize', label: 'Position Size' },
-      ]
-    },
-    { id: 'tags', label: 'Tags', icon: Tag },
+    // {
+    //   id: 'priceQuantity',
+    //   label: 'Price & Quantity',
+    //   icon: TrendingUp,
+    //   subItems: [
+    //     { id: 'price', label: 'Price' },
+    //     { id: 'volume', label: 'Volume' },
+    //     { id: 'instrument', label: 'Instrument' },
+    //   ]
+    // },
+    // {
+    //   id: 'risk',
+    //   label: 'Risk',
+    //   icon: AlertTriangle,
+    //   subItems: [
+    //     { id: 'rMultiple', label: 'R-Multiple' },
+    //     { id: 'positionSize', label: 'Position Size' },
+    //   ]
+    // },
+    // { id: 'tags', label: 'Tags', icon: Tag },
     { id: 'setups', label: 'Setups', icon: Settings },
     { id: 'mistakes', label: 'Mistakes', icon: AlertTriangle },
     { id: 'other', label: 'Other', icon: MoreHorizontal },
@@ -60,14 +61,16 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
   ];
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 p-4">
+    <div className="w-64 bg-[#120322] border-r border-purple-800/30 p-4">
       {menuItems.map((item) => (
         <div key={item.id}>
           <button
             className={`w-full text-left px-4 py-2 rounded-lg flex items-center gap-2 ${
-              selectedView === item.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+              (selectedView === item.id || selectedView === item.link)
+                ? 'bg-[#2A1A4A] text-purple-300' 
+                : 'text-purple-200 hover:bg-[#2A1A4A]/50'
             }`}
-            onClick={() => onViewChange(item.id)}
+            onClick={() => onViewChange(item.link || item.id)}
           >
             <item.icon size={18} />
             <span>{item.label}</span>
@@ -78,7 +81,9 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
                 <button
                   key={subItem.id}
                   className={`w-full text-left px-4 py-2 rounded-lg text-sm ${
-                    selectedView === subItem.id ? 'bg-blue-50 text-blue-600' : 'hover:bg-gray-50'
+                    selectedView === subItem.id 
+                      ? 'bg-[#2A1A4A] text-purple-300' 
+                      : 'text-purple-200 hover:bg-[#2A1A4A]/50'
                   }`}
                   onClick={() => onViewChange(subItem.id)}
                 >
