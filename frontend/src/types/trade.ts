@@ -9,6 +9,10 @@ export interface Trade {
   tags?: string[];
   entryPrice: number;
   exitPrice: number;
+  original_sl?: number;
+  takeProfit?: number;
+  forecasted_rr?: number;
+  actual_rr?: number;
   quantity: number;
   pnl: number;
   strategy?: string;

@@ -42,15 +42,15 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
     //     { id: 'instrument', label: 'Instrument' },
     //   ]
     // },
-    // {
-    //   id: 'risk',
-    //   label: 'Risk',
-    //   icon: AlertTriangle,
-    //   subItems: [
-    //     { id: 'rMultiple', label: 'R-Multiple' },
-    //     { id: 'positionSize', label: 'Position Size' },
-    //   ]
-    // },
+    {
+      id: 'risk',
+      label: 'Risk',
+      icon: AlertTriangle,
+      subItems: [
+        { id: 'forecastedRR', label: 'Forecasted RR' },
+        { id: 'actualRR', label: 'Actual RR' },
+      ]
+    },
     // { id: 'tags', label: 'Tags', icon: Tag },
     { id: 'setups', label: 'Setups', icon: Settings },
     { id: 'mistakes', label: 'Mistakes', icon: AlertTriangle },

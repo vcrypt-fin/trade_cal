@@ -56,11 +56,13 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     contractType: '',
     side: '',
     entryPrice: '',
+    original_sl: '',  // Added original stop loss
+    takeProfit: '',   // Added take profit
     quantity: '',
     strategy: '',
     notes: '',
     brokerage: '',
-    timestamp: new Date().toISOString(), // Added timestamp field
+    timestamp: new Date().toISOString(),
   });
 
   // Initialize executions with one Entry execution
@@ -153,39 +155,40 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     setExecutions(prevExes => prevExes.filter(exe => exe.id !== id));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const calculateRR = (entry: number, sl: number, tp: number, side: 'LONG' | 'SHORT'): number => {
+    const risk = Math.abs(entry - sl);
+    const reward = Math.abs(tp - entry);
+    return risk !== 0 ? reward / risk : 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    //console.log('🚀 Form submission started');
-  
-    // Parse and format the time
-    const timeValue = formData.time;
-    console.log('Original time value:', timeValue);
     
-    let timeWithSeconds;
-    if (timeValue.includes('PM') || timeValue.includes('AM')) {
-      // Parse the 12-hour format time
-      const [time, period] = timeValue.split(' ');
-      const [hours, minutes] = time.split(':');
-      let hour24 = parseInt(hours, 10);
-      
-      // Convert to 24-hour format
-      if (period === 'PM' && hour24 !== 12) {
-        hour24 += 12;
-      } else if (period === 'AM' && hour24 === 12) {
-        hour24 = 0;
-      }
-      
-      // Format with leading zeros and append seconds
-      timeWithSeconds = `${hour24.toString().padStart(2, '0')}:${minutes}:00`;
-    } else {
-      // If it's already in 24-hour format, just append seconds
-      const [hours, minutes] = timeValue.split(':');
-      timeWithSeconds = `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}:00`;
-    }
-  
-    console.log('⏰ Formatted time:', timeWithSeconds);
-  
+    // Add seconds to time if not present
+    const timeWithSeconds = formData.time.split(':').length === 2 
+      ? `${formData.time}:00` 
+      : formData.time;
+
     try {
+      const entryPrice = parseFloat(formData.entryPrice);
+      const original_sl = formData.original_sl ? parseFloat(formData.original_sl) : undefined;
+      const takeProfit = formData.takeProfit ? parseFloat(formData.takeProfit) : undefined;
+      const exitPrice = executions.find(exe => exe.type === 'EXIT')?.price ? 
+        parseFloat(executions.find(exe => exe.type === 'EXIT')!.price) : 
+        undefined;
+
+      // Calculate forecasted and actual RR
+      let forecasted_rr = undefined;
+      let actual_rr = undefined;
+
+      if (original_sl && takeProfit) {
+        forecasted_rr = calculateRR(entryPrice, original_sl, takeProfit, formData.side as 'LONG' | 'SHORT');
+      }
+
+      if (original_sl && exitPrice) {
+        actual_rr = calculateRR(entryPrice, original_sl, exitPrice, formData.side as 'LONG' | 'SHORT');
+      }
+
       const tradeData = {
         id: crypto.randomUUID(),
         date: formData.date,
@@ -196,11 +199,13 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
         notes: formData.notes,
         symbol: `${formData.contractType}`,
         side: formData.side as 'LONG' | 'SHORT',
-        entryPrice: parseFloat(formData.entryPrice),
-        exitPrice: executions.find(exe => exe.type === 'EXIT')?.price ? 
-          parseFloat(executions.find(exe => exe.type === 'EXIT')!.price) : 
-          0,
-        quantity: parseFloat(formData.quantity),
+        entryPrice: entryPrice,
+        exitPrice: exitPrice || 0,
+        original_sl: original_sl,
+        takeProfit: takeProfit,
+        forecasted_rr: forecasted_rr,
+        actual_rr: actual_rr,
+        quantity: parseFloat(formData.quantity) || 0,
         contractMultiplier: contractSpecs[formData.contractType]?.multiplier || 1,
         brokerage: formData.brokerage || '',
       };
@@ -215,7 +220,6 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
         })
         .catch((error) => {
           console.error('❌ Error adding trade:', error);
-          // Optionally show an error message to the user
           alert('Failed to add trade. Please ensure all fields are correct.');
         });
 
@@ -365,6 +369,58 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
                   <option key={brokerage.id} value={brokerage.id}>{brokerage.name}</option>
                 ))}
               </select>
+            </div>
+
+            <div className="grid grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-purple-200 mb-1">Entry Price</label>
+                <input
+                  type="number"
+                  name="entryPrice"
+                  value={formData.entryPrice}
+                  onChange={handleChange}
+                  step="0.01"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-200 mb-1">Original Stop Loss</label>
+                <input
+                  type="number"
+                  name="original_sl"
+                  value={formData.original_sl}
+                  onChange={handleChange}
+                  step="0.01"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-purple-200 mb-1">Take Profit</label>
+                <input
+                  type="number"
+                  name="takeProfit"
+                  value={formData.takeProfit}
+                  onChange={handleChange}
+                  step="0.01"
+                  className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-purple-200 mb-1">Quantity</label>
+              <input
+                type="number"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                min="1"
+                className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                required
+              />
             </div>
 
             <div>

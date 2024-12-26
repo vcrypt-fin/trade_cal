@@ -222,6 +222,12 @@ const Trades: React.FC = () => {
                     P&L
                   </th>
                   <th className="px-6 py-3 border-b border-purple-800/30 text-left text-sm font-semibold text-purple-400">
+                    Forecasted RR
+                  </th>
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-sm font-semibold text-purple-400">
+                    Actual RR
+                  </th>
+                  <th className="px-6 py-3 border-b border-purple-800/30 text-left text-sm font-semibold text-purple-400">
                     Strategy
                   </th>
                   <th className="px-6 py-3 border-b border-purple-800/30 text-left text-sm font-semibold text-purple-400">
@@ -273,6 +279,12 @@ const Trades: React.FC = () => {
                         }`}
                       >
                         {formatCurrency(trade.pnl)}
+                      </td>
+                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
+                        {trade.forecasted_rr ? trade.forecasted_rr.toFixed(2) : 'N/A'}
+                      </td>
+                      <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
+                        {trade.actual_rr ? trade.actual_rr.toFixed(2) : 'N/A'}
                       </td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">
                         {playbook ? playbook.name : 'N/A'}

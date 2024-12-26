@@ -286,6 +286,10 @@ const Reports: React.FC = () => {
         return <SetupsSection />;
       case 'winsVsLosses':
         return <WinsVsLossesSection />;
+      case 'forecastedRR':
+      case 'actualRR':
+      case 'risk':
+        return <RiskSection view={selectedView} />;
       default:
         return <div>Section under development</div>;
     }
