@@ -1,60 +1,49 @@
 // src/components/Header.tsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Filter } from 'lucide-react';
 import FilterBar from './Dashboard/FilterBar';
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@nextui-org/react";
+import { useTrades } from '../context/TradeContext';
 
-interface HeaderProps {
-  dateRange: {
-    startDate: string;
-    endDate: string;
-  };
-  selectedSymbols: string[];
-  selectedStrategies: string[];
-  onDateRangeChange: (startDate: string, endDate: string) => void;
-  onSymbolChange: (symbols: string[]) => void;
-  onStrategyChange: (strategies: string[]) => void;
-}
+const Header: React.FC = () => {
+  const { filters } = useTrades();
+  const [showFilters, setShowFilters] = useState(false);
 
-export default function Header({
-  dateRange,
-  selectedSymbols,
-  selectedStrategies,
-  onDateRangeChange,
-  onSymbolChange,
-  onStrategyChange,
-}: HeaderProps) {
+  // Local state for filters
+  const [selectedSymbols, setSelectedSymbols] = useState<string[]>(filters.symbols);
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>(filters.strategies);
+  const [dateRange, setDateRange] = useState<[string, string]>([filters.startDate, filters.endDate]);
+
   return (
-    <div className="flex justify-between items-center mb-6">
+    <header className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-semibold text-purple-100">Dashboard</h1>
 
       <div className="flex items-center gap-4">
-        <Popover placement="bottom-end">
-          <PopoverTrigger>
-            <Button
-              className="bg-[#120322] text-purple-200 border border-purple-800/30 hover:bg-purple-900/20"
-              endContent={<Filter size={18} className="text-purple-400" />}
-            >
-              Filters
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="p-0 border-0 bg-transparent shadow-none">
-            <FilterBar 
-              dateRange={[dateRange.startDate, dateRange.endDate]}
-              onDateRangeChange={(range) => {
-                if (range[0] && range[1]) {
-                  onDateRangeChange(range[0], range[1]);
-                }
-              }}
-              selectedSymbols={selectedSymbols}
-              onSymbolChange={onSymbolChange}
-              selectedTypes={selectedStrategies}
-              onTypeChange={onStrategyChange}
-            />
-          </PopoverContent>
-        </Popover>
+        <div className="relative z-50">
+          <button 
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
+          >
+            <Filter size={18} />
+            <span>Filters</span>
+          </button>
+          {showFilters && (
+            <div className="absolute top-full right-0 mt-2 bg-[#120322] shadow-xl">
+              <FilterBar
+                dateRange={dateRange}
+                onDateRangeChange={(range) => setDateRange(range)}
+                selectedSymbols={selectedSymbols}
+                onSymbolChange={setSelectedSymbols}
+                selectedTypes={selectedStrategies}
+                onTypeChange={setSelectedStrategies}
+                onClose={() => setShowFilters(false)}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </header>
   );
-}
+};
+
+export default Header;

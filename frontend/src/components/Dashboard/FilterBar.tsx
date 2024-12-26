@@ -12,6 +12,7 @@ interface FilterBarProps {
   onSymbolChange: (symbols: string[]) => void;
   selectedTypes: string[];
   onTypeChange: (types: string[]) => void;
+  onClose: () => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -21,15 +22,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onSymbolChange,
   selectedTypes,
   onTypeChange,
+  onClose,
 }) => {
   const { trades, playbooks, setFilters, resetFilters, filters } = useTrades();
 
   // Extract unique symbols from trades
   const symbolOptions = Array.from(new Set(trades.map(trade => trade.symbol)))
     .filter(symbol => symbol && symbol !== '');
-
-  // Extract unique strategies from playbooks
-  const strategyOptions = playbooks.map(playbook => playbook.name);
 
   // Local temporary state for user selections
   const [localSelectedSymbols, setLocalSelectedSymbols] = useState<string[]>(selectedSymbols);
@@ -67,14 +66,18 @@ const FilterBar: React.FC<FilterBarProps> = ({
     onSymbolChange(localSelectedSymbols);
     onTypeChange(localSelectedStrategies);
     onDateRangeChange([startDateStr, endDateStr]);
+    onClose();
   };
 
   const handleClear = () => {
     resetFilters();
-    // Also clear parent component state
+    // Also clear parent component state with default dates
+    const defaultStartDate = new Date(new Date().setDate(1)).toISOString().split("T")[0];
+    const defaultEndDate = new Date().toISOString().split("T")[0];
     onSymbolChange([]);
     onTypeChange([]);
-    onDateRangeChange(['', '']);
+    onDateRangeChange([defaultStartDate, defaultEndDate]);
+    onClose();
   };
 
   return (
@@ -129,9 +132,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
             popoverContent: "bg-[#1A0E2E]",
           }}
         >
-          {strategyOptions.map((strategy) => (
-            <SelectItem key={strategy} value={strategy} className="text-white data-[selected=true]:text-white">
-              {strategy}
+          {playbooks.map((playbook) => (
+            <SelectItem key={playbook.id} value={playbook.id} className="text-white data-[selected=true]:text-white">
+              {playbook.name}
             </SelectItem>
           ))}
         </Select>
@@ -139,7 +142,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         {/* Date Range */}
         <div className="space-y-2">
           <label className="block text-sm text-purple-300">Date Range</label>
-          <div className="grid grid-cols-2 gap-2 ">
+          <div className="grid grid-cols-2 gap-2">
             <DatePicker 
               value={localStartDate}
               onChange={setLocalStartDate}
@@ -155,7 +158,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 selectorIcon: "!text-white",
                 timeInput: "!text-white",
                 timeInputLabel: "!text-white",
-                //segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white data-[editable=true]:!text-foreground-50 data-[editable=true]:focus:!text-white"
+                segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white"
               }}
             />
             <DatePicker 
@@ -165,7 +168,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               label="End date"
               classNames={{
                 base: "max-w-full",
-                input: "!text-white bg-[#1A0E2E] border-purple-800/30", // Ensures white text
+                input: "[&>*]:!text-white bg-[#1A0E2E] border-purple-800/30",
                 calendar: "bg-[#1A0E2E] border border-purple-800/30",
                 popoverContent: "bg-[#1A0E2E] dark",
                 calendarContent: "!text-white",
@@ -173,7 +176,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 selectorIcon: "!text-white",
                 timeInput: "!text-white",
                 timeInputLabel: "!text-white",
-                // segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white data-[editable=true]:!text-foreground-50 data-[editable=true]:focus:!text-white"
+                segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white"
               }}
             />
           </div>

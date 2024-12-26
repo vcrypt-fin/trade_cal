@@ -15,6 +15,11 @@ const Trades: React.FC = () => {
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Local state for filters
+  const [selectedSymbols, setSelectedSymbols] = useState<string[]>(filters.symbols);
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>(filters.strategies);
+  const [dateRange, setDateRange] = useState<[string, string]>([filters.startDate, filters.endDate]);
+
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
 
@@ -134,7 +139,15 @@ const Trades: React.FC = () => {
               </button>
               {showFilters && (
                 <div className="absolute top-full mt-2">
-                  <FilterBar />
+                  <FilterBar
+                    dateRange={dateRange}
+                    onDateRangeChange={(range) => setDateRange(range)}
+                    selectedSymbols={selectedSymbols}
+                    onSymbolChange={setSelectedSymbols}
+                    selectedTypes={selectedStrategies}
+                    onTypeChange={setSelectedStrategies}
+                    onClose={() => setShowFilters(false)}
+                  />
                 </div>
               )}
             </div>
