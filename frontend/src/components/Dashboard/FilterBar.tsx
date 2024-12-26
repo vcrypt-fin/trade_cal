@@ -2,142 +2,202 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTrades } from '../../context/TradeContext';
-import Select from 'react-select';
-import Button from '../Button'; // Assuming you created a reusable Button component
+import { Button, Select, SelectItem, DatePicker } from "@nextui-org/react";
+import { DateValue, CalendarDate } from "@internationalized/date";
 
-const FilterBar: React.FC = () => {
-  const { trades, playbooks, setFilters, resetFilters, filters, isLoading } = useTrades();
+interface FilterBarProps {
+  dateRange: [string, string];
+  onDateRangeChange: (range: [string, string]) => void;
+  selectedSymbols: string[];
+  onSymbolChange: (symbols: string[]) => void;
+  selectedTypes: string[];
+  onTypeChange: (types: string[]) => void;
+}
+
+const FilterBar: React.FC<FilterBarProps> = ({
+  dateRange,
+  onDateRangeChange,
+  selectedSymbols,
+  onSymbolChange,
+  selectedTypes,
+  onTypeChange,
+}) => {
+  const { trades, playbooks, setFilters, resetFilters, filters } = useTrades();
 
   // Extract unique symbols from trades
   const symbolOptions = Array.from(new Set(trades.map(trade => trade.symbol)))
-    .filter(symbol => symbol && symbol !== '')
-    .map(symbol => ({ value: symbol, label: symbol }));
+    .filter(symbol => symbol && symbol !== '');
 
   // Extract unique strategies from playbooks
-  const strategyOptions = playbooks.map(playbook => ({
-    value: playbook.name,
-    label: playbook.name,
-  }));
+  const strategyOptions = playbooks.map(playbook => playbook.name);
 
   // Local temporary state for user selections
-  const [localSelectedSymbols, setLocalSelectedSymbols] = useState<string[]>(filters.symbols);
-  const [localSelectedStrategies, setLocalSelectedStrategies] = useState<string[]>(filters.strategies);
-  const [localStartDate, setLocalStartDate] = useState<string>(filters.startDate);
-  const [localEndDate, setLocalEndDate] = useState<string>(filters.endDate);
+  const [localSelectedSymbols, setLocalSelectedSymbols] = useState<string[]>(selectedSymbols);
+  const [localSelectedStrategies, setLocalSelectedStrategies] = useState<string[]>(selectedTypes);
+  const [localStartDate, setLocalStartDate] = useState<DateValue | null>(null);
+  const [localEndDate, setLocalEndDate] = useState<DateValue | null>(null);
 
   useEffect(() => {
-    // Sync local state when context filters change
-    setLocalSelectedSymbols(filters.symbols);
-    setLocalSelectedStrategies(filters.strategies);
-    setLocalStartDate(filters.startDate);
-    setLocalEndDate(filters.endDate);
-  }, [filters]);
+    setLocalSelectedSymbols(selectedSymbols);
+    setLocalSelectedStrategies(selectedTypes);
+    // Convert string dates to DateValue
+    if (dateRange[0]) {
+      const [year, month, day] = dateRange[0].split('-').map(Number);
+      setLocalStartDate(new CalendarDate(year, month, day));
+    }
+    if (dateRange[1]) {
+      const [year, month, day] = dateRange[1].split('-').map(Number);
+      setLocalEndDate(new CalendarDate(year, month, day));
+    }
+  }, [selectedSymbols, selectedTypes, dateRange]);
 
   const handleApply = () => {
-    console.log('FilterBar: Applying new filters:', {
-      startDate: localStartDate,
-      endDate: localEndDate,
-      symbols: localSelectedSymbols,
-      strategies: localSelectedStrategies,
-    });
+    // Update both the context and parent component
+    const startDateStr = localStartDate ? `${localStartDate.year}-${localStartDate.month.toString().padStart(2, '0')}-${localStartDate.day.toString().padStart(2, '0')}` : dateRange[0];
+    const endDateStr = localEndDate ? `${localEndDate.year}-${localEndDate.month.toString().padStart(2, '0')}-${localEndDate.day.toString().padStart(2, '0')}` : dateRange[1];
     
     setFilters({
-      startDate: localStartDate,
-      endDate: localEndDate,
+      startDate: startDateStr,
+      endDate: endDateStr,
       symbols: localSelectedSymbols,
       strategies: localSelectedStrategies,
     });
+
+    // Also update parent component state
+    onSymbolChange(localSelectedSymbols);
+    onTypeChange(localSelectedStrategies);
+    onDateRangeChange([startDateStr, endDateStr]);
   };
 
   const handleClear = () => {
     resetFilters();
+    // Also clear parent component state
+    onSymbolChange([]);
+    onTypeChange([]);
+    onDateRangeChange(['', '']);
   };
 
-  if (isLoading) {
-    return (
-      <div className="absolute top-full left-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-6 z-20">
-        <p className="text-center">Loading filters...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="absolute top-full left-0 mt-2 w-80 bg-white shadow-lg rounded-lg p-5 z-20">
-      <h4 className="text-xl font-semibold mb-4">Filter by:</h4>
+    <div className="w-[320px] bg-[#120322] rounded-lg border border-purple-800/30 p-4 shadow-xl">
+      <div className="space-y-4">
+        <div>
+          <h4 className="text-lg font-semibold text-purple-100 mb-4">Filter by:</h4>
+        </div>
 
-      {/* Symbols Dropdown */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Symbols</label>
+        {/* Symbols Select */}
         <Select
-          isMulti
-          value={localSelectedSymbols.map(symbol => ({ value: symbol, label: symbol }))}
-          onChange={(selectedOptions) => {
-            const symbols = selectedOptions ? selectedOptions.map(option => option.value) : [];
-            setLocalSelectedSymbols(symbols);
+          label="Symbols"
+          placeholder="Select symbols"
+          selectionMode="multiple"
+          selectedKeys={new Set(localSelectedSymbols)}
+          onSelectionChange={(keys) => setLocalSelectedSymbols(Array.from(keys) as string[])}
+          className="w-full"
+          variant="bordered"
+          classNames={{
+            base: "max-w-full",
+            trigger: "bg-[#1A0E2E] data-[hover=true]:bg-[#2A1A4A]",
+            value: "!text-white",
+            label: "text-purple-300",
+            innerWrapper: "text-white",
+            listbox: "bg-[#1A0E2E]",
+            popoverContent: "bg-[#1A0E2E]",
           }}
-          options={symbolOptions}
-          placeholder="Select Symbols"
-          className="react-select-container"
-          classNamePrefix="react-select"
-        />
-      </div>
+        >
+          {symbolOptions.map((symbol) => (
+            <SelectItem key={symbol} value={symbol} className="text-white data-[selected=true]:text-white">
+              {symbol}
+            </SelectItem>
+          ))}
+        </Select>
 
-      {/* Strategies Dropdown */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Strategies</label>
+        {/* Strategies Select */}
         <Select
-          isMulti
-          value={localSelectedStrategies.map(strategy => ({ value: strategy, label: strategy }))}
-          onChange={(selectedOptions) => {
-            const strategies = selectedOptions ? selectedOptions.map(option => option.value) : [];
-            setLocalSelectedStrategies(strategies);
+          label="Strategies"
+          placeholder="Select strategies"
+          selectionMode="multiple"
+          selectedKeys={new Set(localSelectedStrategies)}
+          onSelectionChange={(keys) => setLocalSelectedStrategies(Array.from(keys) as string[])}
+          className="w-full"
+          variant="bordered"
+          classNames={{
+            base: "max-w-full",
+            trigger: "bg-[#1A0E2E] data-[hover=true]:bg-[#2A1A4A]",
+            value: "!text-white",
+            label: "text-purple-300",
+            innerWrapper: "text-white",
+            listbox: "bg-[#1A0E2E]",
+            popoverContent: "bg-[#1A0E2E]",
           }}
-          options={strategyOptions}
-          placeholder="Select Strategies"
-          className="react-select-container"
-          classNamePrefix="react-select"
-        />
+        >
+          {strategyOptions.map((strategy) => (
+            <SelectItem key={strategy} value={strategy} className="text-white data-[selected=true]:text-white">
+              {strategy}
+            </SelectItem>
+          ))}
+        </Select>
+
+        {/* Date Range */}
+        <div className="space-y-2">
+          <label className="block text-sm text-purple-300">Date Range</label>
+          <div className="grid grid-cols-2 gap-2 ">
+            <DatePicker 
+              value={localStartDate}
+              onChange={setLocalStartDate}
+              variant="bordered"
+              label="Start date"
+              classNames={{
+                base: "max-w-full",
+                input: "[&>*]:!text-white bg-[#1A0E2E] border-purple-800/30",
+                calendar: "bg-[#1A0E2E] border border-purple-800/30",
+                popoverContent: "bg-[#1A0E2E] dark",
+                calendarContent: "!text-white",
+                selectorButton: "!text-white hover:bg-purple-900/20",
+                selectorIcon: "!text-white",
+                timeInput: "!text-white",
+                timeInputLabel: "!text-white",
+                //segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white data-[editable=true]:!text-foreground-50 data-[editable=true]:focus:!text-white"
+              }}
+            />
+            <DatePicker 
+              value={localEndDate}
+              onChange={setLocalEndDate}
+              variant="bordered"
+              label="End date"
+              classNames={{
+                base: "max-w-full",
+                input: "!text-white bg-[#1A0E2E] border-purple-800/30", // Ensures white text
+                calendar: "bg-[#1A0E2E] border border-purple-800/30",
+                popoverContent: "bg-[#1A0E2E] dark",
+                calendarContent: "!text-white",
+                selectorButton: "!text-white hover:bg-purple-900/20",
+                selectorIcon: "!text-white",
+                timeInput: "!text-white",
+                timeInputLabel: "!text-white",
+                // segment: "[&>.group]:!text-white !text-white data-[editable=true]:!text-white data-[editable=true]:data-[placeholder=true]:!text-white data-[editable=true]:!text-foreground-50 data-[editable=true]:focus:!text-white"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end gap-2 pt-2">
+          <Button
+            variant="flat"
+            color="danger"
+            onPress={handleClear}
+            className="bg-red-500/10 text-red-400"
+          >
+            Reset
+          </Button>
+          <Button
+            color="secondary"
+            onPress={handleApply}
+            className="bg-purple-600 text-white"
+          >
+            Apply Filters
+          </Button>
+        </div>
       </div>
-
-    {/* Date Range Picker */}
-    <div className="mb-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
-      <div className="flex items-center gap-2">
-        <input
-          type="date"
-          value={localStartDate}
-          onChange={(e) => setLocalStartDate(e.target.value)}
-          className="flex-1 min-w-0 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <span>to</span>
-        <input
-          type="date"
-          value={localEndDate}
-          onChange={(e) => setLocalEndDate(e.target.value)}
-          className="flex-1 min-w-0 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-    </div>
-
-
-    {/* Action Buttons */}
-    <div className="flex justify-end mt-4">
-      <Button
-        variant="secondary"
-        size="md"
-        onClick={handleClear}
-        className="mr-2"
-      >
-        Reset Filters
-      </Button>
-      <Button
-        variant="primary"
-        size="md"
-        onClick={handleApply}
-      >
-        Apply Filters
-      </Button>
-    </div>
     </div>
   );
 };
