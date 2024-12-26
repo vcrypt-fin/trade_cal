@@ -26,11 +26,31 @@ interface RiskStats {
 }
 
 const RiskSection: React.FC<{ view: string }> = ({ view }) => {
-  const { trades } = useTrades();
+  const { trades, filters } = useTrades();
+
+  // Get filtered trades
+  const filteredTrades = React.useMemo(() => {
+    return trades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      // Set hours to 0 for consistent date comparison
+      tradeDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
+      const matchesDateRange = tradeDate >= startDate && tradeDate <= endDate;
+      const matchesSymbol = filters.symbols.length === 0 || filters.symbols.includes(trade.symbol);
+      const matchesStrategy = filters.strategies.length === 0 || (trade.strategy && filters.strategies.includes(trade.strategy));
+      
+      return matchesDateRange && matchesSymbol && matchesStrategy;
+    });
+  }, [trades, filters]);
 
   const stats = React.useMemo(() => {
     // Get trades with RR data
-    const tradesWithRR = trades.filter(trade => trade.forecasted_rr && trade.actual_rr);
+    const tradesWithRR = filteredTrades.filter(trade => trade.forecasted_rr && trade.actual_rr);
     
     // Calculate average RRs
     const avgForecasted = tradesWithRR.length > 0 
@@ -85,13 +105,13 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
       actualRRDistribution,
       averageForcastedRR: avgForecasted,
       averageActualRR: avgActual,
-      totalTrades: trades.length,
+      totalTrades: filteredTrades.length,
       tradesWithRR: tradesWithRR.length,
       perfectExecutions,
       perfectExecutionRate: perfectExecutions / (tradesWithRR.length || 1) * 100,
       maxRR
     };
-  }, [trades]);
+  }, [filteredTrades]);
 
   const renderMetricsGrid = (isRiskView = false) => {
     if (isRiskView) {

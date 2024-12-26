@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 import ReportsSidebar from './ReportsSidebar';
@@ -23,14 +23,57 @@ import SetupsSection from './sections/SetupsSection';
 import WinsVsLossesSection from './sections/WinsVsLossesSection';
 import DateTimeOverview from './sections/DateTimeOverview';
 import { Trade, MonthlyTrades, MonthlyPnL, DailyPnLData, CumulativePnLData } from '../../types/trade';
+import { Filter, X } from 'lucide-react';
+import FilterBar from '../Dashboard/FilterBar';
 
 const Reports: React.FC = () => {
-  const { trades } = useTrades();
+  const { trades, filters } = useTrades();
   const [selectedView, setSelectedView] = useState('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Local state for filters
+  const [selectedSymbols, setSelectedSymbols] = useState<string[]>(filters.symbols);
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>(filters.strategies);
+  const [dateRange, setDateRange] = useState<[string, string]>([filters.startDate, filters.endDate]);
+
+  // Get filtered trades
+  const filteredTrades = useMemo(() => {
+    return trades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      // Set hours to 0 for consistent date comparison
+      tradeDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
+      const matchesDateRange = tradeDate >= startDate && tradeDate <= endDate;
+      const matchesSymbol = filters.symbols.length === 0 || filters.symbols.includes(trade.symbol);
+      const matchesStrategy = filters.strategies.length === 0 || (trade.strategy && filters.strategies.includes(trade.strategy));
+      
+      return matchesDateRange && matchesSymbol && matchesStrategy;
+    });
+  }, [trades, filters]);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const stats = useMemo(() => {
-    if (!trades.length) {
+    if (!filteredTrades.length) {
       return {
         bestMonth: { value: 0, date: '-' },
         lowestMonth: { value: 0, date: '-' },
@@ -52,7 +95,7 @@ const Reports: React.FC = () => {
     }
 
     // Group trades by month
-    const monthlyTrades = (trades as Trade[]).reduce<MonthlyTrades>((acc, trade) => {
+    const monthlyTrades = (filteredTrades as Trade[]).reduce<MonthlyTrades>((acc, trade) => {
       const monthKey = format(parseISO(trade.date), 'yyyy-MM');
       if (!acc[monthKey]) {
         acc[monthKey] = [];
@@ -77,7 +120,7 @@ const Reports: React.FC = () => {
     ) : { month: '-', pnl: 0 };
 
     // Calculate daily P&L data
-    const dailyPnLData: DailyPnLData[] = trades.reduce<DailyPnLData[]>((acc, trade) => {
+    const dailyPnLData: DailyPnLData[] = filteredTrades.reduce<DailyPnLData[]>((acc, trade) => {
       const existingDay = acc.find(day => day.date === trade.date);
       if (existingDay) {
         existingDay.pnl += trade.pnl;
@@ -99,8 +142,8 @@ const Reports: React.FC = () => {
     }));
 
     // Calculate winning and losing trades
-    const winningTrades = trades.filter(t => t.pnl > 0);
-    const losingTrades = trades.filter(t => t.pnl < 0);
+    const winningTrades = filteredTrades.filter(t => t.pnl > 0);
+    const losingTrades = filteredTrades.filter(t => t.pnl < 0);
 
     const avgWinningTrade = winningTrades.length ? 
       winningTrades.reduce((sum, trade) => sum + trade.pnl, 0) / winningTrades.length : 
@@ -124,21 +167,21 @@ const Reports: React.FC = () => {
         date: lowestMonth.month === '-' ? '-' : format(parseISO(lowestMonth.month + '-01'), 'MMM yyyy')
       },
       averageMonthly: isNaN(averageMonthly) ? 0 : averageMonthly,
-      totalPnL: trades.reduce((sum, trade) => sum + trade.pnl, 0),
-      totalTrades: trades.length,
-      avgDailyVolume: dailyPnLData.length ? trades.length / dailyPnLData.length : 0,
+      totalPnL: filteredTrades.reduce((sum, trade) => sum + trade.pnl, 0),
+      totalTrades: filteredTrades.length,
+      avgDailyVolume: dailyPnLData.length ? filteredTrades.length / dailyPnLData.length : 0,
       winningTrades: winningTrades.length,
       losingTrades: losingTrades.length,
       avgWinningTrade: isNaN(avgWinningTrade) ? 0 : avgWinningTrade,
       avgLosingTrade: isNaN(avgLosingTrade) ? 0 : avgLosingTrade,
-      largestProfit: winningTrades.length ? Math.max(...trades.map(t => t.pnl)) : 0,
-      largestLoss: losingTrades.length ? Math.min(...trades.map(t => t.pnl)) : 0,
+      largestProfit: winningTrades.length ? Math.max(...filteredTrades.map(t => t.pnl)) : 0,
+      largestLoss: losingTrades.length ? Math.min(...filteredTrades.map(t => t.pnl)) : 0,
       charts: {
         cumulativePnLData,
         dailyPnLData
       }
     };
-  }, [trades]);
+  }, [filteredTrades]);
 
   const formatCurrency = (value: number) => 
     new Intl.NumberFormat('en-US', {
@@ -304,7 +347,31 @@ const Reports: React.FC = () => {
       <div className={`flex flex-1 ${isCollapsed ? 'ml-[80px]' : 'ml-64'}`}>
         <ReportsSidebar selectedView={selectedView} onViewChange={setSelectedView} />
         <div className="flex-1 p-8">
-          <h1 className="text-2xl font-semibold mb-6 text-purple-100">Reports</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-semibold text-purple-100">Reports</h1>
+            <div ref={filterRef}>
+              <button 
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
+              >
+                <Filter size={18} />
+                <span>Filters</span>
+              </button>
+              {showFilters && (
+                <div className="absolute right-8 mt-2 z-50 bg-[#120322] shadow-xl">
+                  <FilterBar
+                    dateRange={dateRange}
+                    onDateRangeChange={(range) => setDateRange(range)}
+                    selectedSymbols={selectedSymbols}
+                    onSymbolChange={setSelectedSymbols}
+                    selectedTypes={selectedStrategies}
+                    onTypeChange={setSelectedStrategies}
+                    onClose={() => setShowFilters(false)}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
           {renderSection()}
         </div>
       </div>

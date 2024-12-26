@@ -6,7 +6,27 @@ import PerformanceChart from '../components/PerformanceChart';
 import { Clock, Calendar, Timer } from 'lucide-react';
 
 const DateTimeOverview: React.FC = () => {
-  const { trades } = useTrades();
+  const { trades, filters } = useTrades();
+
+  // Get filtered trades
+  const filteredTrades = React.useMemo(() => {
+    return trades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      // Set hours to 0 for consistent date comparison
+      tradeDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
+      const matchesDateRange = tradeDate >= startDate && tradeDate <= endDate;
+      const matchesSymbol = filters.symbols.length === 0 || filters.symbols.includes(trade.symbol);
+      const matchesStrategy = filters.strategies.length === 0 || (trade.strategy && filters.strategies.includes(trade.strategy));
+      
+      return matchesDateRange && matchesSymbol && matchesStrategy;
+    });
+  }, [trades, filters]);
 
   // Reuse the stats calculations from DateTimeSection
   const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -29,7 +49,7 @@ const DateTimeOverview: React.FC = () => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const date = new Date(trade.date);
       const dayIndex = date.getDay();
       
@@ -46,7 +66,7 @@ const DateTimeOverview: React.FC = () => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   const timeStats = React.useMemo(() => {
     const stats = HOURS.map(hour => ({
@@ -60,7 +80,7 @@ const DateTimeOverview: React.FC = () => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const hour = trade.time.split(':')[0];
       const hourIndex = parseInt(hour, 10);
       
@@ -77,7 +97,7 @@ const DateTimeOverview: React.FC = () => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   const monthStats = React.useMemo(() => {
     const stats = MONTHS.map((month, index) => ({
@@ -91,7 +111,7 @@ const DateTimeOverview: React.FC = () => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const date = new Date(trade.date);
       const monthIndex = date.getMonth();
       
@@ -108,7 +128,7 @@ const DateTimeOverview: React.FC = () => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   return (
     <div className="space-y-8">

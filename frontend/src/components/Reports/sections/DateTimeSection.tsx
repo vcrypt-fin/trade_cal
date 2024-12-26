@@ -3,6 +3,7 @@ import { useTrades } from '../../../context/TradeContext';
 import StatsTable from '../components/StatsTable';
 import DistributionChart from '../components/DistributionChart';
 import PerformanceChart from '../components/PerformanceChart';
+import { Trade } from '../../../types/trade';
 
 const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const HOURS = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
@@ -58,8 +59,29 @@ const getTradeMinutes = (trade: any) => {
 };
 
 const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
-  const { trades } = useTrades();
-  const DURATION_BUCKETS = React.useMemo(() => createDurationBuckets(trades), [trades]);
+  const { trades, filters } = useTrades();
+
+  // Get filtered trades
+  const filteredTrades = React.useMemo(() => {
+    return trades.filter(trade => {
+      const tradeDate = new Date(trade.date);
+      const startDate = new Date(filters.startDate);
+      const endDate = new Date(filters.endDate);
+      
+      // Set hours to 0 for consistent date comparison
+      tradeDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      
+      const matchesDateRange = tradeDate >= startDate && tradeDate <= endDate;
+      const matchesSymbol = filters.symbols.length === 0 || filters.symbols.includes(trade.symbol);
+      const matchesStrategy = filters.strategies.length === 0 || (trade.strategy && filters.strategies.includes(trade.strategy));
+      
+      return matchesDateRange && matchesSymbol && matchesStrategy;
+    });
+  }, [trades, filters]);
+
+  const DURATION_BUCKETS = React.useMemo(() => createDurationBuckets(filteredTrades), [filteredTrades]);
 
   const dayStats = React.useMemo(() => {
     const stats = DAYS_OF_WEEK.map((day, index) => ({
@@ -74,7 +96,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const date = new Date(trade.date);
       const dayIndex = date.getDay();
       
@@ -91,7 +113,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   const timeStats = React.useMemo(() => {
     const stats = HOURS.map(hour => ({
@@ -106,7 +128,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const hour = trade.time.split(':')[0];
       const hourIndex = parseInt(hour, 10);
       
@@ -123,12 +145,12 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   const weekStats = React.useMemo(() => {
     const weekMap = new Map();
     
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const date = new Date(trade.date);
       const weekNum = getWeekNumber(date);
       const year = date.getFullYear();
@@ -164,8 +186,8 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
 
     return Array.from(weekMap.values())
       .sort((a, b) => a.weekNumber - b.weekNumber);
-  }, [trades]);
-  // Add monthStats calculation inside DateTimeSection component
+  }, [filteredTrades]);
+
   const monthStats = React.useMemo(() => {
     const stats = MONTHS.map((month, index) => ({
       id: `month-${index}`,
@@ -179,7 +201,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       const date = new Date(trade.date);
       const monthIndex = date.getMonth();
       
@@ -196,7 +218,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
     });
 
     return stats;
-  }, [trades]);
+  }, [filteredTrades]);
 
   const durationStats = React.useMemo(() => {
     const stats = DURATION_BUCKETS.map((bucket, index) => ({
@@ -212,7 +234,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
       volume: 0
     }));
 
-    trades.forEach(trade => {
+    filteredTrades.forEach(trade => {
       // Assuming each tick represents ~1 minute of trading time
       const priceChange = Math.abs(trade.exitPrice - trade.entryPrice);
       const estimatedMinutes = Math.max(1, Math.round(priceChange));
@@ -236,7 +258,7 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
     });
 
     return stats;
-  }, [trades, DURATION_BUCKETS]);
+  }, [filteredTrades, DURATION_BUCKETS]);
 
 
   const renderTradeTime = () => (
@@ -355,6 +377,16 @@ const DateTimeSection: React.FC<{ view: string }> = ({ view }) => {
         return renderMonth();
       case 'tradeDuration':
         return renderDuration();
+      case 'dateTime':
+        return (
+          <div className="space-y-8">
+            {renderTradeTime()}
+            {renderDays()}
+            {renderWeek()}
+            {renderMonth()}
+            {renderDuration()}
+          </div>
+        );
       default:
         return null;
     }
