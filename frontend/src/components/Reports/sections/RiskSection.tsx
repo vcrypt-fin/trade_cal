@@ -33,8 +33,12 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
     const tradesWithRR = trades.filter(trade => trade.forecasted_rr && trade.actual_rr);
     
     // Calculate average RRs
-    const avgForecasted = tradesWithRR.reduce((sum, trade) => sum + (trade.forecasted_rr || 0), 0) / (tradesWithRR.length || 1);
-    const avgActual = tradesWithRR.reduce((sum, trade) => sum + (trade.actual_rr || 0), 0) / (tradesWithRR.length || 1);
+    const avgForecasted = tradesWithRR.length > 0 
+      ? tradesWithRR.reduce((sum, trade) => sum + (trade.forecasted_rr || 0), 0) / tradesWithRR.length 
+      : 0;
+    const avgActual = tradesWithRR.length > 0 
+      ? tradesWithRR.reduce((sum, trade) => sum + (trade.actual_rr || 0), 0) / tradesWithRR.length 
+      : 0;
     
     // Count perfect executions (where forecasted_rr equals actual_rr)
     const perfectExecutions = tradesWithRR.filter(trade => 
@@ -152,14 +156,14 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
         <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
           <h4 className="text-sm text-purple-200 mb-2">Average Forecasted RR</h4>
           <p className="text-2xl font-semibold text-purple-100">
-            {stats.averageForcastedRR.toFixed(2)}
+            {Number.isFinite(stats.averageForcastedRR) ? stats.averageForcastedRR.toFixed(2) : '0.00'}
           </p>
         </div>
         
         <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
           <h4 className="text-sm text-purple-200 mb-2">Average Actual RR</h4>
           <p className="text-2xl font-semibold text-purple-100">
-            {stats.averageActualRR.toFixed(2)}
+            {Number.isFinite(stats.averageActualRR) ? stats.averageActualRR.toFixed(2) : '0.00'}
           </p>
         </div>
 
@@ -168,7 +172,7 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-semibold text-purple-100">{stats.perfectExecutions}</p>
             <p className="text-sm text-purple-300">
-              ({stats.perfectExecutionRate.toFixed(1)}%)
+              ({Number.isFinite(stats.perfectExecutionRate) ? stats.perfectExecutionRate.toFixed(1) : '0.0'}%)
             </p>
           </div>
         </div>
@@ -178,7 +182,7 @@ const RiskSection: React.FC<{ view: string }> = ({ view }) => {
           <div className="flex items-baseline gap-2">
             <p className="text-2xl font-semibold text-purple-100">{stats.tradesWithRR}</p>
             <p className="text-sm text-purple-300">
-              ({((stats.tradesWithRR / stats.totalTrades) * 100).toFixed(1)}%)
+              ({Number.isFinite((stats.tradesWithRR / stats.totalTrades) * 100) ? ((stats.tradesWithRR / stats.totalTrades) * 100).toFixed(1) : '0.0'}%)
             </p>
           </div>
         </div>
