@@ -54,10 +54,11 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({ selectedView, onViewCha
     // { id: 'tags', label: 'Tags', icon: Tag },
     { id: 'setups', label: 'Setups', icon: Settings },
     { id: 'mistakes', label: 'Mistakes', icon: AlertTriangle },
-    { id: 'other', label: 'Other', icon: MoreHorizontal },
+   
     { id: 'winsVsLosses', label: 'Wins vs Losses', icon: ArrowLeftRight },
-    { id: 'compare', label: 'Compare', icon: BarChart2 },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'other', label: 'Other', icon: MoreHorizontal },
+    // { id: 'compare', label: 'Compare', icon: BarChart2 },
+    // { id: 'calendar', label: 'Calendar', icon: Calendar },
   ];
 
   return (

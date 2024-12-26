@@ -34,7 +34,7 @@ const WinsVsLossesSection: React.FC = () => {
         name: 'Break Even',
         value: breakEvenTrades.length,
         totalPnl: 0,
-        color: '#9CA3AF'
+        color: '#A78BFA'
       }
     ].filter(item => item.value > 0); // Only show categories that have trades
 
@@ -52,9 +52,9 @@ const WinsVsLossesSection: React.FC = () => {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Wins vs Losses Analysis</h3>
+          <h3 className="text-lg font-semibold text-purple-100">Wins vs Losses Analysis</h3>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm text-center text-purple-300">
           No trades available for analysis
         </div>
       </div>
@@ -64,23 +64,23 @@ const WinsVsLossesSection: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Wins vs Losses Analysis</h3>
+        <h3 className="text-lg font-semibold text-purple-100">Wins vs Losses Analysis</h3>
       </div>
       
       <div className="grid grid-cols-3 gap-6 mb-8">
         {stats.map(stat => (
-          <div key={stat.name} className="bg-white p-6 rounded-lg shadow-sm">
-            <h4 className="text-sm text-gray-600 mb-2">{stat.name}</h4>
+          <div key={stat.name} className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+            <h4 className="text-sm text-purple-200 mb-2">{stat.name}</h4>
             <div className="flex items-baseline gap-2">
-              <p className="text-2xl font-semibold">{stat.value}</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-2xl font-semibold text-purple-100">{stat.value}</p>
+              <p className="text-sm text-purple-300">
                 ({((stat.value / trades.length) * 100).toFixed(1)}%)
               </p>
             </div>
             <p className={`text-sm ${
-              stat.totalPnl > 0 ? 'text-green-600' : 
-              stat.totalPnl < 0 ? 'text-red-600' : 
-              'text-gray-600'
+              stat.totalPnl > 0 ? 'text-green-400' : 
+              stat.totalPnl < 0 ? 'text-red-400' : 
+              'text-purple-300'
             }`}>
               {formatCurrency(stat.totalPnl)}
             </p>
@@ -89,7 +89,7 @@ const WinsVsLossesSection: React.FC = () => {
       </div>
 
       {stats.length > 0 && (
-        <div className="bg-white p-6 rounded-lg shadow-sm">
+        <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
           <div className="h-[400px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -103,9 +103,10 @@ const WinsVsLossesSection: React.FC = () => {
                   label={({name, value, percent}) => 
                     `${name}: ${value} (${(percent * 100).toFixed(1)}%)`
                   }
+                  labelLine={{ stroke: '#A78BFA' }}
                 >
                   {stats.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#2A1A4A" strokeWidth={2} />
                   ))}
                 </Pie>
                 <Tooltip 
@@ -113,8 +114,16 @@ const WinsVsLossesSection: React.FC = () => {
                     `${value} trades (${((value / trades.length) * 100).toFixed(1)}%)`,
                     name
                   ]}
+                  contentStyle={{
+                    backgroundColor: '#120322',
+                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    borderRadius: '0.5rem',
+                    color: '#E9D5FF'
+                  }}
                 />
-                <Legend />
+                <Legend 
+                  formatter={(value, entry) => <span className="text-purple-200">{value}</span>}
+                />
               </PieChart>
             </ResponsiveContainer>
           </div>
