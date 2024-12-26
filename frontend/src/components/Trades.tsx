@@ -1,7 +1,7 @@
 // src/components/Trades.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from './Sidebar';
-import { Filter, Calendar as CalendarIcon, Edit, Trash2, Tag } from 'lucide-react';
+import { Filter, Calendar as CalendarIcon, Edit, Trash2, Tag, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTrades } from '../context/TradeContext';
 import Stats from './Stats';
@@ -108,6 +108,22 @@ const Trades: React.FC = () => {
     }
   };
 
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
       <Sidebar 
@@ -129,7 +145,7 @@ const Trades: React.FC = () => {
 
           {/* Filter Options */}
           <div className="flex justify-between items-center">
-            <div className="flex gap-4 relative z-50">
+            <div className="flex gap-4 relative z-50" ref={filterRef}>
               <button 
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"

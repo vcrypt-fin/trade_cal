@@ -1,25 +1,40 @@
 // src/components/Header.tsx
 
-import React, { useState } from 'react';
-import { Filter } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Filter, X } from 'lucide-react';
 import FilterBar from './Dashboard/FilterBar';
 import { useTrades } from '../context/TradeContext';
 
 const Header: React.FC = () => {
   const { filters } = useTrades();
   const [showFilters, setShowFilters] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
 
   // Local state for filters
   const [selectedSymbols, setSelectedSymbols] = useState<string[]>(filters.symbols);
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>(filters.strategies);
   const [dateRange, setDateRange] = useState<[string, string]>([filters.startDate, filters.endDate]);
 
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setShowFilters(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <header className="flex justify-between items-center mb-6">
       <h1 className="text-2xl font-semibold text-purple-100">Dashboard</h1>
 
       <div className="flex items-center gap-4">
-        <div className="relative z-50">
+        <div className="relative z-50" ref={filterRef}>
           <button 
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
