@@ -380,6 +380,11 @@ export default function LandingPage() {
                 <span className="font-semibold">Beta Version Available!</span> During our beta phase, all features are available at no cost. Pricing will be implemented after the beta period.
               </p>
             </div>
+            <div className="mt-4 text-center">
+              <p className="text-lg text-red-400 font-semibold">
+                Important: Use code <span className="font-bold text-purple-400">BETA</span> at signup to avoid being charged!
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-center mb-8">
