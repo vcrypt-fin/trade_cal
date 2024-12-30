@@ -34,12 +34,12 @@ const Header: React.FC = () => {
       <h1 className="text-2xl font-semibold text-purple-100">Dashboard</h1>
 
       <div className="flex items-center gap-4">
-        <div className="relative z-50" ref={filterRef}>
+        <div className="relative z-50 mt-2" ref={filterRef}>
           <button 
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
           >
-            <Filter size={18} />
+            <Filter size={12} />
             <span>Filters</span>
           </button>
           {showFilters && (

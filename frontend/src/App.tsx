@@ -13,7 +13,7 @@ import { Playbook } from './components/Playbook';
 import PlaybookDetail from './components/PlaybookDetail';
 import Trades from './components/Trades';
 import Reports from './components/Reports/Reports';
-import Settings from './components/Settings';
+// import Settings from './components/Settings';
 import { TradeProvider } from './context/TradeContext';
 import { JournalProvider } from './context/JournalContext';
 import EditTradeForm from './components/EditTradeForm';
@@ -76,7 +76,7 @@ function App() {
                   <Route path="/playbook/:id" element={<PlaybookDetail />} />
                   <Route path="/trades" element={<Trades />} /> 
                   <Route path="/reports" element={<Reports />} />
-                  <Route path="/settings" element={<Settings />} />
+                  {/* <Route path="/settings" element={<Settings />} /> */}
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/update-password" element={<UpdatePassword />} />
                 </Routes>

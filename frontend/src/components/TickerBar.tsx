@@ -138,9 +138,9 @@ export function TickerBar({ isCollapsed, isTickerCollapsed, onTickerToggle }: Ti
       </div>
       <button
         onClick={onTickerToggle}
-        className="absolute bottom-0 right-4 translate-y-full rounded-b-lg bg-gradient-to-r from-[#110420] via-[#1E002F] to-[#110420] px-4 py-1 text-white hover:bg-white/5"
+        className="absolute bottom-2 right-4 translate-y-full rounded-lg bg-gradient-to-r from-[#110420] via-[#1E002F] to-[#110420] px-2 py-1 text-white hover:bg-white/10 border border-purple-800 shadow-lg"
       >
-        {isTickerCollapsed ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
+        {isTickerCollapsed ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
       </button>
     </div>
   );
