@@ -47,14 +47,35 @@ export function Playbook() {
   const [newPlaybookName, setNewPlaybookName] = useState('');
   const [newPlaybookDescription, setNewPlaybookDescription] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
 
-  // Fetch data when component mounts
+  // Initial data load and background refresh
   useEffect(() => {
     const loadData = async () => {
-      await Promise.all([fetchTrades(), fetchPlaybooks()]);
+      // If we have no data, show loading state and fetch
+      if (trades.length === 0 || playbooks.length === 0) {
+        await Promise.all([fetchTrades(), fetchPlaybooks()]);
+        return;
+      }
+
+      // If we have data, do a background refresh
+      setIsBackgroundLoading(true);
+      try {
+        await Promise.all([fetchTrades(), fetchPlaybooks()]);
+      } catch (error) {
+        console.error('Background refresh failed:', error);
+      } finally {
+        setIsBackgroundLoading(false);
+      }
     };
+
     loadData();
-  }, [fetchTrades, fetchPlaybooks]);
+
+    // Set up periodic background refresh every 30 seconds
+    const refreshInterval = setInterval(loadData, 30000);
+
+    return () => clearInterval(refreshInterval);
+  }, [fetchTrades, fetchPlaybooks, trades.length, playbooks.length]);
 
   // Calculate summary stats for each playbook
   const playbookSummaries = playbooks.map(playbook => {
@@ -105,8 +126,8 @@ export function Playbook() {
   const formatPercent = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1 }).format(value / 100);
 
-  // Add loading state
-  if (isLoading) {
+  // Only show loading state if we have no cached data
+  if (isLoading && (trades.length === 0 || playbooks.length === 0)) {
     return (
       <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
         <Sidebar 
@@ -130,7 +151,12 @@ export function Playbook() {
       />
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-purple-100">Playbook</h1>
+          <h1 className="text-2xl font-semibold text-purple-100">
+            Playbook
+            {isBackgroundLoading && (
+              <span className="ml-3 inline-block w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            )}
+          </h1>
           <button
             onClick={handleCreatePlaybook}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
