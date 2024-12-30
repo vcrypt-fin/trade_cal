@@ -4,13 +4,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Check, ArrowRight, Loader2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
-import { supabase } from '../../context/SupabaseClient'
+import { useAuth } from '../../context/AuthContext'
 
 export default function SubscriptionPage() {
   const [isAnnual, setIsAnnual] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   // Function to toggle billing cycle
   const toggleBilling = () => {
@@ -26,8 +27,6 @@ export default function SubscriptionPage() {
     try {
       setLoading(true)
       setSelectedPlan(planName)
-
-      const { data: { user } } = await supabase.auth.getUser()
       
       if (!user) {
         toast.error('Please log in to subscribe')
@@ -41,19 +40,11 @@ export default function SubscriptionPage() {
       const cancelUrl = `${window.location.origin}/subscription`
 
       // Construct the full URL with success and cancel parameters
-      const checkoutUrl = `${baseStripeUrl}?success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(cancelUrl)}`
+      const checkoutUrl = `${baseStripeUrl}?success_url=${encodeURIComponent(successUrl)}&cancel_url=${encodeURIComponent(cancelUrl)}&client_reference_id=${user.id}&metadata[plan]=${planName}&metadata[interval]=${isAnnual ? 'year' : 'month'}`
 
       if (!checkoutUrl) {
         throw new Error('Invalid plan selected')
       }
-
-      // Store subscription details in localStorage for post-payment processing
-      localStorage.setItem('pendingSubscription', JSON.stringify({
-        userId: user.id,
-        planName: planName,
-        interval: isAnnual ? 'year' : 'month',
-        price: price
-      }))
 
       // Redirect to Stripe checkout
       window.location.href = checkoutUrl

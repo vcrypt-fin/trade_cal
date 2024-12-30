@@ -102,7 +102,8 @@ const AuthHandler: React.FC = () => {
     const wasOnSubscriptionPage = location.pathname === '/subscription';
     
     return () => {
-      if (wasOnSubscriptionPage && !isAuthenticated) {
+      // Only clear auth if we're not authenticated and not on a public route
+      if (wasOnSubscriptionPage && !isAuthenticated && !PUBLIC_ROUTES.includes(location.pathname)) {
         clearAuth();
         supabase.auth.signOut();
       }
