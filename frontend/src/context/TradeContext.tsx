@@ -32,6 +32,8 @@ interface TradeContextType {
   addTrade: (trade: Omit<Trade, "id">) => Promise<void>;
   editTrade: (updatedTrade: Trade) => Promise<void>;
   addPlaybook: (playbook: Omit<Playbook, "id" | "createdAt">) => Promise<void>;
+  editPlaybook: (playbook: Playbook) => Promise<void>;
+  deletePlaybook: (id: string) => Promise<void>;
   addBulkTrades: (newTrades: Trade[]) => Promise<void>;
   getPlaybookById: (id: string) => Playbook | undefined;
   clearAllTrades: () => Promise<void>;
@@ -49,6 +51,8 @@ export const TradeContext = createContext<TradeContextType>({
   addTrade: async () => {},
   editTrade: async () => {},
   addPlaybook: async () => {},
+  editPlaybook: async () => {},
+  deletePlaybook: async () => {},
   addBulkTrades: async () => {},
   getPlaybookById: () => undefined,
   clearAllTrades: async () => {},
@@ -215,6 +219,51 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
     [fetchPlaybooks]
   );
 
+  const editPlaybook = useCallback(
+    async (playbook: Playbook) => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
+
+      const { error } = await supabase
+        .from("playbooks")
+        .update({
+          name: playbook.name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          description: playbook.description
+        })
+        .match({ id: playbook.id, userId: session.user.id });
+
+      if (error) {
+        console.error("Failed to edit playbook:", error);
+      } else {
+        await fetchPlaybooks();
+      }
+    },
+    [fetchPlaybooks]
+  );
+
+  const deletePlaybook = useCallback(
+    async (id: string) => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
+
+      const { error } = await supabase
+        .from("playbooks")
+        .delete()
+        .match({ id, userId: session.user.id });
+
+      if (error) {
+        console.error("Failed to delete playbook:", error);
+      } else {
+        await fetchPlaybooks();
+      }
+    },
+    [fetchPlaybooks]
+  );
+
   const addBulkTrades = useCallback(
     async (newTrades: Trade[]) => {
       console.log("Bulk inserting trades into Supabase:", newTrades);
@@ -310,6 +359,8 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       addTrade,
       editTrade,
       addPlaybook,
+      editPlaybook,
+      deletePlaybook,
       addBulkTrades,
       getPlaybookById,
       clearAllTrades,
@@ -326,6 +377,8 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       addTrade,
       editTrade,
       addPlaybook,
+      editPlaybook,
+      deletePlaybook,
       addBulkTrades,
       getPlaybookById,
       clearAllTrades,

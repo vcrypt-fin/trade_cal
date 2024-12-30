@@ -3,33 +3,62 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Plus, MoreHorizontal, TrendingUp, BarChart2 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import { useTrades } from '../context/TradeContext';
+import type { Playbook as PlaybookType } from '../context/TradeContext';
 
-// Add proper types for CustomModal
 interface CustomModalProps {
   isOpen: boolean;
-  onRequestClose: () => void;
+  onClose: () => void;
   title: string;
-  onConfirm: () => void;
-  children: React.ReactNode;
+  initialName: string;
+  initialDescription: string;
+  onSubmit: (name: string, description: string) => Promise<void>;
 }
 
-function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }: CustomModalProps) {
+function CustomModal({ isOpen, onClose, title, initialName, initialDescription, onSubmit }: CustomModalProps) {
+  const [name, setName] = useState(initialName);
+  const [description, setDescription] = useState(initialDescription);
+
+  useEffect(() => {
+    setName(initialName);
+    setDescription(initialDescription);
+  }, [initialName, initialDescription]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 w-1/3">
         <h2 className="text-xl font-semibold mb-4 text-purple-100">{title}</h2>
-        {children}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-purple-200 mb-1">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-3 py-2 bg-[#2A1A4A] text-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+              placeholder="Enter playbook name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-purple-200 mb-1">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full px-3 py-2 bg-[#2A1A4A] text-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 h-32"
+              placeholder="Enter playbook description"
+            />
+          </div>
+        </div>
         <div className="flex justify-end space-x-4 mt-4">
           <button
-            onClick={onRequestClose}
+            onClick={onClose}
             className="px-4 py-2 bg-[#2A1A4A] text-purple-100 rounded-lg hover:bg-purple-800/20"
           >
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => onSubmit(name, description)}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
           >
             Confirm
@@ -40,14 +69,57 @@ function CustomModal({ isOpen, onRequestClose, title, onConfirm, children }: Cus
   );
 }
 
+interface DropdownMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function DropdownMenu({ isOpen, onClose, onEdit, onDelete }: DropdownMenuProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-[#120322] border border-purple-800/30">
+      <div className="py-1" role="menu">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onEdit();
+            onClose();
+          }}
+          className="w-full text-left px-4 py-2 text-sm text-purple-100 hover:bg-[#2A1A4A]"
+          role="menuitem"
+        >
+          Edit Playbook
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+            onClose();
+          }}
+          className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-[#2A1A4A]"
+          role="menuitem"
+        >
+          Delete Playbook
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function Playbook() {
   const navigate = useNavigate();
-  const { trades, playbooks, addPlaybook, fetchTrades, fetchPlaybooks, isLoading } = useTrades();
+  const { trades, playbooks, addPlaybook, editPlaybook, deletePlaybook, isLoading, fetchTrades, fetchPlaybooks } = useTrades();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlaybook, setSelectedPlaybook] = useState<PlaybookType | null>(null);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [newPlaybookName, setNewPlaybookName] = useState('');
   const [newPlaybookDescription, setNewPlaybookDescription] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isBackgroundLoading, setIsBackgroundLoading] = useState(false);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
 
   // Initial data load and background refresh
   useEffect(() => {
@@ -126,6 +198,36 @@ export function Playbook() {
   const formatPercent = (value: number) =>
     new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1 }).format(value / 100);
 
+  const handleEditClick = (playbook: PlaybookType) => {
+    setSelectedPlaybook(playbook);
+    setModalMode('edit');
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteClick = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this playbook?')) {
+      await deletePlaybook(id);
+    }
+  };
+
+  const handleModalSubmit = async (name: string, description: string) => {
+    if (modalMode === 'edit' && selectedPlaybook) {
+      await editPlaybook({
+        ...selectedPlaybook,
+        name,
+        description
+      });
+    } else {
+      await addPlaybook({
+        name,
+        description,
+        userId: ''  // This will be set by the backend
+      });
+    }
+    setIsModalOpen(false);
+    setSelectedPlaybook(null);
+  };
+
   // Only show loading state if we have no cached data
   if (isLoading && (trades.length === 0 || playbooks.length === 0)) {
     return (
@@ -158,7 +260,11 @@ export function Playbook() {
             )}
           </h1>
           <button
-            onClick={handleCreatePlaybook}
+            onClick={() => {
+              setModalMode('add');
+              setSelectedPlaybook(null);
+              setIsModalOpen(true);
+            }}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
           >
             <Plus size={20} /> Create Playbook
@@ -173,7 +279,23 @@ export function Playbook() {
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-purple-100">{playbook.name}</h2>
-                <MoreHorizontal size={20} className="text-purple-400" />
+                <div className="relative">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpenDropdownId(openDropdownId === playbook.id ? null : playbook.id);
+                    }}
+                    className="text-purple-400 hover:text-purple-300 p-1"
+                  >
+                    <MoreHorizontal size={20} />
+                  </button>
+                  <DropdownMenu
+                    isOpen={openDropdownId === playbook.id}
+                    onClose={() => setOpenDropdownId(null)}
+                    onEdit={() => handleEditClick(playbook)}
+                    onDelete={() => handleDeleteClick(playbook.id)}
+                  />
+                </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center gap-2">
@@ -205,37 +327,15 @@ export function Playbook() {
       
       <CustomModal
         isOpen={isModalOpen}
-        onRequestClose={() => setIsModalOpen(false)}
-        title="Add New Playbook"
-        onConfirm={handleModalConfirm}
-      >
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-purple-200 mb-1">
-              Playbook Name
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter playbook name"
-              value={newPlaybookName}
-              onChange={(e) => setNewPlaybookName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-purple-200 mb-1">
-              Description (optional)
-            </label>
-            <textarea
-              className="w-full p-2 bg-[#2A1A4A] border border-purple-800/30 rounded-lg text-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter playbook description"
-              value={newPlaybookDescription}
-              onChange={(e) => setNewPlaybookDescription(e.target.value)}
-              rows={3}
-            />
-          </div>
-        </div>
-      </CustomModal>
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedPlaybook(null);
+        }}
+        title={modalMode === 'edit' ? 'Edit Playbook' : 'Add Playbook'}
+        initialName={selectedPlaybook?.name || ''}
+        initialDescription={selectedPlaybook?.description || ''}
+        onSubmit={handleModalSubmit}
+      />
     </div>
   );
 }
