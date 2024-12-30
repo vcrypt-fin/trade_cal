@@ -101,11 +101,21 @@ export default function SubscriptionPage() {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`bg-purple-900/20 border border-purple-700/50 shadow-lg transform transition-all duration-300 hover:scale-105 ${
+              className={`relative bg-purple-900/20 border border-purple-700/50 shadow-lg transform transition-all duration-300 hover:scale-105 ${
                 plan.featured ? 'ring-2 ring-purple-500' : ''
-              }`}
+              } ${plan.comingSoon ? 'opacity-80' : ''}`}
             >
-              <CardHeader>
+              {plan.comingSoon && (
+                <>
+                  <div className="absolute inset-0 backdrop-blur-[8px] bg-black/40 z-10 rounded-lg"></div>
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-purple-700 text-white text-base font-medium px-6 py-2 rounded-full shadow-lg border border-purple-400/30">
+                      Coming Soon
+                    </div>
+                  </div>
+                </>
+              )}
+              <CardHeader className={plan.comingSoon ? 'opacity-50' : ''}>
                 <CardTitle className="text-2xl font-bold text-purple-100">
                   {plan.name}
                 </CardTitle>
@@ -113,7 +123,7 @@ export default function SubscriptionPage() {
                   {plan.description}
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className={plan.comingSoon ? 'opacity-50' : ''}>
                 <div className="text-4xl font-bold text-purple-100 mb-4">
                   ${calculatePrice(plan.price)}
                   <span className="text-lg font-normal text-purple-300">
@@ -129,12 +139,16 @@ export default function SubscriptionPage() {
                   ))}
                 </ul>
               </CardContent>
-              <CardFooter>
+              <CardFooter className={plan.comingSoon ? 'opacity-60' : ''}>
                 <Button
                   size="lg"
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/20"
-                  onClick={() => handleSubscribe(plan.name.toLowerCase(), plan.price)}
-                  disabled={loading && selectedPlan === plan.name.toLowerCase()}
+                  className={`w-full ${
+                    plan.comingSoon 
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                  } text-white shadow-lg shadow-purple-500/20`}
+                  onClick={() => !plan.comingSoon && handleSubscribe(plan.name.toLowerCase(), plan.price)}
+                  disabled={loading && selectedPlan === plan.name.toLowerCase() || plan.comingSoon}
                 >
                   {loading && selectedPlan === plan.name.toLowerCase() ? (
                     <>
@@ -143,8 +157,8 @@ export default function SubscriptionPage() {
                     </>
                   ) : (
                     <>
-                      Get Started
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      {plan.comingSoon ? 'Coming Soon' : 'Get Started'}
+                      {!plan.comingSoon && <ArrowRight className="ml-2 h-4 w-4" />}
                     </>
                   )}
                 </Button>
@@ -154,15 +168,15 @@ export default function SubscriptionPage() {
         </div>
 
         <div className="mt-12 text-center text-purple-300">
-          <p className="mb-4">
+          {/* <p className="mb-4">
             All plans include a 14-day money-back guarantee
-          </p>
+          </p> */}
           <Button
             variant="link"
             className="text-purple-400 hover:text-purple-300"
             onClick={() => navigate('/demo')}
           >
-            Return to Demo
+            Return to Home
           </Button>
         </div>
       </div>
@@ -181,7 +195,8 @@ const plans = [
       "Daily Journal",
       "Email support",
       "Basic charts and analysis"
-    ]
+    ],
+    comingSoon: false
   },
   {
     name: "Pro",
@@ -196,7 +211,8 @@ const plans = [
       "Advanced analytics",
       "Custom alerts",
       "Strategy backtesting"
-    ]
+    ],
+    comingSoon: true
   },
   {
     name: "Enterprise",
@@ -211,6 +227,7 @@ const plans = [
       "Custom features",
       "API access",
       "Team collaboration tools"
-    ]
+    ],
+    comingSoon: true
   }
 ] 
