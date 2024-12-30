@@ -2,7 +2,21 @@ import React, { useEffect, useState, createContext, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './SupabaseClient';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/github/callback', '/stripe/callback', '/demo', '/watch-demo', '/auth', '/subscription'];
+const PUBLIC_ROUTES = [
+  '/login', 
+  '/register', 
+  '/github/callback', 
+  '/stripe/callback', 
+  '/demo', 
+  '/watch-demo', 
+  '/auth', 
+  '/subscription',
+  '/about',
+  '/careers',
+  '/legal/terms',
+  '/legal/privacy',
+  '/legal/cookies'
+];
 
 // Create context for auth token
 interface AuthContextType {

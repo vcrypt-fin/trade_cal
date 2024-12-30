@@ -30,7 +30,7 @@ const Header: React.FC = () => {
   }, []);
 
   return (
-    <header className="flex justify-between items-center mb-6">
+    <header className="flex justify-between items-center mb-6 ml-[30px]">
       <h1 className="text-2xl font-semibold text-purple-100">Dashboard</h1>
 
       <div className="flex items-center gap-4">

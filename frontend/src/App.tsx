@@ -35,6 +35,11 @@ import AuthPage from './app/auth/page.tsx';
 import WatchDemo from './app/watch-demo/page.tsx';
 import PaymentPage from './components/payment';
 import SubscriptionPage from './app/subscription/page';
+import AboutPage from './app/about/page';
+import CareersPage from './app/careers/page';
+import TermsPage from './app/legal/terms/page';
+import PrivacyPage from './app/legal/privacy/page';
+import CookiesPage from './app/legal/cookies/page';
 
 function App() {
   return (
@@ -55,6 +60,11 @@ function App() {
                   <Route path="/stripe/callback" element={<StripeCallback />} />
                   <Route path="/payment" element={<PaymentPage />} />
                   <Route path="/subscription" element={<SubscriptionPage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/careers" element={<CareersPage />} />
+                  <Route path="/legal/terms" element={<TermsPage />} />
+                  <Route path="/legal/privacy" element={<PrivacyPage />} />
+                  <Route path="/legal/cookies" element={<CookiesPage />} />
 
                   {/* Protected routes */}
                   <Route path="/" element={<DashboardLayout />} />

@@ -96,13 +96,16 @@ export default function LandingPage() {
         {/* Header */}
         <header className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
-            <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">TradeMind</div>
+            <div className="flex items-center gap-2">
+              <div className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">TradeMind</div>
+              <span className="px-2 py-0.5 text-xs font-semibold bg-gradient-to-r from-purple-500 to-pink-500 rounded-full text-white">BETA</span>
+            </div>
             <nav className="hidden md:block">
               <ul className="flex space-x-8">
                 <li><a href="#home" className="hover:text-purple-400 transition-colors">Home</a></li>
                 <li><a href="#features" className="hover:text-purple-400 transition-colors">Features</a></li>
                 <li><a href="#pricing" className="hover:text-purple-400 transition-colors">Pricing</a></li>
-                <li><a href="#testimonials" className="hover:text-purple-400 transition-colors">Testimonials</a></li>
+                {/* <li><a href="#testimonials" className="hover:text-purple-400 transition-colors">Testimonials</a></li> */}
                 <li><a href="#faq" className="hover:text-purple-400 transition-colors">FAQs</a></li>
               </ul>
             </nav>
@@ -128,7 +131,7 @@ export default function LandingPage() {
                       <li><a href="#home" className="block py-2 hover:text-purple-400 transition-colors">Home</a></li>
                       <li><a href="#features" className="block py-2 hover:text-purple-400 transition-colors">Features</a></li>
                       <li><a href="#pricing" className="block py-2 hover:text-purple-400 transition-colors">Pricing</a></li>
-                      <li><a href="#testimonials" className="block py-2 hover:text-purple-400 transition-colors">Testimonials</a></li>
+                      {/* <li><a href="#testimonials" className="block py-2 hover:text-purple-400 transition-colors">Testimonials</a></li> */}
                       <li><a href="#faq" className="block py-2 hover:text-purple-400 transition-colors">FAQs</a></li>
                     </ul>
                   </nav>
@@ -176,65 +179,15 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="flex-1 relative">
-              <div className="w-full h-[500px] bg-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-900 to-pink-900 opacity-50"></div>
-                <div className="relative p-6 flex flex-col h-full">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="text-2xl font-bold text-white">TradeMind Dashboard</div>
-                    <div className="flex space-x-2">
-                      <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    </div>
-                  </div>
-                  <div className="flex-1 grid grid-cols-2 gap-4">
-                    <div className="bg-gray-700 rounded-lg p-4 flex flex-col justify-between">
-                      <div className="text-sm text-gray-400">Portfolio Value</div>
-                      <div className="text-2xl font-bold text-green-400">$124,567.89</div>
-                      <div className="text-sm text-green-400 flex items-center">
-                        <TrendingUp className="w-4 h-4 mr-1" />
-                        +2.34%
-                      </div>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-4 flex flex-col justify-between">
-                      <div className="text-sm text-gray-400">Win Rate</div>
-                      <div className="text-2xl font-bold text-purple-400">68%</div>
-                      <div className="text-sm text-purple-400 flex items-center">
-                        <ArrowUpRight className="w-4 h-4 mr-1" />
-                        +5% this month
-                      </div>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-4 flex flex-col justify-between">
-                      <div className="text-sm text-gray-400">Open Positions</div>
-                      <div className="text-2xl font-bold text-blue-400">7</div>
-                      <div className="text-sm text-blue-400 flex items-center">
-                        <Activity className="w-4 h-4 mr-1" />
-                        3 profitable
-                      </div>
-                    </div>
-                    <div className="bg-gray-700 rounded-lg p-4 flex flex-col justify-between">
-                      <div className="text-sm text-gray-400">AI Insights</div>
-                      <div className="text-lg font-bold text-pink-400">3 new signals</div>
-                      <div className="text-sm text-pink-400 flex items-center">
-                        <Zap className="w-4 h-4 mr-1" />
-                        View now
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-6 bg-gray-700 rounded-lg p-4">
-                    <div className="text-sm text-gray-400 mb-2">Recent Performance</div>
-                    <div className="flex items-end space-x-1 h-20">
-                      {[40, 60, 30, 70, 50, 80, 35, 65, 45, 75, 55, 85].map((height, index) => (
-                        <div
-                          key={index}
-                          className="w-1/12 bg-gradient-to-t from-purple-500 to-pink-500 rounded-sm"
-                          style={{ height: `${height}%` }}
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <img
+                src="/landing-hero.png"
+                alt="TradeMind Platform Interface"
+                className="w-full h-auto rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
+                style={{
+                  maxWidth: '600px',
+                  margin: '0 auto'
+                }}
+              />
             </div>
           </div>
         </section>
@@ -244,46 +197,57 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-white">
             Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">TradeMind</span>?
           </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { 
-                title: "Free to Start", 
-                description: "Begin your trading journey without any upfront costs. Experience the full power of TradeMind risk-free.",
-                icon: Zap,
-                color: "text-purple-400"
-              },
-              { 
-                title: "User Friendly", 
-                description: "Intuitive interface designed for traders of all levels. Get started quickly and easily navigate through powerful features.",
-                icon: Users,
-                color: "text-purple-400"
-              },
-              { 
-                title: "Real-Time Data", 
-                description: "Stay informed with the latest market updates and news. Make decisions based on up-to-the-minute information.",
-                icon: TrendingUp,
-                color: "text-purple-400"
-              },
-              { 
-                title: "Advanced AI", 
-                description: "Leverage cutting-edge algorithms for better trades. Get AI-powered insights and predictions to enhance your strategy.",
-                icon: Sparkles,
-                color: "text-purple-400"
-              }
-            ].map((feature, index) => (
-              <Card key={index} className="bg-gradient-to-b from-[#2A1A4A] to-[#1A0E2E] border-purple-700 text-white hover:border-purple-500 transition-all duration-300 overflow-hidden group">
-                <CardContent className="p-6 relative">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity duration-300"></div>
-                  <feature.icon className={`h-12 w-12 ${feature.color} mb-4 group-hover:scale-110 transition-transform duration-300`} />
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
-                  <div className="mt-4 flex items-center text-purple-400 group-hover:text-pink-400 transition-colors duration-300">
-                    <span className="text-sm font-medium">Learn more</span>
-                    <ArrowRight className="h-4 w-4 ml-1" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px]">
+              {[
+                { 
+                  title: "Free to Start", 
+                  description: "Begin your trading journey without any upfront costs. Experience the full power of TradeMind risk-free.",
+                  icon: Zap,
+                  color: "text-purple-400",
+                  details: "Start with our Basic plan at no cost. Get access to essential features like trade journaling, basic analytics, and market insights. Upgrade anytime as your trading needs grow."
+                },
+                { 
+                  title: "User Friendly", 
+                  description: "Intuitive interface designed for traders of all levels. Get started quickly and easily navigate through powerful features.",
+                  icon: Users,
+                  color: "text-purple-400",
+                  details: "Our platform is built with simplicity in mind. Clean, modern interface with drag-and-drop functionality, customizable dashboards, and step-by-step tutorials to help you get the most out of every feature."
+                },
+                { 
+                  title: "Advanced AI", 
+                  description: "Leverage cutting-edge algorithms for better trades. Get AI-powered insights and predictions to enhance your strategy.",
+                  icon: Sparkles,
+                  color: "text-purple-400",
+                  details: "Our AI technology analyzes market patterns, predicts trends, and provides personalized recommendations. Machine learning algorithms adapt to your trading style and help identify profitable opportunities.",
+                  comingSoon: true
+                }
+              ].map((feature, index) => (
+                <Card key={index} className="bg-gradient-to-b from-[#2A1A4A] to-[#1A0E2E] border-purple-700 text-white hover:border-purple-500 transition-all duration-300 overflow-hidden group w-full">
+                  <CardContent className="p-6 relative">
+                    {feature.comingSoon && (
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Coming Soon
+                      </div>
+                    )}
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    <feature.icon className={`h-12 w-12 ${feature.color} mb-4 group-hover:scale-110 transition-transform duration-300`} />
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-gray-300">{feature.description}</p>
+                    <Accordion type="single" collapsible className="w-full mt-4">
+                      <AccordionItem value={`item-${index}`} className="border-none">
+                        <AccordionTrigger className="flex items-center text-purple-400 group-hover:text-pink-400 transition-colors duration-300 hover:no-underline py-0">
+                          <span className="text-sm font-medium">Learn more</span>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-gray-300 mt-2 text-sm">
+                          {feature.details}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -298,82 +262,107 @@ export default function LandingPage() {
           <p className="text-xl text-center text-gray-300 mb-12 max-w-3xl mx-auto">
             Elevate your trading game with our comprehensive suite of tools designed to give you the edge in any market condition.
           </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              { 
-                title: "Advanced Trading Journal",
-                description: "Log trades with precision, track your progress, and gain valuable insights into your trading patterns.",
-                icon: Book,
-                color: "text-purple-400"
-              },
-              { 
-                title: "AI-Powered Insights",
-                description: "Harness the power of machine learning to get intelligent suggestions and market predictions.",
-                icon: Zap,
-                color: "text-pink-400"
-              },
-              { 
-                title: "Real-Time Analytics",
-                description: "Visualize your trading performance with comprehensive charts and metrics in real-time.",
-                icon: BarChart2,
-                color: "text-blue-400"
-              },
-              { 
-                title: "Risk Management",
-                description: "Set and monitor risk parameters to protect your capital and optimize your trading strategy.",
-                icon: Shield,
-                color: "text-green-400"
-              },
-              { 
-                title: "Strategy Playbook",
-                description: "Document and refine your trading strategies. Backtest and optimize for better performance.",
-                icon: BookOpen,
-                color: "text-yellow-400"
-              },
-              { 
-                title: "Cloud Integration",
-                description: "Access your data from any device, anytime. Seamlessly integrate with your favorite brokers.",
-                icon: Lock,
-                color: "text-indigo-400"
-              },
-              { 
-                title: "Market Sentiment Analysis",
-                description: "Stay ahead with advanced tools to gauge market emotions and trends using social media and news data.",
-                icon: TrendingUp,
-                color: "text-red-400"
-              },
-              { 
-                title: "Custom Alerts",
-                description: "Never miss an opportunity with customizable notifications for price movements and technical indicators.",
-                icon: Bell,
-                color: "text-orange-400"
-              },
-              { 
-                title: "Trading Community",
-                description: "Connect with fellow traders, share insights, and access educational resources to continually improve your skills.",
-                icon: Users,
-                color: "text-teal-400"
-              },
-            ].map((feature, index) => (
-              <Card key={index} className="bg-gradient-to-br from-purple-900 to-purple-950 border-purple-700 text-white hover:border-purple-500 transition-all duration-300 group overflow-hidden">
-                <CardContent className="p-6 relative">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity duration-300"></div>
-                  <feature.icon className="h-12 w-12 text-purple-400 mb-4 group-hover:scale-110 transition-transform duration-300" />
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-300">{feature.description}</p>
-                  <div className="mt-4 flex items-center text-purple-400 group-hover:text-pink-400 transition-colors duration-300">
-                    <span className="text-sm font-medium">Learn more</span>
-                    <ArrowRight className="h-4 w-4 ml-1" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px]">
+              {[
+                { 
+                  title: "Advanced Trading Journal",
+                  description: "Log trades with precision, track your progress, and gain valuable insights into your trading patterns.",
+                  icon: Book,
+                  color: "text-purple-400",
+                  details: "Our advanced journaling system allows you to record every aspect of your trades, including entry/exit points, emotions, market conditions, and custom metrics. Generate detailed reports and identify patterns in your trading behavior."
+                },
+                { 
+                  title: "AI-Powered Insights",
+                  description: "Harness the power of machine learning to get intelligent suggestions and market predictions.",
+                  icon: Zap,
+                  color: "text-pink-400",
+                  details: "Our AI algorithms analyze your trading history and market data to provide personalized insights. Get recommendations for trade setups, risk management, and strategy optimization based on your trading style.",
+                  comingSoon: true
+                },
+                { 
+                  title: "Real-Time Analytics",
+                  description: "Visualize your trading performance with comprehensive charts and metrics in real-time.",
+                  icon: BarChart2,
+                  color: "text-blue-400",
+                  details: "Monitor your performance with live P&L tracking, equity curves, win rates, and advanced risk metrics. Customize your dashboard to focus on the metrics that matter most to your trading strategy."
+                },
+                { 
+                  title: "Risk Management",
+                  description: "Set and monitor risk parameters to protect your capital and optimize your trading strategy.",
+                  icon: Shield,
+                  color: "text-green-400",
+                  details: "Define position sizes, stop losses, and risk limits automatically. Track your risk exposure across different markets and get alerts when approaching your predefined risk thresholds."
+                },
+                { 
+                  title: "Strategy Playbook",
+                  description: "Document and refine your trading strategies. Backtest and optimize for better performance.",
+                  icon: BookOpen,
+                  color: "text-yellow-400",
+                  details: "Create detailed strategy templates, complete with entry/exit rules, risk parameters, and performance metrics. Backtest your strategies against historical data and optimize them for different market conditions."
+                },
+                { 
+                  title: "Cloud Integration",
+                  description: "Access your data from any device, anytime. Seamlessly integrate with your favorite brokers.",
+                  icon: Lock,
+                  color: "text-indigo-400",
+                  details: "Your trading data is securely stored in the cloud and accessible across all your devices. Connect with major brokers for automated trade importing and real-time position tracking."
+                },
+                { 
+                  title: "Market Sentiment Analysis",
+                  description: "Stay ahead with advanced tools to gauge market emotions and trends using social media and news data.",
+                  icon: TrendingUp,
+                  color: "text-red-400",
+                  details: "Track market sentiment across social media, news sources, and trading forums. Get real-time alerts on significant sentiment shifts that could affect your trading positions.",
+                  comingSoon: true
+                },
+                { 
+                  title: "Custom Alerts",
+                  description: "Never miss an opportunity with customizable notifications for price movements and technical indicators.",
+                  icon: Bell,
+                  color: "text-orange-400",
+                  details: "Set up personalized alerts for price levels, technical indicators, volume spikes, and more. Receive notifications via email, mobile push, or within the platform."
+                },
+                { 
+                  title: "Trading Community",
+                  description: "Connect with fellow traders, share insights, and access educational resources to continually improve your skills.",
+                  icon: Users,
+                  color: "text-teal-400",
+                  details: "Join a community of like-minded traders, share strategies, and learn from experienced mentors. Access webinars, tutorials, and educational content to enhance your trading knowledge.",
+                  comingSoon: true
+                },
+              ].map((feature, index) => (
+                <Card key={index} className="bg-gradient-to-br from-purple-900 to-purple-950 border-purple-700 text-white hover:border-purple-500 transition-all duration-300 group overflow-hidden w-full">
+                  <CardContent className="p-6 relative">
+                    {feature.comingSoon && (
+                      <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        Coming Soon
+                      </div>
+                    )}
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-600 to-pink-600 rounded-bl-full opacity-10 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    <feature.icon className={`h-12 w-12 ${feature.color} mb-4 group-hover:scale-110 transition-transform duration-300`} />
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-gray-300">{feature.description}</p>
+                    <Accordion type="single" collapsible className="w-full mt-4">
+                      <AccordionItem value={`feature-${index}`} className="border-none">
+                        <AccordionTrigger className="flex items-center text-purple-400 group-hover:text-pink-400 transition-colors duration-300 hover:no-underline py-0">
+                          <span className="text-sm font-medium">Learn more</span>
+                        </AccordionTrigger>
+                        <AccordionContent className="text-gray-300 mt-2 text-sm">
+                          {feature.details}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
           <div className="mt-12 text-center">
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+            {/* <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 transform hover:scale-105">
               Explore All Features
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            </Button> */}
           </div>
         </section>
 
@@ -382,6 +371,17 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center text-white">
             Choose Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Plan</span>
           </h2>
+          
+          {/* Beta Version Banner */}
+          <div className="max-w-3xl mx-auto mb-12 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg p-4">
+            <div className="flex items-center justify-center gap-2 text-center">
+              <Sparkles className="h-5 w-5 text-purple-400" />
+              <p className="text-lg text-purple-100">
+                <span className="font-semibold">Beta Version Available!</span> During our beta phase, all features are available at no cost. Pricing will be implemented after the beta period.
+              </p>
+            </div>
+          </div>
+
           <div className="flex justify-center mb-8">
             <div className="bg-[#1A1A1A] p-1 rounded-full">
               <Button
@@ -466,7 +466,7 @@ export default function LandingPage() {
                       {billingCycle === 'monthly' ? 'per month' : 'per year'}
                     </p>
                     {billingCycle === 'yearly' && (
-                      <p className="text-sm text-green-400 mt-2">
+                      <p className="text-sm text-green-400 font-bold mt-2">
                         Save {Math.round((1 - (parseFloat(plan.yearlyPrice.slice(1)) / (parseFloat(plan.monthlyPrice.slice(1)) * 12))) * 100)}%
                       </p>
                     )}
@@ -493,8 +493,8 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="container mx-auto px-4 py-20 bg-gradient-to-b from-purple-950/30 to-black rounded-3xl my-12" id="testimonials">
+        {/* Testimonials Section COMMENTED OUT BECAUSE WE DON'T HAVE ANY TESTIMONIALS YET*/}
+        {/* <section className="container mx-auto px-4 py-20 bg-gradient-to-b from-purple-950/30 to-black rounded-3xl my-12" id="testimonials">
           <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center text-white">
             What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">Traders</span> Say
           </h2>
@@ -562,7 +562,7 @@ export default function LandingPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
-        </section>
+        </section> */}
 
         {/* FAQ Section */}
         <section className="container mx-auto px-4 py-20 bg-gradient-to-b from-purple-950/20 to-black rounded-3xl my-12" id="faq">
@@ -714,7 +714,7 @@ export default function LandingPage() {
                 {[
                   {
                     question: "What subscription plans does TradeMind offer?",
-                    answer: "We offer flexible plans including Basic (free), Pro, and Enterprise subscriptions. Each plan is designed to cater to different trading needs and volumes, with various feature sets and support levels."
+                    answer: "We offer flexible plans including Basic, Pro, and Enterprise subscriptions. Each plan is designed to cater to different trading needs and volumes, with various feature sets and support levels."
                   },
                   {
                     question: "Can I upgrade or downgrade my plan?",
@@ -722,11 +722,11 @@ export default function LandingPage() {
                   },
                   {
                     question: "Do you offer refunds?",
-                    answer: "Yes, we offer a 14-day money-back guarantee for all new subscriptions. If you're not satisfied, you can request a full refund within this period."
+                    answer: "No, we do not offer refunds at this time. For example, if you purchase a monthly subscription for $5.99, this charge is non-refundable."
                   },
                   {
                     question: "What payment methods do you accept?",
-                    answer: "We accept all major credit cards, PayPal, and select cryptocurrencies. All transactions are processed securely through our trusted payment partners."
+                    answer: "We accept all major credit cards, PayPal. All transactions are processed securely through our trusted payment partners."
                   },
                 ].map((faq, index) => (
                   <AccordionItem 
@@ -748,7 +748,10 @@ export default function LandingPage() {
 
           <div className="mt-12 text-center">
             <p className="text-gray-300 mb-4">Can't find the answer you're looking for?</p>
-            <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+            <Button 
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-8 py-3 rounded-full text-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+              onClick={() => window.location.href = 'mailto:contact@vcryptfinancial.com'}
+            >
               Contact Support
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -764,7 +767,7 @@ export default function LandingPage() {
               className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-6 text-lg rounded-full shadow-lg transition-all duration-300 transform hover:scale-105"
               onClick={() => navigate('/auth')}
             >
-              Start Your Free Trial
+              Start Your Journey
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -783,23 +786,22 @@ export default function LandingPage() {
                 <ul className="space-y-2">
                   <li><a href="#features" className="text-gray-400 hover:text-purple-400 transition-colors">Features</a></li>
                   <li><a href="#pricing" className="text-gray-400 hover:text-purple-400 transition-colors">Pricing</a></li>
-                  <li><a href="#testimonials" className="text-gray-400 hover:text-purple-400 transition-colors">Testimonials</a></li>
                 </ul>
               </div>
               <div>
                 <h4 className="text-lg font-semibold mb-4 text-white">Company</h4>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">About Us</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Careers</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Contact</a></li>
+                  <li><a href="/about" className="text-gray-400 hover:text-purple-400 transition-colors">About Us</a></li>
+                  <li><a href="/careers" className="text-gray-400 hover:text-purple-400 transition-colors">Careers</a></li>
+                  <li><a href="mailto:contact@vcryptfinancial.com" className="text-gray-400 hover:text-purple-400 transition-colors">Contact</a></li>
                 </ul>
               </div>
               <div>
                 <h4 className="text-lg font-semibold mb-4 text-white">Legal</h4>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Terms of Service</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Privacy Policy</a></li>
-                  <li><a href="#" className="text-gray-400 hover:text-purple-400 transition-colors">Cookie Policy</a></li>
+                  <li><a href="/legal/terms" className="text-gray-400 hover:text-purple-400 transition-colors">Terms of Service</a></li>
+                  <li><a href="/legal/privacy" className="text-gray-400 hover:text-purple-400 transition-colors">Privacy Policy</a></li>
+                  <li><a href="/legal/cookies" className="text-gray-400 hover:text-purple-400 transition-colors">Cookie Policy</a></li>
                 </ul>
               </div>
             </div>
