@@ -5,6 +5,7 @@ import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTrades } from '../context/TradeContext';
+import { Loader2 } from 'lucide-react';
 
 interface Subscription {
   id: string;
@@ -24,6 +25,10 @@ const Profile = () => {
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const fetchSubscription = useCallback(async () => {
     try {
@@ -134,6 +139,62 @@ const Profile = () => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
+  };
+
+  const handleResetPassword = async () => {
+    try {
+      if (!user?.email) {
+        toast.error('No email found');
+        return;
+      }
+
+      setIsResettingPassword(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
+        redirectTo: `${window.location.origin}/update-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success('Password reset link sent to your email');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      toast.error('Failed to send password reset email');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return;
+    }
+
+    try {
+      setIsResettingPassword(true);
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) throw error;
+
+      toast.success('Password updated successfully!');
+      setShowPasswordModal(false);
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (error) {
+      console.error('Error updating password:', error);
+      toast.error('Failed to update password');
+    } finally {
+      setIsResettingPassword(false);
+    }
   };
 
   if (!user) {
@@ -251,12 +312,26 @@ const Profile = () => {
               <div>
                 <button
                   onClick={() => setShowConfirmation(true)}
-                  className="px-4 py-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors"
+                  className="px-4 py-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors mr-4"
                 >
                   Clear All Data
                 </button>
+                <button
+                  onClick={handleResetPassword}
+                  disabled={isResettingPassword}
+                  className="px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors inline-flex items-center"
+                >
+                  {isResettingPassword ? (
+                    <>
+                      <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                      Sending Reset Link...
+                    </>
+                  ) : (
+                    'Reset Password'
+                  )}
+                </button>
                 <p className="mt-2 text-sm text-purple-300">
-                  This will permanently remove all trades, journal entries, playbooks, and other data.
+                  Manage your account data and security settings. Password reset link will be sent to your email.
                 </p>
               </div>
             </div>
@@ -301,6 +376,74 @@ const Profile = () => {
                   Clear All Data
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Password Update Modal */}
+        {showPasswordModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[#120322] rounded-lg border border-purple-800/30 p-6 max-w-md w-full">
+              <h3 className="text-lg font-semibold mb-4 text-purple-100">Update Password</h3>
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-purple-200 mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full p-2 bg-purple-900/20 border border-purple-800/30 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-purple-100"
+                    required
+                    minLength={6}
+                    placeholder="Enter new password"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-purple-200 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full p-2 bg-purple-900/20 border border-purple-800/30 rounded-lg focus:ring-purple-500 focus:border-purple-500 text-purple-100"
+                    required
+                    minLength={6}
+                    placeholder="Confirm new password"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPasswordModal(false);
+                      setNewPassword('');
+                      setConfirmPassword('');
+                    }}
+                    className="px-4 py-2 border border-purple-800/30 rounded-lg text-purple-200 hover:bg-purple-900/20 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isResettingPassword}
+                    className="px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors flex items-center"
+                  >
+                    {isResettingPassword ? (
+                      <>
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                        Updating...
+                      </>
+                    ) : (
+                      'Update Password'
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
