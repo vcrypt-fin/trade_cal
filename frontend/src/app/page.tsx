@@ -374,16 +374,16 @@ export default function LandingPage() {
           
           {/* Beta Version Banner */}
           <div className="max-w-3xl mx-auto mb-12 bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-lg p-4">
-            <div className="flex items-center justify-center gap-2 text-center">
-              <Sparkles className="h-5 w-5 text-purple-400" />
-              <p className="text-lg text-purple-100">
-                <span className="font-semibold">Beta Version Available!</span> During our beta phase, all features are available at no cost. Pricing will be implemented after the beta period.
-              </p>
-            </div>
-            <div className="mt-4 text-center">
-              <p className="text-lg text-red-400 font-semibold">
-                Important: Use code <span className="font-bold text-purple-400">BETA</span> at signup to avoid being charged!
-              </p>
+            <div className="flex items-start gap-2 text-center">
+              <Sparkles className="h-10 w-10 text-purple-400 mt-[-4px]" />
+              <div>
+                <p className="text-lg text-purple-100 text-left">
+                  <span className="font-semibold">Beta Version Available!</span> During our beta phase, all features are available at no cost. Pricing will be implemented after the beta period.
+                </p>
+                <p className="text-lg text-red-400 font-semibold mt-4 text-left">
+                  Important: Use code <span className="font-bold text-purple-400">BETA</span> at signup to avoid being charged!
+                </p>
+              </div>
             </div>
           </div>
 
