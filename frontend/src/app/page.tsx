@@ -419,7 +419,8 @@ export default function LandingPage() {
                 ],
                 cta: "Get Started",
                 popular: false,
-                gradient: "from-purple-600 to-blue-500"
+                gradient: "from-purple-600 to-blue-500",
+                comingSoon: false
               },
               {
                 title: "Pro",
@@ -431,9 +432,10 @@ export default function LandingPage() {
                   "AI-powered insights",
                   "Unlimited trades",
                 ],
-                cta: "Get Started",
-                popular: true,
-                gradient: "from-pink-500 to-purple-600"
+                cta: "Coming Soon",
+                popular: false,
+                gradient: "from-pink-500 to-purple-600",
+                comingSoon: true
               },
               {
                 title: "Enterprise",
@@ -447,22 +449,33 @@ export default function LandingPage() {
                   "Dedicated account manager",
                   "Priority support",
                 ],
-                cta: "Get Started",
+                cta: "Coming Soon",
                 popular: false,
-                gradient: "from-purple-800 to-purple-500"
+                gradient: "from-purple-800 to-purple-500",
+                comingSoon: true
               }
             ].map((plan, index) => (
-              <Card key={index} className={`relative overflow-hidden bg-gradient-to-br ${plan.gradient} ${plan.popular ? 'shadow-lg shadow-purple-500/20' : ''}`}>
+              <Card key={index} className={`relative overflow-hidden bg-gradient-to-br ${plan.gradient} ${plan.popular ? 'shadow-lg shadow-purple-500/20' : ''} ${plan.comingSoon ? 'opacity-80' : ''}`}>
                 {plan.popular && (
-                  <div className="absolute top-0 right-0 bg-yellow-400 text-purple-900 text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  <div className="absolute top-0 right-0 bg-gradient-to-r from-yellow-400 to-yellow-500 text-purple-900 text-xs font-bold px-3 py-1 rounded-bl-lg z-20">
                     MOST POPULAR
                   </div>
                 )}
-                <CardHeader className="pb-0 pt-6">
+                {plan.comingSoon && (
+                  <>
+                    <div className="absolute inset-0 backdrop-blur-[4px] bg-black/20 z-10"></div>
+                    <div className="absolute inset-0 flex items-center justify-center z-20">
+                      <div className="bg-gradient-to-r from-violet-600 via-purple-600 to-purple-700 text-white text-base font-medium px-6 py-2 rounded-full shadow-lg border border-purple-400/30 transform ">
+                        Coming Soon
+                      </div>
+                    </div>
+                  </>
+                )}
+                <CardHeader className={`pb-0 pt-6 ${plan.comingSoon ? 'opacity-60' : ''}`}>
                   <CardTitle className="text-2xl mb-1 text-white">{plan.title}</CardTitle>
                   <p className="text-purple-100">{plan.subtitle}</p>
                 </CardHeader>
-                <CardContent className="p-6 flex flex-col h-[500px]">
+                <CardContent className={`p-6 flex flex-col h-[500px] ${plan.comingSoon ? 'opacity-60' : ''}`}>
                   <div className="mb-6 text-center">
                     <p className="text-5xl font-bold text-white">
                       {billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
@@ -486,8 +499,13 @@ export default function LandingPage() {
                   </ul>
                   <div className="mt-auto">
                     <Button 
-                      className="w-full py-4 rounded-full text-lg bg-white hover:bg-purple-100 text-purple-700 transition-colors duration-300"
-                      // onClick={() => router.push(`/payment?plan=${plan.title.toLowerCase()}&cycle=${billingCycle}`)}
+                      className={`w-full py-4 rounded-full text-lg transition-colors duration-300 ${
+                        plan.comingSoon 
+                          ? 'bg-gray-400 cursor-not-allowed'
+                          : 'bg-white hover:bg-purple-100 text-purple-700'
+                      }`}
+                      disabled={plan.comingSoon}
+                      onClick={() => !plan.comingSoon && navigate('/auth')}
                     >
                       {plan.cta}
                     </Button>
