@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useTrades } from '../context/TradeContext';
 
 interface Subscription {
   id: string;
@@ -17,9 +18,12 @@ interface Subscription {
 const Profile = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { clearAllTrades } = useTrades();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const fetchSubscription = useCallback(async () => {
     try {
@@ -31,7 +35,6 @@ const Profile = () => {
 
       console.log('Fetching subscription for user:', user.id);
 
-      // Add proper headers for Supabase
       const { data, error } = await supabase
         .from('subscriptions')
         .select('*')
@@ -41,7 +44,6 @@ const Profile = () => {
       if (error) {
         console.error('Error fetching subscription:', error);
         if (error.code === 'PGRST116') {
-          // No subscription found
           setSubscription(null);
         } else {
           throw error;
@@ -64,8 +66,8 @@ const Profile = () => {
   }, [fetchSubscription]);
 
   const handleSubscribe = () => {
-    console.log('Navigating to payment page');
-    navigate('/payment');
+    console.log('Navigating to subscription page');
+    navigate('/subscription');
   };
 
   const handleCancelSubscription = async () => {
@@ -75,7 +77,6 @@ const Profile = () => {
         return;
       }
       
-      // Use Stripe's test portal URL
       const portalUrl = `https://billing.stripe.com/p/login/test_aEUcQ017E0bA0us4gg`;
       console.log('Redirecting to portal:', portalUrl);
       window.location.href = portalUrl;
@@ -85,16 +86,61 @@ const Profile = () => {
     }
   };
 
+  const handleClearData = async () => {
+    if (!user) return;
+
+    try {
+      // Delete all trades for this user
+      const { error: tradesError } = await supabase
+        .from('trades')
+        .delete()
+        .eq('userId', user.id);
+
+      if (tradesError) throw tradesError;
+
+      // Delete all notes for this user
+      const { error: notesError } = await supabase
+        .from('notes')
+        .delete()
+        .eq('user_id', user.id);
+
+      if (notesError) throw notesError;
+
+      // Delete all playbooks for this user
+      const { error: playbooksError } = await supabase
+        .from('playbooks')
+        .delete()
+        .eq('userId', user.id);
+
+      if (playbooksError) throw playbooksError;
+
+      // Clear trades context
+      clearAllTrades();
+      
+      // Clear localStorage except for Supabase session
+      for (let key of Object.keys(localStorage)) {
+        if (!key.startsWith('sb-')) {
+          localStorage.removeItem(key);
+        }
+      }
+
+      setShowConfirmation(false);
+      toast.success('All data cleared successfully');
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      toast.error('Failed to clear data');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  // Show loading state while user authentication is pending
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center">Authenticating...</div>
+          <div className="text-center text-purple-100">Authenticating...</div>
         </div>
       </div>
     );
@@ -102,50 +148,51 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] py-12">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center">Loading subscription details...</div>
+          <div className="text-center text-purple-100">Loading subscription details...</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64 p-8">
+    <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] flex">
+      <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
+      <div className={`flex-1 transition-all duration-300 pt-12 ${isCollapsed ? 'ml-[60px]' : 'ml-[250px]'} p-8`}>
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h1 className="text-2xl font-bold mb-6">Subscription Management</h1>
+          {/* Subscription Section */}
+          <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6 mb-8">
+            <h2 className="text-2xl font-bold mb-6 text-purple-100">Subscription Management</h2>
             
             {error && (
-              <div className="bg-red-50 text-red-700 p-4 rounded-lg mb-6">
+              <div className="bg-red-900/20 text-red-400 p-4 rounded-lg mb-6 border border-red-800/30">
                 {error}
               </div>
             )}
 
             {subscription ? (
               <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <h2 className="text-lg font-semibold mb-2">Current Plan</h2>
+                <div className="bg-purple-900/20 p-4 rounded-lg border border-purple-800/30">
+                  <h3 className="text-lg font-semibold mb-2 text-purple-100">Current Plan</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-gray-600">Status</p>
-                      <p className="font-medium">{subscription.status}</p>
+                      <p className="text-purple-300">Status</p>
+                      <p className="font-medium text-purple-100">{subscription.status}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Plan</p>
-                      <p className="font-medium">{subscription.plan_id}</p>
+                      <p className="text-purple-300">Plan</p>
+                      <p className="font-medium text-purple-100">{subscription.plan_id}</p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Current Period Ends</p>
-                      <p className="font-medium">
+                      <p className="text-purple-300">Current Period Ends</p>
+                      <p className="font-medium text-purple-100">
                         {formatDate(subscription.current_period_end)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-600">Auto-Renewal</p>
-                      <p className="font-medium">
+                      <p className="text-purple-300">Auto-Renewal</p>
+                      <p className="font-medium text-purple-100">
                         {subscription.cancel_at_period_end ? 'Off' : 'On'}
                       </p>
                     </div>
@@ -153,7 +200,7 @@ const Profile = () => {
 
                   <button
                     onClick={handleCancelSubscription}
-                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className="mt-4 px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors"
                   >
                     Manage Subscription
                   </button>
@@ -162,15 +209,15 @@ const Profile = () => {
             ) : (
               <div className="space-y-6">
                 <div className="text-center">
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-purple-300 mb-4">
                     You don't have an active subscription
                   </p>
                   
                   <div className="max-w-md mx-auto">
-                    <div className="border rounded-lg p-6">
-                      <h3 className="text-xl font-semibold mb-2">Monthly Plan</h3>
-                      <p className="text-3xl font-bold mb-4">$9.99<span className="text-sm text-gray-600">/month</span></p>
-                      <ul className="text-left mb-4 space-y-2">
+                    <div className="border border-purple-800/30 rounded-lg p-6 bg-purple-900/20">
+                      <h3 className="text-xl font-semibold mb-2 text-purple-100">Monthly Plan</h3>
+                      <p className="text-3xl font-bold mb-4 text-purple-100">$9.99<span className="text-sm text-purple-300">/month</span></p>
+                      <ul className="text-left mb-4 space-y-2 text-purple-200">
                         <li className="flex items-center">
                           <span className="text-green-500 mr-2">✓</span>
                           Unlimited Trade Tracking
@@ -186,7 +233,7 @@ const Profile = () => {
                       </ul>
                       <button
                         onClick={handleSubscribe}
-                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="w-full px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors"
                       >
                         Subscribe Now
                       </button>
@@ -196,7 +243,67 @@ const Profile = () => {
               </div>
             )}
           </div>
+
+          {/* Data Management Section */}
+          <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6 mb-8">
+            <h2 className="text-lg font-semibold mb-4 text-purple-100">Data Management</h2>
+            <div className="space-y-4">
+              <div>
+                <button
+                  onClick={() => setShowConfirmation(true)}
+                  className="px-4 py-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors"
+                >
+                  Clear All Data
+                </button>
+                <p className="mt-2 text-sm text-purple-300">
+                  This will permanently remove all trades, journal entries, playbooks, and other data.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Support Section */}
+          <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6">
+            <h2 className="text-lg font-semibold mb-4 text-purple-100">Support</h2>
+            <div>
+              <a
+                href="mailto:eclinick@vcryptfinancial.com?subject=Bug%20Report&body=Please%20describe%20the%20issue%20you're%20experiencing:"
+                className="px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors inline-block"
+              >
+                Report a Bug
+              </a>
+              <p className="mt-2 text-sm text-purple-300">
+                Encountered a bug? Send us an email with the details.
+              </p>
+            </div>
+          </div>
         </div>
+
+        {/* Confirmation Modal */}
+        {showConfirmation && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-[#120322] rounded-lg border border-purple-800/30 p-6 max-w-md">
+              <h3 className="text-lg font-semibold mb-4 text-purple-100">Confirm Clear Data</h3>
+              <p className="text-purple-200 mb-6">
+                Are you sure you want to clear all data? This action cannot be undone.
+              </p>
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setShowConfirmation(false)}
+                  className="px-4 py-2 border border-purple-800/30 rounded-lg text-purple-200 hover:bg-purple-900/20 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleClearData}
+                  className="px-4 py-2 bg-red-600/80 text-white rounded-lg hover:bg-red-700/80 transition-colors"
+                >
+                  Clear All Data
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

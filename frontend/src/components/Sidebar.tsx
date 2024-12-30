@@ -24,8 +24,7 @@ const menuItems = [
   { icon: TrendingUp, text: 'Trades', path: '/trades' },
   { icon: Notebook, text: 'Notebook', path: '/notebook' },
   { icon: BookMarked, text: 'Playbook', path: '/playbook' },
-  { icon: BarChart2, text: 'Reports', path: '/reports' },
-  { icon: SettingsIcon, text: 'Settings', path: '/settings' }
+  { icon: BarChart2, text: 'Reports', path: '/reports' }
 ];
 
 const cleanUsername = (user: SupabaseUser | null): string => {
