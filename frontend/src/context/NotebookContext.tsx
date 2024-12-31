@@ -45,109 +45,82 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
 
-  // Initialize default folders for new users
-  const initializeDefaultFolders = async () => {
-    try {
-      // First check if user already has folders
-      const { data: existingFolders, error: fetchError } = await supabase
-        .from('note_folders')
-        .select('*')
-        .eq('user_id', user?.id);
-
-      if (fetchError) throw fetchError;
-
-      // Only insert default folders if user has NO folders
-      if (existingFolders && existingFolders.length === 0) {
-        const { error: insertError } = await supabase
-          .from('note_folders')
-          .insert(
-            DEFAULT_FOLDERS.map(folder => ({
-              name: folder.name,
-              user_id: user?.id
-            }))
-          );
-
-        if (insertError) throw insertError;
-      }
-
-      // Fetch folders again after potential insert
-      const { data: finalFolders, error: finalFetchError } = await supabase
-        .from('note_folders')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: true });
-
-      if (finalFetchError) throw finalFetchError;
-
-      // Add virtual "All Notes" folder
-      const allNotesFolder = {
-        id: 'all',
-        name: 'All Notes',
-        created_at: new Date().toISOString()
-      };
-
-      setFolders([...(finalFolders || []), allNotesFolder]);
-
-    } catch (error) {
-      console.error('Error initializing default folders:', error);
-    }
-  };
-
   useEffect(() => {
-    if (user) {
-      const loadData = async () => {
-        setIsLoading(true);
-        try {
-          await initializeDefaultFolders();
-          await fetchNotes();
-        } catch (error) {
-          console.error('Error loading notebook data:', error);
-        } finally {
+    if (!user) return;
+
+    let isMounted = true;
+    
+    const loadData = async () => {
+      if (!isMounted) return;
+      setIsLoading(true);
+      
+      try {
+        // Fetch existing folders first
+        const { data: existingFolders, error: fetchError } = await supabase
+          .from('note_folders')
+          .select('*')
+          .eq('user_id', user.id);
+
+        if (!isMounted) return;
+        if (fetchError) throw fetchError;
+
+        // Only insert default folders if user has NO folders
+        if (existingFolders && existingFolders.length === 0) {
+          const { error: insertError } = await supabase
+            .from('note_folders')
+            .insert(
+              DEFAULT_FOLDERS.map(folder => ({
+                name: folder.name,
+                user_id: user.id
+              }))
+            );
+
+          if (insertError) throw insertError;
+        }
+
+        // Fetch all data in parallel
+        const [foldersResult, notesResult] = await Promise.all([
+          supabase
+            .from('note_folders')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: true }),
+          supabase
+            .from('notes')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('updated_at', { ascending: false })
+        ]);
+
+        if (!isMounted) return;
+
+        if (foldersResult.error) throw foldersResult.error;
+        if (notesResult.error) throw notesResult.error;
+
+        // Add virtual "All Notes" folder
+        const allNotesFolder = {
+          id: 'all',
+          name: 'All Notes',
+          created_at: new Date().toISOString()
+        };
+
+        setFolders([...(foldersResult.data || []), allNotesFolder]);
+        setNotes(notesResult.data || []);
+      } catch (error) {
+        console.error('Error loading notebook data:', error);
+      } finally {
+        if (isMounted) {
           setIsLoading(false);
         }
-      };
-      
-      loadData();
-    }
-  }, [user]);
+      }
+    };
+    
+    loadData();
 
-  const fetchNotes = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('notes')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      setNotes(data || []);
-    } catch (error) {
-      console.error('Error fetching notes:', error);
-    }
-  };
-
-  const fetchFolders = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('note_folders')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: true });
-
-      if (error) throw error;
-      
-      // Add virtual "All Notes" folder at the end
-      const allNotesFolder = {
-        id: 'all',
-        name: 'All Notes',
-        created_at: new Date().toISOString()
-      };
-      
-      setFolders([...(data || []), allNotesFolder]);
-    } catch (error) {
-      console.error('Error fetching folders:', error);
-    }
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.id]); // Only depend on user.id instead of the entire user object
 
   const addNote = async (note: Omit<Note, 'id' | 'created_at' | 'updated_at'>) => {
     const { data, error } = await supabase
@@ -169,7 +142,15 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       .eq('user_id', user?.id);
 
     if (error) throw error;
-    await fetchNotes(); // Refresh notes after update
+    
+    // Update notes state locally instead of fetching all notes
+    setNotes(prevNotes => 
+      prevNotes.map(note => 
+        note.id === id 
+          ? { ...note, ...updates, updated_at: new Date().toISOString() }
+          : note
+      )
+    );
   };
 
   const deleteNote = async (id: string) => {
@@ -196,14 +177,38 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const deleteFolder = async (id: string) => {
-    const { error } = await supabase
-      .from('note_folders')
-      .delete()
-      .eq('id', id)
-      .eq('user_id', user?.id);
+    // Prevent deletion of virtual 'all' folder
+    if (id === 'all') {
+      console.warn('Cannot delete virtual "All Notes" folder');
+      return;
+    }
 
-    if (error) throw error;
-    setFolders(prev => prev.filter(folder => folder.id !== id));
+    try {
+      // First delete all notes in the folder
+      const { error: notesError } = await supabase
+        .from('notes')
+        .delete()
+        .eq('folder_id', id)
+        .eq('user_id', user?.id);
+
+      if (notesError) throw notesError;
+
+      // Then delete the folder
+      const { error: folderError } = await supabase
+        .from('note_folders')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user?.id);
+
+      if (folderError) throw folderError;
+
+      // Update both states locally
+      setNotes(prev => prev.filter(note => note.folder_id !== id));
+      setFolders(prev => prev.filter(folder => folder.id !== id));
+    } catch (error) {
+      console.error('Error deleting folder:', error);
+      throw error;
+    }
   };
 
   return (
