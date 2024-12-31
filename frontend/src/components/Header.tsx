@@ -38,7 +38,7 @@ const Header: React.FC = () => {
       <h1 className="text-2xl font-semibold text-purple-100">Dashboard</h1>
 
       <div className="flex items-center gap-4">
-        <div className="mt-2" ref={filterRef}>
+        <div className="mt-2 relative" ref={filterRef}>
           <button 
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-3 py-1.5 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             <span>Filters</span>
           </button>
           {showFilters && (
-            <div className="absolute mt-2 bg-[#120322] shadow-xl">
+            <div className="absolute right-0 z-50 mt-2 bg-[#120322] shadow-xl">
               <FilterBar
                 dateRange={dateRange}
                 onDateRangeChange={(range) => setDateRange(range)}

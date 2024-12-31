@@ -25,11 +25,13 @@ import DateTimeOverview from './sections/DateTimeOverview';
 import { Trade, MonthlyTrades, MonthlyPnL, DailyPnLData, CumulativePnLData } from '../../types/trade';
 import { Filter, X } from 'lucide-react';
 import FilterBar from '../Dashboard/FilterBar';
+import { cn } from '../../lib/utils';
 
 const Reports: React.FC = () => {
   const { trades, filters } = useTrades();
   const [selectedView, setSelectedView] = useState('overview');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -344,8 +346,21 @@ const Reports: React.FC = () => {
         isCollapsed={isCollapsed}
         onToggle={() => setIsCollapsed(!isCollapsed)}
       />
-      <div className={`flex flex-1 ${isCollapsed ? 'ml-[80px]' : 'ml-64'}`}>
-        <ReportsSidebar selectedView={selectedView} onViewChange={setSelectedView} />
+      <div className={cn(
+        "flex flex-1",
+        isCollapsed ? "ml-[60px]" : "ml-[280px]"
+      )}>
+        <div className={cn(
+          "flex-none",
+          !isCollapsed && !isSidebarCollapsed && "ml-4"
+        )}>
+          <ReportsSidebar 
+            selectedView={selectedView} 
+            onViewChange={setSelectedView}
+            isCollapsed={isSidebarCollapsed}
+            onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          />
+        </div>
         <div className="flex-1 p-8">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-2xl font-semibold text-purple-100">Reports</h1>

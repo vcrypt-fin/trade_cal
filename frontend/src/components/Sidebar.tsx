@@ -121,7 +121,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     <div className={cn(
       'flex flex-col text-white transition-all duration-300 fixed top-0 bottom-0 left-0 z-20',
       'bg-gradient-to-b from-[#0D0019] via-[#1E002F] via-[#230037] via-[#2A0043] to-[#450050]',
-      isCollapsed ? 'w-[60px]' : 'w-[280px]'
+      isCollapsed ? 'w-[60px]' : 'w-[280px]',
+      isCollapsed && 'border-r border-purple-800/30'
     )}>
       <div className="flex h-30 items-center justify-between p-4">
         <div className="flex items-center gap-3">
