@@ -24,6 +24,7 @@ export default function BrokerageLink({
     { slug: "WEBULL", name: "Webull US" },
     { slug: "WEBULL-CANADA", name: "Webull Canada" },
     { slug: "PUBLIC", name: "Public" },
+    { slug: "SCHWAB", name: "Charles Schwab" },
   ];
 
   const onSuccess = (data: any) => {
