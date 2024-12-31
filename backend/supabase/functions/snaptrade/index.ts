@@ -5,8 +5,8 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { Snaptrade } from "./snaptrade/mod.js"
 
 // SnapTrade API Credentials
-const SNAP_KEY = "VCRYPT-SOFTWARE-LLC-TEST"
-const SNAP_SECRET = "9aGTDnfx1wysv2Avbe2uwpwVebbsQ3ViyUU9Zyq0z7PAwCSqKG"
+const SNAP_KEY = "VCRYPT-SOFTWARE-LLC"
+const SNAP_SECRET = "3Xn7XlIzA7k09RO6OKNs36yb6crxGHgbRFulJXjUNDXRv1GzEx"
 
 // Initialize SnapTrade client
 const snaptrade = new Snaptrade({
@@ -133,27 +133,98 @@ Deno.serve(async (req) => {
              */
             case "snaptrade-pull-holdings": {
                 try {
-                    let { accountId, userId, userSecret } = body
+                    let { accountId, userId, userSecret, supaUserId } = body;
 
-                    let holding_res = await snaptrade.accountInformation.getUserAccountOrders({
-                        accountId: accountId,
-                        userId: userId,
-                        userSecret: userSecret,
-                        days: 30,
-                    })
+                    // 1) Retrieve transactions/activities from SnapTrade
+                    let holding_res = await snaptrade.transactionsAndReporting.getActivities({
+                        accounts: [accountId],
+                        userId,
+                        userSecret,
+                    });
 
-                    console.log(holding_res.data)
+                    let holding_data = holding_res.data; // An array of transactions
 
-                    return new Response(JSON.stringify(holding_res.data), {
-                        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                    console.log(holding_data.length, "SnapTrade transactions found");
+
+                    // 2) Transform each SnapTrade transaction into a Trade
+                    //    Adjust logic as needed for your particular definitions.
+                    const tradesToInsert = holding_data.map((tx) => {
+                        console.log("SnapTrade transaction:", tx);
+
+                        // Parse trade date/time
+                        const tradeDate = new Date(tx.trade_date);
+
+                        // Convert SnapTrade's "type" to your side. For example:
+                        // "BUY" => "LONG", otherwise "SHORT".
+                        // If you have more advanced logic (e.g. "BUY_TO_OPEN", etc.) tweak accordingly.
+                        let side = "LONG";
+                        if (tx.type && tx.type.toUpperCase().includes("SELL")) {
+                            side = "SHORT";
+                        }
+
+                        return {
+                            id: tx.id, // SnapTrade transaction ID
+                            // Generate a userId (uuid) if needed; here we store the "userId" from the request.
+                            userId: supaUserId,
+
+                            // date (type date in your DB)
+                            date: tradeDate.toISOString().slice(0, 10), // "YYYY-MM-DD"
+
+                            // time (type time in your DB)
+                            time: tradeDate.toISOString().slice(11, 19), // "HH:MM:SS"
+
+                            // timestamp (type timestamp in your DB)
+                            // Node Postgres can insert a JS Date directly into a timestamp column
+                            timestamp: tradeDate,
+
+                            symbol: tx.symbol?.symbol ?? "N/A",
+                            side,
+                            brokerage: tx.institution ?? null,
+
+                            // If you do not have the actual contractMultiplier from SnapTrade,
+                            // just store a default (like 1) or null.
+                            contractMultiplier: 1,
+
+                            entryPrice: tx.price ?? 0,
+                            exitPrice: 0, // or 0 until closed trades are identified
+                            quantity: tx.units ?? 0,
+
+                            // For columns you don’t really use now, store null or skip them
+                            strategy: "brokerage",
+                            notes: `SnapTrade ID: ${tx.id} | ${tx.description ?? ""}`,
+
+                            // PNL might be 0 until you close a trade or you can store tx.amount
+                            // if you’re certain it represents realized PnL
+                            pnl: 0,
+
+                            // playbookId (uuid) => if you have no data, store null
+                            playbookid: null,
+
+                            // original_sl => If you don’t have an SL from SnapTrade, store 0 or null
+                            original_sl: 0,
+
+                        };
+                    });
+
+                    // 3) Insert mapped trades into Supabase
+                    let { data, error } = await supabase.from("trades").upsert(tradesToInsert, { onConflict: "id" });
+
+                    if (error) {
+                        // Handle Supabase insert errors
+                        throw new Error(error.message);
+                    }
+
+                    // Return the newly inserted trades (or whatever you wish)
+                    return new Response(JSON.stringify(holding_res), {
+                        headers: { ...corsHeaders, "Content-Type": "application/json" },
                         status: 200,
-                    })
+                    });
                 } catch (error) {
-                    console.error("Error creating SnapTrade user:", error)
+                    console.error("Error fetching & inserting trades:", error);
                     return new Response(JSON.stringify({ error: error.message }), {
-                        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                        headers: { ...corsHeaders, "Content-Type": "application/json" },
                         status: 500,
-                    })
+                    });
                 }
             }
 
