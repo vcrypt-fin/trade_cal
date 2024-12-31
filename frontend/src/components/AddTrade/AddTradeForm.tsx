@@ -151,6 +151,7 @@ export default function AddTradeForm() {
       userId: snaptradeData.snap_user_id,
       userSecret: snaptradeData.snap_user_secret, 
       accountId: accountId,
+      supaUserId: session.user.id,
     };
 
     const response = await fetch(path, {
