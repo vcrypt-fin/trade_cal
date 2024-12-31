@@ -2,12 +2,18 @@ export interface Trade {
   id: string;
   date: string;
   time: string;
+  timestamp: string;
   exitTime?: string;
   symbol: string;
+  side: "LONG" | "SHORT";
   setup?: string;
   tags?: string[];
   entryPrice: number;
   exitPrice: number;
+  original_sl?: number; // Stop Loss
+  takeProfit?: number; // Take Profit
+  forecasted_rr?: number;
+  actual_rr?: number;
   quantity: number;
   pnl: number;
   strategy?: string;
@@ -48,4 +54,4 @@ export interface StatItem {
   totalProfits: number;
   totalLoss: number;
   volume: number;
-} 
+}

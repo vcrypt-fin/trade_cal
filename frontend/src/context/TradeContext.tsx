@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from "react";
 import { supabase } from "./SupabaseClient";
-import { Trade } from '../types/trade';
+import { Trade } from "../types/trade";
 
 export interface Playbook {
   id: string;
@@ -102,7 +102,9 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const fetchPlaybooks = useCallback(async () => {
     try {
       setIsFetching(true);
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("User is not logged in");
 
       const { data, error } = await supabase
@@ -123,7 +125,9 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   const fetchTrades = useCallback(async () => {
     try {
       setIsFetching(true);
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) throw new Error("User is not logged in");
 
       const { data, error } = await supabase
@@ -152,6 +156,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       const tradeData = {
         ...trade,
         userId: session.user.id,
+        timestamp: trade.timestamp || new Date().toISOString(),
       };
 
       console.log("Inserting trade into Supabase:", tradeData);
@@ -226,6 +231,7 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       const tradesData = newTrades.map((trade) => ({
         ...trade,
         userId: session.user.id,
+        timestamp: trade.timestamp || new Date().toISOString(),
       }));
 
       const { error } = await supabase.from("trades").insert(tradesData);
