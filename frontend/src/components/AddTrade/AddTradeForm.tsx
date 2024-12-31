@@ -12,6 +12,8 @@ export default function AddTradeForm() {
   const [entryMethod, setEntryMethod] = useState<'manual' | 'brokerage' | 'csv' | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [snaptradeData, setSnaptradeData] = useState<any>(null);
+  const [snaptradeAccounts, setSnaptradeAccounts] = useState<any>(null);
+  const [snaptradeHoldings, setSnaptradeHoldings] = useState<any>(null);
 
   const navigate = useNavigate();
 
@@ -108,6 +110,76 @@ export default function AddTradeForm() {
     }
   };
 
+  const getAccounts = async () => {
+    // Check if user has snaptrade data
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("User is not logged in");
+    
+    let path = `${SNAPTRADE_URL}/snaptrade-pull-accounts`;
+    let body = {
+      type: "snaptrade-pull-accounts",
+      userId: snaptradeData.snap_user_id,
+      userSecret: snaptradeData.snap_user_secret, 
+    };
+
+    const response = await fetch(path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    setSnaptradeAccounts(await response.json());
+
+    console.log("Accounts", snaptradeAccounts);
+
+    if (!response.ok) {
+      throw new Error(`Failed to get SnapTrade user accounts: ${response.statusText}`);
+    }
+  };
+
+  const getHoldings = async (accountId: string) => {
+    // Check if user has snaptrade data
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("User is not logged in");
+    
+    let path = `${SNAPTRADE_URL}/snaptrade-pull-holdings`;
+    let body = {
+      type: "snaptrade-pull-holdings",
+      userId: snaptradeData.snap_user_id,
+      userSecret: snaptradeData.snap_user_secret, 
+      accountId: accountId,
+    };
+
+    const response = await fetch(path, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to get SnapTrade user data: ${response.statusText}`);
+    }
+
+    return await response.json();
+  };
+
+  const onSync = async () => {
+    await getAccounts();
+
+    let accountIds = snaptradeAccounts.map((account: any) => account.id);
+
+    let holdings = await getHoldings(accountIds[0]);
+
+    setSnaptradeHoldings(holdings);
+    console.log("Holdings", holdings);
+  }
+
   if (!entryMethod) {
     return (
       <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
@@ -140,6 +212,13 @@ export default function AddTradeForm() {
               >
                 <h2 className="text-lg font-semibold mb-2 text-purple-100">Link Brokerage</h2>
                 <p className="text-purple-200">Import trades from your brokerage account</p>
+              </button>
+              <button
+                onClick={() => onSync()}
+                className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm hover:bg-[#2A1A4A] transition-colors duration-300"
+              >
+                <h2 className="text-lg font-semibold mb-2 text-purple-100">Sync Trades</h2>
+                <p className="text-purple-200">Sync trades from linked brokerages</p>
               </button>
               <button
                 onClick={() => setEntryMethod('csv')}

@@ -76,6 +76,7 @@ function App() {
                   <Route path="/playbook/:id" element={<PlaybookDetail />} />
                   <Route path="/trades" element={<Trades />} /> 
                   <Route path="/reports" element={<Reports />} />
+
                   {/* <Route path="/settings" element={<Settings />} /> */}
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/update-password" element={<UpdatePassword />} />
