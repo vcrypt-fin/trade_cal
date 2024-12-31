@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
                     let res = await snaptrade.authentication.loginSnapTradeUser({
                         userId,
                         userSecret,
-                        customRedirect: "http://localhost:5173/",
+                        customRedirect: "http://cal.vcryptfinancial.com/",
                         immediateRedirect: true,
                     })
 
@@ -135,7 +135,7 @@ Deno.serve(async (req) => {
                 try {
                     let { accountId, userId, userSecret } = body
 
-                    let holding_res = await snaptrade.accountInformation.getUserAccountRecentOrders({
+                    let holding_res = await snaptrade.accountInformation.getUserAccountOrders({
                         accountId: accountId,
                         userId: userId,
                         userSecret: userSecret,
