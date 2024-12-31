@@ -20,6 +20,9 @@ class NewsService {
   private pollingInterval: number | null = null;
   private subscribers: ((data: NewsItem[]) => void)[] = [];
   private lastFetchTimestamp: string | null = null;
+  private lastSuccessfulNews: NewsItem[] = [];
+  private retryCount = 0;
+  private maxRetries = 3;
 
   public async fetchNews(symbols: string[]) {
     try {
@@ -58,12 +61,23 @@ class NewsService {
       // Update last fetch timestamp to latest news item's timestamp
       if (news.length > 0) {
         this.lastFetchTimestamp = news[0].created_at;
+        this.lastSuccessfulNews = news;
+        this.retryCount = 0;
       }
 
       return news;
     } catch (error) {
       console.error('Error fetching news:', error);
-      return [];
+      
+      // If we have previous successful news and haven't exceeded retry count,
+      // return the last successful news instead of empty array
+      if (this.lastSuccessfulNews.length > 0 && this.retryCount < this.maxRetries) {
+        this.retryCount++;
+        console.log(`Retry ${this.retryCount}/${this.maxRetries}: Using cached news`);
+        return this.lastSuccessfulNews;
+      }
+      
+      return this.lastSuccessfulNews.length > 0 ? this.lastSuccessfulNews : [];
     }
   }
 

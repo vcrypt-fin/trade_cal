@@ -35,7 +35,7 @@ export default function SubscriptionPage() {
       }
 
       // Stripe checkout URLs based on plan and billing cycle
-      const baseStripeUrl = 'https://buy.stripe.com/test_cN26rG2bEcWvgGkaEG'
+      const baseStripeUrl = import.meta.env.VITE_STRIPE_URL
       const successUrl = `${window.location.origin}/stripe/callback`
       const cancelUrl = `${window.location.origin}/subscription`
 

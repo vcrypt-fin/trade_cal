@@ -4,9 +4,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Filter, X } from 'lucide-react';
 import FilterBar from './Dashboard/FilterBar';
 import { useTrades } from '../context/TradeContext';
+import { useAuth } from '../context/AuthContext';
 
 const Header: React.FC = () => {
   const { filters } = useTrades();
+  const { showLoadingScreen } = useAuth();
   const [showFilters, setShowFilters] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +30,8 @@ const Header: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  if (showLoadingScreen) return null;
 
   return (
     <header className="flex justify-between items-center mb-6 ml-[30px]">

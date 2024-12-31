@@ -1,23 +1,29 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
 import { supabase } from './SupabaseClient';
+import LoadingScreen from '../components/LoadingScreen';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   error: AuthError | null;
+  showLoadingScreen: boolean;
+  setShowLoadingScreen: (show: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isLoading: true,
-  error: null
+  error: null,
+  showLoadingScreen: false,
+  setShowLoadingScreen: () => {}
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<AuthError | null>(null);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -29,6 +35,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user && !user) {
+        setShowLoadingScreen(true);
+      }
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
@@ -36,10 +45,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, error }}>
+    <AuthContext.Provider value={{ user, isLoading, error, showLoadingScreen, setShowLoadingScreen }}>
+      {showLoadingScreen && <LoadingScreen />}
       {children}
     </AuthContext.Provider>
   );
