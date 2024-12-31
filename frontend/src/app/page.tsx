@@ -107,7 +107,7 @@ export default function LandingPage() {
             </nav>
             <div className="flex items-center space-x-4">
               <Button 
-                className="bg-purple-600 hover:bg-purple-700 text-white rounded-full"
+                className="bg-purple-600 hover:bg-purple-700 text-white"
                 onClick={() => navigate('/auth')}
               >
                 Sign Up
