@@ -247,6 +247,7 @@ const Stats: React.FC = () => {
         isOpen={isAddWidgetModalOpen}
         onClose={() => setIsAddWidgetModalOpen(false)}
         onAddWidget={handleAddWidget}
+        activeWidgets={widgets}
       />
     </div>
   );

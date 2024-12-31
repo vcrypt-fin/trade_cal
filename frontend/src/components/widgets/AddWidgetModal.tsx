@@ -1,12 +1,13 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { StatWidgetType } from '../../types/widget';
+import { StatWidgetType, Widget } from '../../types/widget';
 import './AddWidgetModal.css';
 
 interface AddWidgetModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddWidget: (type: StatWidgetType, title: string) => void;
+  activeWidgets?: Widget[];
 }
 
 interface WidgetOption {
@@ -35,8 +36,13 @@ const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
   isOpen,
   onClose,
   onAddWidget,
+  activeWidgets = [],
 }) => {
   if (!isOpen) return null;
+
+  const isWidgetActive = (type: StatWidgetType) => {
+    return activeWidgets.some(widget => widget.type === type && widget.visible);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -52,19 +58,29 @@ const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
         <div className="p-4 max-h-[60vh] overflow-y-auto widget-scroll">
           <div className="grid grid-cols-2 gap-4">
-            {AVAILABLE_WIDGETS.map(widget => (
-              <button
-                key={widget.type}
-                onClick={() => {
-                  onAddWidget(widget.type, widget.title);
-                  onClose();
-                }}
-                className="p-4 border border-purple-900/20 rounded-lg text-left hover:bg-purple-900/20 transition-colors"
-              >
-                <h3 className="font-medium mb-1 text-gray-200">{widget.title}</h3>
-                <p className="text-sm text-gray-400">{widget.description}</p>
-              </button>
-            ))}
+            {AVAILABLE_WIDGETS.map(widget => {
+              const isActive = isWidgetActive(widget.type);
+              return (
+                <button
+                  key={widget.type}
+                  onClick={() => {
+                    if (!isActive) {
+                      onAddWidget(widget.type, widget.title);
+                      onClose();
+                    }
+                  }}
+                  className={`p-4 border border-purple-900/20 rounded-lg text-left transition-colors ${
+                    isActive 
+                      ? 'opacity-30 cursor-not-allowed blur-[1px]' 
+                      : 'hover:bg-purple-900/20 cursor-pointer'
+                  }`}
+                  disabled={isActive}
+                >
+                  <h3 className="font-medium mb-1 text-gray-200">{widget.title}</h3>
+                  <p className="text-sm text-gray-400">{widget.description}</p>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
