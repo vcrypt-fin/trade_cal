@@ -33,8 +33,12 @@ const LoadingScreen: React.FC = () => (
   <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] via-[#1A0E2E] to-[#0A0A0A] text-white py-20">
     <div className="text-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto" />
-      <p className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Verifying subscription...</p>
-      <p className="text-lg text-purple-300">Please wait while we verify your subscription.</p>
+      <p className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
+        Verifying subscription...
+      </p>
+      <p className="text-lg text-purple-300">
+        Please wait while we verify your subscription.
+      </p>
     </div>
   </div>
 );
@@ -65,7 +69,7 @@ const AuthHandler: React.FC = () => {
   };
 
   const checkSubscription = async (userId: string) => {
-    // If we already know the subscription status, return it
+    // If we already know the subscription status, just return it
     if (hasActiveSubscription !== null) {
       return hasActiveSubscription;
     }
@@ -76,16 +80,19 @@ const AuthHandler: React.FC = () => {
         .from('subscriptions')
         .select('*')
         .eq('user_id', userId)
-        .single()
-        .throwOnError();
+        // .single()
+        // .throwOnError();
+        .maybeSingle(); // won't throw a 406 if zero rows
 
       console.log('Subscription check result:', { subscription, error });
 
       if (error) {
+        // If there's an actual error (e.g. RLS, etc.), log it
         console.error('Error checking subscription:', error);
         return false;
       }
 
+      // subscription === null means no row found
       const isActive = subscription && subscription.status === 'active';
       setHasActiveSubscription(isActive);
       return isActive;
@@ -102,8 +109,13 @@ const AuthHandler: React.FC = () => {
     const wasOnSubscriptionPage = location.pathname === '/subscription';
     
     return () => {
-      // Only clear auth if we're not authenticated and not on a public route
-      if (wasOnSubscriptionPage && !isAuthenticated && !PUBLIC_ROUTES.includes(location.pathname)) {
+      // If you no longer want to forcibly sign out users upon leaving /subscription,
+      // either remove this or adjust the logic carefully:
+      if (
+        wasOnSubscriptionPage &&
+        !isAuthenticated &&
+        !PUBLIC_ROUTES.includes(location.pathname)
+      ) {
         clearAuth();
         supabase.auth.signOut();
       }
@@ -120,8 +132,41 @@ const AuthHandler: React.FC = () => {
           return;
         }
 
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
+        // Handle OAuth redirect with hash fragment
+        if (window.location.hash && window.location.hash.includes('access_token')) {
+          console.log('Detected OAuth redirect with hash fragment');
+          const { data: { session }, error } = await supabase.auth.getSession();
+          
+          if (error || !session) {
+            console.error('Failed to get session from hash:', error);
+            clearAuth();
+            navigate('/demo');
+            return;
+          }
+
+          setToken(session.access_token);
+          setIsAuthenticated(true);
+          
+          // Clear the hash without triggering a reload
+          window.history.replaceState(null, '', window.location.pathname);
+          
+          // Check subscription after successful OAuth
+          const hasSubscription = await checkSubscription(session.user.id);
+          if (!hasSubscription) {
+            console.log('No active subscription found after OAuth, redirecting to subscription page');
+            navigate('/subscription');
+          } else {
+            console.log('Active subscription found after OAuth, redirecting to dashboard');
+            navigate('/');
+          }
+          return;
+        }
+
+        const {
+          data: { session },
+          error
+        } = await supabase.auth.getSession();
+
         if (error || !session) {
           console.error('Auth error or no session:', error);
           clearAuth();
@@ -137,7 +182,11 @@ const AuthHandler: React.FC = () => {
           return;
         }
 
-        // Check subscription status for protected routes
+        // Always set isAuthenticated = true if there's a valid session
+        setToken(session.access_token);
+        setIsAuthenticated(true);
+
+        // Now check subscription
         const hasSubscription = await checkSubscription(session.user.id);
         if (!hasSubscription) {
           console.log('No active subscription found, redirecting to subscription page');
@@ -145,8 +194,6 @@ const AuthHandler: React.FC = () => {
           return;
         }
 
-        setToken(session.access_token);
-        setIsAuthenticated(true);
       } catch (err) {
         console.error('Auth check failed:', err);
         clearAuth();
@@ -159,22 +206,24 @@ const AuthHandler: React.FC = () => {
     checkAuth();
 
     // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
-      
+
       if (session) {
         setToken(session.access_token);
         setIsAuthenticated(true);
-        
-        // Only check subscription if we're actively authenticating
+
+        // Only check subscription if we’re actively authenticating
         if (localStorage.getItem('auth_in_prog') === 'true') {
           setIsCheckingSubscription(true);
           const hasSubscription = await checkSubscription(session.user.id);
           console.log('Subscription check completed:', hasSubscription);
-          
+
           // Clear the auth in progress flag
           localStorage.setItem('auth_in_prog', 'false');
-          
+
           if (!hasSubscription) {
             console.log('No active subscription found, redirecting to subscription page');
             navigate('/subscription');
@@ -184,6 +233,7 @@ const AuthHandler: React.FC = () => {
           }
         }
       } else {
+        // If there's no session, fully clear out and route to a public page
         clearAuth();
         if (!PUBLIC_ROUTES.includes(location.pathname)) {
           navigate('/demo');
@@ -197,7 +247,10 @@ const AuthHandler: React.FC = () => {
   }, [navigate, location.pathname]);
 
   // Show loading screen when checking auth or subscription status for protected routes
-  if ((isLoading || isCheckingSubscription) && !PUBLIC_ROUTES.includes(location.pathname)) {
+  if (
+    (isLoading || isCheckingSubscription) &&
+    !PUBLIC_ROUTES.includes(location.pathname)
+  ) {
     return <LoadingScreen />;
   }
 

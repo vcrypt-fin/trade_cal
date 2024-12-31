@@ -13,20 +13,15 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storage: {
-      getItem: (key) => {
-        const value = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith(`${key}=`))
-          ?.split('=')[1];
-        return value ? JSON.parse(decodeURIComponent(value)) : null;
-      },
-      setItem: (key, value) => {
-        document.cookie = `${key}=${encodeURIComponent(JSON.stringify(value))}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`;
-      },
-      removeItem: (key) => {
-        document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`;
-      }
+    storageKey: 'supabase.auth.token',
+    storage: localStorage,
+    flowType: 'implicit',
+    // debug: true
+  },
+  global: {
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
   }
-})
+});
