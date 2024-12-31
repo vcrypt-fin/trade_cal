@@ -88,11 +88,7 @@ export default function LandingPage() {
   }, [])
   return (
     <div className="min-h-screen relative">
-      {/* <TradingBackground /> */}
-      
-      {/* </div><div className="relative z-10"> */}
       <div className="min-h-screen bg-gradient-to-b from-[#0A0A0A] via-[#1A0E2E] to-[#0A0A0A] text-white">
-
         {/* Header */}
         <header className="container mx-auto px-4 py-6">
           <div className="flex justify-between items-center">
@@ -142,7 +138,7 @@ export default function LandingPage() {
         </header>
 
         {/* Hero Section */}
-        <section className="container mx-auto px-4 py-20 relative overflow-hidden" id="home">
+        <section className="container mx-auto px-4 py-12 lg:py-16 relative overflow-hidden min-h-[400px] lg:min-h-[600px]" id="home">
           {/* Background Elements */}
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
@@ -150,8 +146,18 @@ export default function LandingPage() {
             <div className="absolute -bottom-1/4 left-1/3 w-1/2 h-1/2 bg-yellow-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
           </div>
 
-          <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12">
-            <div className="flex-1 space-y-8">
+          {/* Image positioned behind content */}
+          <div className="absolute inset-0 lg:inset-auto lg:right-0 lg:top-0 mt-12 lg:mt-0 z-0">
+            <img
+              src="/landing-hero.png"
+              alt="TradeMind Platform Interface"
+              className="w-full h-auto lg:max-w-none lg:w-[800px] rounded-2xl opacity-90"
+            />
+          </div>
+
+          {/* Content overlay */}
+          <div className="relative z-10 flex flex-col lg:flex-row items-center">
+            <div className="flex-1 space-y-6 lg:max-w-[45%] pt-8 lg:pt-0">
               <h1 className="text-4xl md:text-6xl font-bold leading-tight">
                 Elevate Your Trading with <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">TradeMind</span>
               </h1>
@@ -175,19 +181,7 @@ export default function LandingPage() {
                   Watch Demo
                   <Play className="ml-2 h-5 w-5" />
                 </Button>
-
               </div>
-            </div>
-            <div className="flex-1 relative">
-              <img
-                src="/landing-hero.png"
-                alt="TradeMind Platform Interface"
-                className="w-full h-auto rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300"
-                style={{
-                  maxWidth: '600px',
-                  margin: '0 auto'
-                }}
-              />
             </div>
           </div>
         </section>
