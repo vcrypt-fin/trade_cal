@@ -1,20 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Sidebar from "../Sidebar";
 import ManualTradeForm from "./ManualTradeForm";
 import BrokerageLink from "./BrokerageLink";
 import BrokerageImport from "./BrokerageImport";
 import CSVTradeImport from "./CSVTradeImport";
+import { supabase } from '../../context/SupabaseClient';
+
+const SNAPTRADE_URL = "https://wxvmssqfidodxyoxjtju.supabase.co/functions/v1/snaptrade"
 
 export default function AddTradeForm() {
   const [entryMethod, setEntryMethod] = useState<
     "import" | "manual" | "brokerage" | "csv" | null
   >(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const handleConnectionComplete = () => {
-    setEntryMethod(null); // Reset entry method to null after connection
-  };
+  const navigate = useNavigate();
 
   if (!entryMethod) {
     return (
