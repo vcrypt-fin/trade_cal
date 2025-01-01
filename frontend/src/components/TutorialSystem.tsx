@@ -235,6 +235,28 @@ export default function TutorialSystem() {
       window.scrollTo(0, 0);
     };
 
+    // Handle close button click
+    if (type === 'step:after' && action === 'close') {
+      if (index === 0) {  // Only for first step
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase
+              .from('user_preferences')
+              .update({ has_completed_tutorial: true })
+              .eq('user_id', user.id);
+          }
+        } catch (error) {
+          console.error('Error updating tutorial status:', error);
+        }
+
+        setShowTutorial(false);
+        setHasCompletedTutorial(true);
+        navigateAndScroll('/');
+      }
+      return;
+    }
+
     // Update current step based on action
     if (type === 'step:after' && action === 'next') {
       const nextStep = index + 1;
@@ -365,6 +387,7 @@ export default function TutorialSystem() {
       showSkipButton
       stepIndex={currentStep}
       callback={handleJoyrideCallback}
+      disableCloseOnEsc
       styles={{
         options: {
           primaryColor: '#9333EA', // Purple-600
