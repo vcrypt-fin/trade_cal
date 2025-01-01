@@ -157,15 +157,31 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
       throw new Error("SnapTrade user ID or secret is not available.");
     }
 
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!session) { console.error("User is not logged in"); return; }
+
     try {
-      const response = await snaptrade.connections.listBrokerageAuthorizations({
-        userId: snapTradeUserId,
-        userSecret: snapTradeUserSecret,
+      const response = await fetch(`${SNAPTRADE_URL}/snaptrade-pull-accounts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          type: 'snaptrade-pull-accounts',
+          userId: snapTradeUserId,
+          userSecret: snapTradeUserSecret,
+        }),
       });
 
-      console.log(response.data);
+      let res = await response.json();
+      console.log(res);
 
-      return response.data; // Return the list of connections
+      return res; // Return the list of connections
     } catch (error) {
       console.error("Error listing brokerage connections:", error);
       throw new Error(

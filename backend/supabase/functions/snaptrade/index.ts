@@ -126,6 +126,29 @@ Deno.serve(async (req) => {
                 }
             }
 
+            case "snaptrade-pull-accounts": {
+                try {
+                    let { userId, userSecret } = body
+
+                    let holding_res = await snaptrade.accountInformation.listUserAccounts({
+                        userId: userId,
+                        userSecret: userSecret,
+                    })
+
+                    return new Response(JSON.stringify(holding_res.data), {
+                        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                        status: 200,
+                    })
+                } catch (error) {
+                    console.error("Error creating SnapTrade user:", error)
+                    return new Response(JSON.stringify({ error: error.message }), {
+                        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+                        status: 500,
+                    })
+
+                }
+            }
+
             /**
              * 3) Pull Holdings
              * 

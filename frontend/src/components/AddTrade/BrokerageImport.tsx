@@ -28,7 +28,7 @@ const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
         // Extract the necessary fields: connection ID and brokerage name
         const simplifiedConnections = rawConnections.map((connection: any) => ({
           id: connection.id,
-          name: connection.brokerage?.display_name || "Unknown Brokerage",
+          name: connection.name || "Unknown Brokerage",
         }));
 
         setConnections(simplifiedConnections);

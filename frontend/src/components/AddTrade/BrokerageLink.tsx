@@ -97,20 +97,9 @@ export default function BrokerageLink({
         <div className="bg-[#1A0F2E] p-6 rounded-lg shadow-lg">
           <div className="mb-4">
             <label htmlFor="broker" className="text-purple-200 font-semibold">
-              Select Brokerage
+              Link SnapTrade Brokerages
             </label>
-            <select
-              id="broker"
-              value={selectedBroker}
-              onChange={(e) => setSelectedBroker(e.target.value)}
-              className="w-full mt-2 p-2 bg-[#2A1A4A] text-purple-100 rounded-lg"
-            >
-              {brokers.map((broker) => (
-                <option key={broker.slug} value={broker.slug}>
-                  {broker.name}
-                </option>
-              ))}
-            </select>
+
           </div>
           <button
             onClick={handleBrokerConnect}
