@@ -6,11 +6,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useTrades } from '../context/TradeContext';
 import Stats from './Stats';
 import FilterBar from './Dashboard/FilterBar';
+import { supabase } from '../context/SupabaseClient';
 
 const Trades: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { trades, filters, editTrade, playbooks } = useTrades();
+  const { trades, filters, editTrade, playbooks, fetchTrades } = useTrades();
   const [showFilters, setShowFilters] = useState(false);
   const [selectedTrades, setSelectedTrades] = useState<string[]>([]);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -91,17 +92,20 @@ const Trades: React.FC = () => {
     }
 
     try {
-      const deletions = selectedTrades.map(tradeId => {
-        const trade = trades.find(t => t.id === tradeId);
-        if (trade) {
-          return editTrade({
-            ...trade,
-            deleted: true // Assuming your backend handles soft deletion
-          });
-        }
-      });
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("User is not logged in");
 
-      await Promise.all(deletions.filter(Boolean));
+      // Delete trades from the database
+      const { error } = await supabase
+        .from("trades")
+        .delete()
+        .in('id', selectedTrades)
+        .eq('userId', session.user.id);
+
+      if (error) throw error;
+
+      // Refresh trades after deletion
+      await fetchTrades();
       setSelectedTrades([]);
     } catch (error) {
       console.error('Error deleting trades:', error);
@@ -124,7 +128,11 @@ const Trades: React.FC = () => {
     };
   }, []);
 
-  const handleRowClick = (tradeId: string) => {
+  const handleRowClick = (e: React.MouseEvent, tradeId: string) => {
+    // If the click is on the checkbox or its container, don't navigate
+    if ((e.target as HTMLElement).closest('[data-checkbox]')) {
+      return;
+    }
     navigate(`/trades/${tradeId}`);
   };
 
@@ -285,16 +293,18 @@ const Trades: React.FC = () => {
                     return (
                     <tr
                       key={trade.id}
-                      onClick={() => handleRowClick(trade.id)}
+                      onClick={(e) => handleRowClick(e, trade.id)}
                       className="border-b border-purple-800/30 hover:bg-purple-800/10 cursor-pointer transition-colors duration-200"
                     >
                       <td className="px-6 py-4 border-b border-purple-800/30">
-                        <input
-                          type="checkbox"
-                          checked={selectedTrades.includes(trade.id)}
-                          onChange={() => handleSelectTrade(trade.id)}
-                          className="rounded border-purple-800/30 text-purple-600 focus:ring-purple-500 bg-[#2A1A4A]"
-                        />
+                        <div data-checkbox>
+                          <input
+                            type="checkbox"
+                            checked={selectedTrades.includes(trade.id)}
+                            onChange={() => handleSelectTrade(trade.id)}
+                            className="rounded border-purple-800/30 text-purple-600 focus:ring-purple-500 bg-[#2A1A4A]"
+                          />
+                        </div>
                       </td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.date}</td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm text-purple-200">{trade.time}</td>
@@ -332,7 +342,10 @@ const Trades: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 border-b border-purple-800/30 text-sm">
                         <button
-                          onClick={() => handleEdit(trade.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(trade.id);
+                          }}
                           className="px-2 py-1 bg-purple-700 text-white rounded hover:bg-purple-600 transition-colors duration-300"
                         >
                           Edit
