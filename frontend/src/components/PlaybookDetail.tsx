@@ -138,7 +138,7 @@ export default function PlaybookDetail() {
 
         <h1 className="text-2xl font-semibold mb-6 text-purple-100">{playbook.name} - Overview</h1>
 
-        <div className="grid grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-3 gap-6 mb-8" data-tour="playbook-stats">
           <div className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
             <h3 className="text-sm text-purple-400 mb-1">Net P&L</h3>
             <p className={`text-2xl font-bold ${stats.netPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>

@@ -266,6 +266,7 @@ export function Playbook() {
               setIsModalOpen(true);
             }}
             className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+            data-tour="create-playbook"
           >
             <Plus size={20} /> Create Playbook
           </button>
@@ -276,6 +277,7 @@ export function Playbook() {
               key={playbook.id}
               className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 cursor-pointer hover:bg-[#2A1A4A] transition-colors duration-300"
               onClick={() => handlePlaybookClick(playbook.id)}
+              data-tour="playbook-card"
             >
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-lg font-semibold text-purple-100">{playbook.name}</h2>

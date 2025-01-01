@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Joyride, { Step, CallBackProps, STATUS } from 'react-joyride';
 import { useNavigate } from 'react-router-dom';
 import { useTutorial } from '../context/TutorialContext';
+import { useTrades } from '../context/TradeContext';
 import { supabase } from '../context/SupabaseClient';
 import './TutorialSystem.module.css';
 
@@ -153,6 +154,36 @@ const tutorialSteps: Step[] = [
       disableAnimation: true
     }
   },
+  {
+    target: '[data-tour="create-playbook"]',
+    content: 'Click here to create a new playbook for your trading strategy.',
+    placement: 'left',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="playbook-card"]',
+    content: 'Click on any playbook to view detailed statistics and performance metrics for that strategy.',
+    placement: 'bottom',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+//   {
+//     target: '[data-tour="playbook-stats"]',
+//     content: 'Here you can see key metrics like Net P&L, Win Rate, and detailed trade history for your strategy.',
+//     placement: 'top',
+//     spotlightPadding: 5,
+//     floaterProps: {
+//       offset: 15,
+//       disableAnimation: true
+//     }
+//   },
 //11
   {
     target: '[data-tour="reports"]',
@@ -180,6 +211,7 @@ const tutorialSteps: Step[] = [
 export default function TutorialSystem() {
   const navigate = useNavigate();
   const { showTutorial, setShowTutorial, setHasCompletedTutorial } = useTutorial();
+  const { playbooks } = useTrades();
   const [currentStep, setCurrentStep] = useState(0);
 
   // Add tutorial-active class when tutorial starts
@@ -233,13 +265,25 @@ export default function TutorialSystem() {
           break;
         case 10: // Add folder
         case 11: // Folders list
-        
           // Stay on notebook page for these steps
           break;
-        case 12: // Playbook
+        case 12: // Playbook intro
           navigateAndScroll('/playbook');
           break;
-        case 13: // Reports
+        case 13: // Create playbook
+          // Stay on playbook page
+          break;
+        case 14: // Playbook card
+          // Stay on playbook page
+          break;
+        // case 15: // Playbook stats
+        //   // Navigate to first available playbook if exists
+        //   const firstPlaybook = playbooks[0];
+        //   if (firstPlaybook) {
+        //     navigateAndScroll(`/playbook/${firstPlaybook.id}`);
+        //   }
+        //   break;
+        case 15: // Reports
           navigateAndScroll('/reports');
           break;
         default:
@@ -272,13 +316,20 @@ export default function TutorialSystem() {
         case 9: // Notebook intro
         case 10: // Add folder
         case 11: // Folders list
-        case 12: // Add note
           navigateAndScroll('/notebook');
           break;
-        case 13: // Playbook
+        case 12: // Playbook intro
+        case 13: // Create playbook
+        case 14: // Playbook card
           navigateAndScroll('/playbook');
           break;
-        case 14: // Reports
+        case 15: // Playbook stats
+          const firstPlaybook = playbooks[0];
+          if (firstPlaybook) {
+            navigateAndScroll(`/playbook/${firstPlaybook.id}`);
+          }
+          break;
+        case 16: // Reports
           navigateAndScroll('/reports');
           break;
         default:
@@ -301,6 +352,7 @@ export default function TutorialSystem() {
 
       setShowTutorial(false);
       setHasCompletedTutorial(true);
+      navigateAndScroll('/');
     }
   };
 
