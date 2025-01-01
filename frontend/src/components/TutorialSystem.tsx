@@ -104,7 +104,7 @@ const tutorialSteps: Step[] = [
 //
     {
     target: '[data-tour="notebook"]',
-    content: 'Document your trading ideas and market research.',
+    content: 'Document your trading ideas and market research in the notebook.',
     placement: 'right',
     spotlightPadding: 5,
     floaterProps: {
@@ -112,6 +112,36 @@ const tutorialSteps: Step[] = [
       disableAnimation: true
     }
   },
+  {
+    target: '[data-tour="add-folder"]',
+    content: 'Click the + button to create new folders to organize your notes.',
+    placement: 'right',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="folders-list"]',
+    content: 'Your folders appear here. Click on a folder to view its notes.',
+    placement: 'right',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+//   {
+//     target: '[data-tour="add-note"]',
+//     content: 'Create new notes within your selected folder using the + button.',
+//     placement: 'left',
+//     spotlightPadding: 5,
+//     floaterProps: {
+//       offset: 15,
+//       disableAnimation: true
+//     }
+//   },
 //10
   {
     target: '[data-tour="playbook"]',
@@ -198,17 +228,19 @@ export default function TutorialSystem() {
         case 8: // Mass actions
           // Stay on trades page for these steps
           break;
-        case 10: // Notebook
+        case 9: // Notebook intro
           navigateAndScroll('/notebook');
           break;
-        case 11: // Playbook
+        case 10: // Add folder
+        case 11: // Folders list
+        
+          // Stay on notebook page for these steps
+          break;
+        case 12: // Playbook
           navigateAndScroll('/playbook');
           break;
-        case 12: // Reports
+        case 13: // Reports
           navigateAndScroll('/reports');
-          break;
-        case 13: // Add Trade
-          // Stay on current page
           break;
         default:
           break;
@@ -237,17 +269,17 @@ export default function TutorialSystem() {
         case 8: // Mass actions
           navigateAndScroll('/trades');
           break;
-        case 9: // Notebook
+        case 9: // Notebook intro
+        case 10: // Add folder
+        case 11: // Folders list
+        case 12: // Add note
           navigateAndScroll('/notebook');
           break;
-        case 10: // Playbook
+        case 13: // Playbook
           navigateAndScroll('/playbook');
           break;
-        case 11: // Reports
+        case 14: // Reports
           navigateAndScroll('/reports');
-          break;
-        case 12: // Add Trade
-          // Stay on current page
           break;
         default:
           break;

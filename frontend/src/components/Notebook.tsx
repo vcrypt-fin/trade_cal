@@ -277,12 +277,13 @@ export default function Notebook() {
                 <button
                   onClick={handleAddFolder}
                   className="p-1 hover:bg-purple-800/20 rounded-lg transition-colors duration-300"
+                  data-tour="add-folder"
                 >
                   <Plus size={20} className="text-purple-400" />
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2" data-tour="folders-list">
                 {folders.map(folder => (
                   <div key={folder.id} className="space-y-1">
                     <div 
@@ -335,6 +336,7 @@ export default function Notebook() {
                         <button
                           onClick={handleAddNote}
                           className="flex items-center text-purple-400 hover:text-purple-300 py-1 px-2"
+                          data-tour="add-note"
                         >
                           <Plus size={14} className="mr-1" />
                           <span className="text-sm">Add Note</span>
