@@ -10,10 +10,10 @@ export default function Careers() {
 
   const positions = [
     {
-      title: "Senior Full Stack Developer",
+      title: "Full Stack Developer",
       department: "Engineering",
       location: "Remote",
-      type: "Full-time",
+      type: "Part-time",
       icon: Code,
       description: "Join our engineering team to build and scale our trading platform. Work with modern technologies like React, Node.js, and cloud infrastructure."
     },
@@ -21,15 +21,15 @@ export default function Careers() {
       title: "Quantitative Analyst",
       department: "Research",
       location: "Remote",
-      type: "Full-time",
+      type: "Part-time",
       icon: LineChart,
       description: "Help develop and implement trading algorithms and analytical tools. Strong background in mathematics and statistics required."
     },
     {
-      title: "Community Manager",
-      department: "Community",
+      title: "Marketing Manager",
+      department: "Marketing",
       location: "Remote",
-      type: "Full-time",
+      type: "Part-time",
       icon: Users,
       description: "Build and nurture our trading community. Create engaging content and organize community events."
     },
@@ -37,7 +37,7 @@ export default function Careers() {
       title: "Technical Support Specialist",
       department: "Support",
       location: "Remote",
-      type: "Full-time",
+      type: "Part-time",
       icon: MessageSquare,
       description: "Provide excellent technical support to our users. Help traders get the most out of our platform."
     }
@@ -116,7 +116,7 @@ export default function Careers() {
                       <p className="text-gray-300 mb-4">{position.description}</p>
                       <Button 
                         className="bg-purple-600 hover:bg-purple-500 text-white"
-                        onClick={() => window.location.href = 'mailto:careers@vcryptfinancial.com'}
+                        onClick={() => window.location.href = 'https://forms.gle/QqX7jZdrt5EY2M5D9'}
                       >
                         Apply Now
                         <Mail className="ml-2 h-4 w-4" />
