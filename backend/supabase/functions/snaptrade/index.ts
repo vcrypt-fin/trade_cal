@@ -5,9 +5,8 @@ import { createClient } from 'jsr:@supabase/supabase-js@2'
 import { Snaptrade } from "./snaptrade/mod.js"
 
 // SnapTrade API Credentials
-const SNAP_KEY = "VCRYPT-SOFTWARE-LLC-TEST"
-const SNAP_SECRET = "9aGTDnfx1wysv2Avbe2uwpwVebbsQ3ViyUU9Zyq0z7PAwCSqKG"
-
+const SNAP_KEY = "VCRYPT-SOFTWARE-LLC"
+const SNAP_SECRET = "3Xn7XlIzA7k09RO6OKNs36yb6crxGHgbRFulJXjUNDXRv1GzEx"
 // Initialize SnapTrade client
 const snaptrade = new Snaptrade({
     clientId: SNAP_KEY,

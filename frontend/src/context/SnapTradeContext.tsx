@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { supabase } from "./SupabaseClient";
 import { Snaptrade } from "snaptrade-typescript-sdk";
 
+const SNAPTRADE_URL = "https://wxvmssqfidodxyoxjtju.supabase.co/functions/v1/snaptrade";
+
 interface SnapTradeContextProps {
   snapTradeUserId: string | null;
   snapTradeUserSecret: string | null;
@@ -53,35 +55,41 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
         error: sessionError,
       } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
-      if (!session) throw new Error("User is not logged in");
+      if (!session) { console.error("User is not logged in"); return; }
+  
 
-      const userId = session.user.id;
-      setSnapTradeUserId(userId); // Set user ID here
-
+      // Fetch SnapTrade user secret
       const { data, error } = await supabase
-        .from("snaptrade_users")
+        .from("snap_users")
         .select("snap_user_secret")
-        .eq("snap_user_id", userId)
+        .eq("snap_user_id", snapTradeUserId)
         .single();
 
-      if (error) throw error;
-
-      if (!data) {
-        const response = await snaptrade.authentication.registerSnapTradeUser({
-          userId,
+      if(error && error.code == 'PGRST116') {
+        // Register new SnapTrade user
+        const response = await fetch(`${SNAPTRADE_URL}/snaptrade-newuser`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            type: 'snaptrade-newuser',
+          }),
         });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to register SnapTrade user: ${response.statusText}`);
+        }
+        
+        let res = await response.json();
 
-        const userSecret = response.data.userSecret;
-        if (!userSecret) {
+        if (!res.userSecret || !res.userId) {
           throw new Error("Failed to register SnapTrade user.");
         }
 
-        const { error: insertError } = await supabase
-          .from("snaptrade_users")
-          .insert([{ snap_user_id: userId, snap_user_secret: userSecret }]);
-        if (insertError) throw insertError;
-
-        setSnapTradeUserSecret(userSecret);
+        setSnapTradeUserId(res.userId);
+        setSnapTradeUserSecret(res.userSecret);
       } else {
         setSnapTradeUserSecret(data.snap_user_secret);
       }
@@ -99,24 +107,43 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
   }) => {
     const { broker, customRedirect } = args;
 
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!session) { console.error("User is not logged in"); return; }
+
     if (!snapTradeUserId || !snapTradeUserSecret) {
       throw new Error("SnapTrade user ID or secret is not available.");
     }
 
     try {
-      const response = await snaptrade.authentication.loginSnapTradeUser({
-        userId: snapTradeUserId,
-        userSecret: snapTradeUserSecret,
-        broker,
-        connectionType: "read",
-        connectionPortalVersion: "v4",
+      console.log(snapTradeUserId, snapTradeUserSecret, broker);
+
+      const response = await fetch(`${SNAPTRADE_URL}/snaptrade-login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          type: 'snaptrade-login',
+          userId: snapTradeUserId,
+          userSecret: snapTradeUserSecret,
+          broker,
+        }),
       });
 
-      if (!response?.data?.redirectURI) {
+      let res = await response.json();
+
+      console.log(res)
+
+      if (!res.redirectURI) {
         throw new Error("Failed to retrieve redirect URI.");
       }
 
-      return response.data.redirectURI;
+      return res.redirectURI;
     } catch (error) {
       console.error("Error logging in SnapTrade user:", error);
       throw new Error(
