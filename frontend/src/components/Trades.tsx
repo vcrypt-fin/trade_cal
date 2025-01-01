@@ -145,7 +145,7 @@ const Trades: React.FC = () => {
 
           {/* Filter Options */}
           <div className="flex justify-between items-center">
-            <div className="flex gap-4 relative z-50" ref={filterRef}>
+            <div className="flex gap-4 relative" ref={filterRef}>
               <button 
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center gap-2 px-4 py-2 bg-[#2A1A4A] text-purple-300 rounded-lg border border-purple-800/20 hover:bg-purple-800/20 transition-colors duration-300"
@@ -154,7 +154,7 @@ const Trades: React.FC = () => {
                 <span>Filters</span>
               </button>
               {showFilters && (
-                <div className="absolute top-full mt-2">
+                <div className="absolute top-full mt-2 z-40">
                   <FilterBar
                     dateRange={dateRange}
                     onDateRangeChange={(range) => setDateRange(range)}
@@ -178,7 +178,7 @@ const Trades: React.FC = () => {
 
           {/* Mass Action Buttons */}
           {selectedTrades.length > 0 && (
-            <div className="flex gap-2 items-center bg-[#2A1A4A] p-4 rounded-lg border border-purple-800/20">
+            <div className="flex gap-2 items-center bg-[#2A1A4A] p-4 rounded-lg border border-purple-800/20" data-tour="mass-actions">
               <span className="text-sm text-purple-300">
                 {selectedTrades.length} trades selected
               </span>
@@ -214,7 +214,7 @@ const Trades: React.FC = () => {
           )}
 
           {/* Trades Table */}
-          <div className="overflow-x-auto bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm">
+          <div className="overflow-x-auto bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm" data-tour="trades-table">
             <table className="min-w-full">
               <thead>
                 <tr>
@@ -224,6 +224,7 @@ const Trades: React.FC = () => {
                       checked={selectedTrades.length === filteredTrades.length && filteredTrades.length > 0}
                       onChange={handleSelectAll}
                       className="rounded border-purple-800/30 text-purple-600 focus:ring-purple-500 bg-[#2A1A4A]"
+                      data-tour="select-all"
                     />
                   </th>
                   <th className="px-6 py-3 border-b border-purple-800/30 text-left text-sm font-semibold text-purple-400">
