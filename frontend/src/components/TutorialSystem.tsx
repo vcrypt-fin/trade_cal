@@ -195,6 +195,36 @@ const tutorialSteps: Step[] = [
       disableAnimation: true
     }
   },
+  {
+    target: '[data-tour="reports-overview"]',
+    content: 'Get a high-level view of your trading performance with key metrics like win rate, profit factor, and total P&L.',
+    placement: 'top',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="reports-time"]',
+    content: 'Analyze your trading performance across different time periods and days of the week.',
+    placement: 'top',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="reports-risk"]',
+    content: 'Review your risk management with metrics like R-multiple, average win/loss, and maximum drawdown.',
+    placement: 'top',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
 //12
   {
     target: '[data-tour="add-trade"]',
@@ -293,20 +323,16 @@ export default function TutorialSystem() {
           navigateAndScroll('/playbook');
           break;
         case 13: // Create playbook
-          // Stay on playbook page
-          break;
         case 14: // Playbook card
           // Stay on playbook page
           break;
-        // case 15: // Playbook stats
-        //   // Navigate to first available playbook if exists
-        //   const firstPlaybook = playbooks[0];
-        //   if (firstPlaybook) {
-        //     navigateAndScroll(`/playbook/${firstPlaybook.id}`);
-        //   }
-        //   break;
-        case 15: // Reports
+        case 15: // Reports intro
           navigateAndScroll('/reports');
+          break;
+        case 16: // Reports overview
+        case 17: // Reports time
+        case 18: // Reports risk
+          // Stay on reports page
           break;
         default:
           break;
@@ -345,13 +371,10 @@ export default function TutorialSystem() {
         case 14: // Playbook card
           navigateAndScroll('/playbook');
           break;
-        case 15: // Playbook stats
-          const firstPlaybook = playbooks[0];
-          if (firstPlaybook) {
-            navigateAndScroll(`/playbook/${firstPlaybook.id}`);
-          }
-          break;
-        case 16: // Reports
+        case 15: // Reports intro
+        case 16: // Reports overview
+        case 17: // Reports time
+        case 18: // Reports risk
           navigateAndScroll('/reports');
           break;
         default:

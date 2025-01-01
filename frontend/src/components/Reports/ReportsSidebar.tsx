@@ -99,6 +99,12 @@ const ReportsSidebar: React.FC<ReportsSidebarProps> = ({
                 onViewChange(item.link || item.id);
               }
             }}
+            data-tour={
+              item.id === 'overview' ? 'reports-overview' :
+              item.id === 'dateTime' ? 'reports-time' :
+              item.id === 'risk' ? 'reports-risk' :
+              undefined
+            }
           >
             <div className={cn(
               'flex items-center justify-center',
