@@ -1,39 +1,5 @@
 import React from "react";
-
-export interface Execution {
-  id: string;
-  type: "ENTRY" | "EXIT";
-  price: string;
-  quantity: string;
-  fee: string;
-}
-
-export interface Trade {
-  id: string;
-  date: string;
-  time: string;
-  timestamp: string;
-  exitTime?: string;
-  symbol: string;
-  side: "LONG" | "SHORT";
-  setup?: string;
-  tags?: string[];
-  entryPrice: number;
-  exitPrice: number;
-  original_sl?: number; // Stop Loss
-  takeProfit?: number; // Take Profit
-  forecasted_rr?: number;
-  actual_rr?: number;
-  quantity: number;
-  pnl: number;
-  strategy?: string;
-  notes?: string;
-  deleted?: boolean;
-  userId?: string;
-  brokerage?: string;
-  contractMultiplier?: number;
-  playbookId?: string;
-}
+import { Execution, Trade } from "@/types/trade";
 
 interface TradeFormProps {
   trade: Trade;

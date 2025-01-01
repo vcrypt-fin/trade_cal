@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useTrades } from "../../context/TradeContext";
 import { useCsvImport } from "../../context/CsvImportContext";
 import Sidebar from "../Sidebar";
-import TradeForm, { Trade, Execution } from "./TradeForm";
+import TradeForm from "./TradeForm";
+import { Execution, Trade } from "@/types/trade";
 
 interface ContractSpec {
   symbol: string;

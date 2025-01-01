@@ -147,24 +147,51 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addTrade = useCallback(
-    async (trade: Omit<Trade, "id">) => {
+    async (trade: Trade) => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) throw new Error("User is not logged in");
 
-      const tradeData = {
-        ...trade,
+      // Extract executions from the trade object
+      const { executions, ...tradeData } = trade;
+
+      // Add userId and timestamp
+      const enrichedTradeData = {
+        ...tradeData,
         userId: session.user.id,
         timestamp: trade.timestamp || new Date().toISOString(),
       };
 
-      console.log("Inserting trade into Supabase:", tradeData);
-      const { error } = await supabase.from("trades").insert([tradeData]);
+      console.log("Inserting trade into Supabase:", enrichedTradeData);
 
-      if (error) {
-        console.error("Error adding trade:", error);
-        throw error;
+      const { data: insertedTrade, error: tradeError } = await supabase
+        .from("trades")
+        .insert([enrichedTradeData])
+        .select("*");
+
+      if (tradeError) {
+        console.error("Error adding trade:", tradeError);
+        throw tradeError;
+      }
+
+      // Insert executions
+      if (executions && executions.length > 0) {
+        const executionData = executions.map((exe) => ({
+          ...exe,
+          trade_id: insertedTrade[0].id,
+        }));
+
+        console.log("Inserting executions into Supabase:", executionData);
+
+        const { error: executionError } = await supabase
+          .from("executions")
+          .insert(executionData);
+
+        if (executionError) {
+          console.error("Error adding executions:", executionError);
+          throw executionError;
+        }
       }
 
       await fetchTrades(); // Refresh trades
@@ -222,25 +249,47 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
 
   const addBulkTrades = useCallback(
     async (newTrades: Trade[]) => {
-      console.log("Bulk inserting trades into Supabase:", newTrades);
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) throw new Error("User is not logged in");
 
-      const tradesData = newTrades.map((trade) => ({
+      // Separate trades and executions
+      const tradeData = newTrades.map(({ executions, ...trade }) => ({
         ...trade,
         userId: session.user.id,
         timestamp: trade.timestamp || new Date().toISOString(),
       }));
 
-      const { error } = await supabase.from("trades").insert(tradesData);
+      console.log("Bulk inserting trades into Supabase:", tradeData);
 
-      if (error) {
-        console.error("Failed to add bulk trades:", error);
-      } else {
-        await fetchTrades();
+      const { data: insertedTrades, error: tradesError } = await supabase
+        .from("trades")
+        .insert(tradeData)
+        .select("*");
+
+      if (tradesError) throw tradesError;
+
+      // Insert executions
+      const executionData = newTrades.flatMap(
+        (trade, index) =>
+          trade.executions?.map((exe) => ({
+            ...exe,
+            trade_id: insertedTrades[index].id,
+          })) || []
+      );
+
+      if (executionData.length > 0) {
+        console.log("Bulk inserting executions into Supabase:", executionData);
+
+        const { error: executionsError } = await supabase
+          .from("executions")
+          .insert(executionData);
+
+        if (executionsError) throw executionsError;
       }
+
+      await fetchTrades(); // Refresh trades
     },
     [fetchTrades]
   );

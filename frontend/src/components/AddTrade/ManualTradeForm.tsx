@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTrades } from "../../context/TradeContext";
 import Sidebar from "../Sidebar";
-import TradeForm, { Execution, Trade } from "./TradeForm";
+import TradeForm from "./TradeForm";
+import { Execution, Trade } from "@/types/trade";
 
 const contractSpecs: Record<string, { symbol: string; multiplier: number }> = {
   MNQ: { symbol: "MNQ", multiplier: 2 },
@@ -116,10 +117,11 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
       const takeProfit = trade.takeProfit || 0;
       const entryPrice = trade.entryPrice;
       const exitPrice = parseFloat(
-        executions.find((exe) => exe.type === "EXIT")?.price || "0"
+        executions.find((exe) => exe.type === "EXIT")?.price || 0
       );
 
-      const tradeData = {
+      // Prepare the trade object
+      const tradeData: Omit<Trade, "id"> = {
         ...trade,
         entryPrice: entryPrice,
         exitPrice: exitPrice,
@@ -130,7 +132,17 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
         contractMultiplier: contract.multiplier,
       };
 
-      await addTrade(tradeData);
+      // Add trade with executions
+      await addTrade({
+        ...tradeData,
+        executions: executions.map((exe) => ({
+          ...exe,
+          price: parseFloat(exe.price),
+          quantity: parseFloat(exe.quantity),
+          fee: parseFloat(exe.fee),
+        })),
+      });
+
       navigate("/trades");
     } catch (error) {
       console.error("❌ Error adding trade:", error);

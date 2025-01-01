@@ -1,3 +1,11 @@
+export interface Execution {
+  id: string;
+  type: "ENTRY" | "EXIT";
+  price: number;
+  quantity: number;
+  fee: number;
+}
+
 export interface Trade {
   id: string;
   date: string;
@@ -23,6 +31,7 @@ export interface Trade {
   brokerage?: string;
   contractMultiplier?: number;
   playbookId?: string;
+  executions?: Execution[];
 }
 
 export interface DailyPnLData {

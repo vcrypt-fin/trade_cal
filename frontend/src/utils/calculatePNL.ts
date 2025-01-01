@@ -1,6 +1,6 @@
 // src/utils/calculatePNL.ts
 
-import { Trade } from "../types/trade";
+import { Trade, Execution } from "../types/trade";
 
 interface CSVTrade {
   orderId: string;
