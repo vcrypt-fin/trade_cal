@@ -1,0 +1,60 @@
+/* Tutorial System Styles */
+:global(.react-joyride__button--primary) {
+  background-color: #9333EA !important;
+}
+
+:global(.react-joyride__button--primary:hover) {
+  background-color: #7E22CE !important;
+}
+
+:global(.react-joyride__button--secondary) {
+  background-color: transparent !important;
+  border: 1px solid rgba(147, 51, 234, 0.5) !important;
+}
+
+:global(.react-joyride__button--secondary:hover) {
+  background-color: rgba(147, 51, 234, 0.1) !important;
+}
+
+:global(.react-joyride__button--skip) {
+  color: #9CA3AF !important;
+}
+
+:global(.react-joyride__button--skip:hover) {
+  color: #E5E7EB !important;
+}
+
+:global(.react-joyride__close) {
+  color: #9CA3AF !important;
+  transform: scale(0.8) !important;
+  padding: 8px !important;
+}
+
+:global(.react-joyride__close:hover) {
+  color: #E5E7EB !important;
+}
+
+:global(.react-joyride__tooltip) {
+  background-color: #1A1A1A !important;
+  border: 1px solid rgba(147, 51, 234, 0.3) !important;
+}
+
+:global(.react-joyride__tooltip .react-joyride__tooltip__footer) {
+  border-top: 1px solid rgba(147, 51, 234, 0.2) !important;
+}
+
+:global(.react-joyride__close svg) {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Prevent unwanted scrolling during tutorial */
+:global(body.tutorial-active) {
+  height: 100vh !important;
+  overflow: hidden !important;
+}
+
+:global(.react-joyride__overlay) {
+  overflow: hidden !important;
+  height: 100vh !important;
+} 

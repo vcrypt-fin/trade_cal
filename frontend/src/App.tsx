@@ -40,6 +40,8 @@ import CareersPage from './app/careers/page';
 import TermsPage from './app/legal/terms/page';
 import PrivacyPage from './app/legal/privacy/page';
 import CookiesPage from './app/legal/cookies/page';
+import { TutorialProvider } from './context/TutorialContext';
+import TutorialSystem from './components/TutorialSystem';
 
 function App() {
   return (
@@ -47,43 +49,46 @@ function App() {
       <AuthTokenProvider>
         <AuthProvider>
           <AuthChecker />
-          <TradeProvider>
-            <JournalProvider>
-              <NotebookProvider>
-                <Routes>
-                  {/* Public routes */}
-                  <Route path="/demo" element={<LandingPage />} />
-                  <Route path="/watch-demo" element={<WatchDemo />} />
-                  <Route path="/auth" element={<AuthPage />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/github/callback" element={<GitHubCallback />} />
-                  <Route path="/stripe/callback" element={<StripeCallback />} />
-                  <Route path="/payment" element={<PaymentPage />} />
-                  <Route path="/subscription" element={<SubscriptionPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/careers" element={<CareersPage />} />
-                  <Route path="/legal/terms" element={<TermsPage />} />
-                  <Route path="/legal/privacy" element={<PrivacyPage />} />
-                  <Route path="/legal/cookies" element={<CookiesPage />} />
+          <TutorialProvider>
+            <TradeProvider>
+              <JournalProvider>
+                <NotebookProvider>
+                  <TutorialSystem />
+                  <Routes>
+                    {/* Public routes */}
+                    <Route path="/demo" element={<LandingPage />} />
+                    <Route path="/watch-demo" element={<WatchDemo />} />
+                    <Route path="/auth" element={<AuthPage />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/github/callback" element={<GitHubCallback />} />
+                    <Route path="/stripe/callback" element={<StripeCallback />} />
+                    <Route path="/payment" element={<PaymentPage />} />
+                    <Route path="/subscription" element={<SubscriptionPage />} />
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/careers" element={<CareersPage />} />
+                    <Route path="/legal/terms" element={<TermsPage />} />
+                    <Route path="/legal/privacy" element={<PrivacyPage />} />
+                    <Route path="/legal/cookies" element={<CookiesPage />} />
 
-                  {/* Protected routes */}
-                  <Route path="/" element={<DashboardLayout />} />
-                  <Route path="/add-trade" element={<AddTradeForm />} />
-                  <Route path="/edit-trade/:id" element={<EditTradeForm />} />
-                  <Route path="/notebook" element={<Notebook />} />
-                  <Route path="/journal" element={<Journal />} />
-                  <Route path="/playbook" element={<Playbook />} />
-                  <Route path="/playbook/:id" element={<PlaybookDetail />} />
-                  <Route path="/trades" element={<Trades />} /> 
-                  <Route path="/reports" element={<Reports />} />
+                    {/* Protected routes */}
+                    <Route path="/" element={<DashboardLayout />} />
+                    <Route path="/add-trade" element={<AddTradeForm />} />
+                    <Route path="/edit-trade/:id" element={<EditTradeForm />} />
+                    <Route path="/notebook" element={<Notebook />} />
+                    <Route path="/journal" element={<Journal />} />
+                    <Route path="/playbook" element={<Playbook />} />
+                    <Route path="/playbook/:id" element={<PlaybookDetail />} />
+                    <Route path="/trades" element={<Trades />} /> 
+                    <Route path="/reports" element={<Reports />} />
 
-                  {/* <Route path="/settings" element={<Settings />} /> */}
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/update-password" element={<UpdatePassword />} />
-                </Routes>
-              </NotebookProvider>
-            </JournalProvider>
-          </TradeProvider>
+                    {/* <Route path="/settings" element={<Settings />} /> */}
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/update-password" element={<UpdatePassword />} />
+                  </Routes>
+                </NotebookProvider>
+              </JournalProvider>
+            </TradeProvider>
+          </TutorialProvider>
           <ToastContainer position="top-right" autoClose={3000} />
         </AuthProvider>
       </AuthTokenProvider>

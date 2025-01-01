@@ -19,12 +19,12 @@ import { Avatar } from "@nextui-org/react";
 import { cn } from '../utils/cn';
 
 const menuItems = [
-  { icon: LayoutDashboard, text: 'Dashboard', path: '/' },
-  { icon: BookOpen, text: 'Daily Journal', path: '/journal' },
-  { icon: TrendingUp, text: 'Trades', path: '/trades' },
-  { icon: Notebook, text: 'Notebook', path: '/notebook' },
-  { icon: BookMarked, text: 'Playbook', path: '/playbook' },
-  { icon: BarChart2, text: 'Reports', path: '/reports' }
+  { icon: LayoutDashboard, text: 'Dashboard', path: '/', tourId: 'dashboard' },
+  { icon: BookOpen, text: 'Daily Journal', path: '/journal', tourId: 'daily-journal' },
+  { icon: TrendingUp, text: 'Trades', path: '/trades', tourId: 'trades' },
+  { icon: Notebook, text: 'Notebook', path: '/notebook', tourId: 'notebook' },
+  { icon: BookMarked, text: 'Playbook', path: '/playbook', tourId: 'playbook' },
+  { icon: BarChart2, text: 'Reports', path: '/reports', tourId: 'reports' }
 ];
 
 const cleanUsername = (user: SupabaseUser | null): string => {
@@ -148,6 +148,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         <Link
           to="/add-trade"
           className="mx-4 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg mb-6 flex items-center justify-center gap-2"
+          data-tour="add-trade"
         >
           <span className="text-lg">+</span>Add Trade
         </Link>
@@ -163,6 +164,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
               location.pathname === item.path ? 'bg-white/20' : 'hover:bg-white/10',
               isCollapsed && 'justify-center'
             )}
+            data-tour={item.tourId}
           >
             <item.icon size={20} />
             {!isCollapsed && <span>{item.text}</span>}
