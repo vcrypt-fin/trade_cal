@@ -102,7 +102,12 @@ const DashboardLayout: React.FC = () => {
             onSymbolChange={handleSymbolChange}
             onStrategyChange={handleStrategyChange}
           />
-          <Stats />
+          
+          {/* Stats Section */}
+          <div data-tour="stats-widgets">
+            <Stats />
+          </div>
+
           <div className="mt-8 flex gap-6">
             <div className="flex-1">
               <Calendar
@@ -111,9 +116,12 @@ const DashboardLayout: React.FC = () => {
                 strategies={selectedStrategies}
               />
             </div>
-            <div className="w-[300px] relative">
+            
+            {/* Large Widgets Section */}
+            <div className="w-[300px] relative" data-tour="large-widgets">
               {largeWidgets.length === 0 ? (
                 <button
+                  data-tour="add-widget"
                   onClick={() => setIsWidgetModalOpen(true)}
                   className="h-[calc(100vh-13rem)] w-full border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-white/20 transition-colors"
                 >
@@ -138,6 +146,7 @@ const DashboardLayout: React.FC = () => {
                   ))}
                   {largeWidgets.length < 2 && (
                     <button
+                      data-tour="add-widget"
                       onClick={() => setIsWidgetModalOpen(true)}
                       className="h-[calc(50%-0.5rem)] w-full border-2 border-dashed border-white/10 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-white/20 transition-colors"
                     >

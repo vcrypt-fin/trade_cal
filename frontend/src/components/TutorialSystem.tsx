@@ -14,8 +14,28 @@ const tutorialSteps: Step[] = [
   },
   {
     target: '[data-tour="dashboard"]',
-    content: 'This is your Dashboard. Here you can see your trading performance and key metrics.',
+    content: 'This is your Dashboard. Here you can see your trading performance and key metrics at a glance.',
     placement: 'right',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="stats-widgets"]',
+    content: 'These quick stats show your key performance metrics like win rate, profit factor, and total P&L.',
+    placement: 'bottom',
+    spotlightPadding: 5,
+    floaterProps: {
+      offset: 15,
+      disableAnimation: true
+    }
+  },
+  {
+    target: '[data-tour="large-widgets"]',
+    content: 'Larger widgets provide detailed insights like performance charts, trade distribution, and market analysis.',
+    placement: 'bottom',
     spotlightPadding: 5,
     floaterProps: {
       offset: 15,
@@ -107,7 +127,6 @@ export default function TutorialSystem() {
     
     const navigateAndScroll = (path: string) => {
       navigate(path);
-      // Ensure we're at the top of the viewport
       window.scrollTo(0, 0);
     };
 
@@ -118,22 +137,26 @@ export default function TutorialSystem() {
       
       // Handle navigation based on the next step
       switch (nextStep) {
-        case 1: // Dashboard
+        case 1: // Dashboard intro
           navigateAndScroll('/');
           break;
-        case 2: // Daily Journal
+        case 2: // Stats widgets
+        case 3: // Large widgets
+          // Stay on dashboard for these steps
+          break;
+        case 4: // Daily Journal
           navigateAndScroll('/journal');
           break;
-        case 3: // Trades
+        case 5: // Trades
           navigateAndScroll('/trades');
           break;
-        case 4: // Notebook
+        case 6: // Notebook
           navigateAndScroll('/notebook');
           break;
-        case 5: // Playbook
+        case 7: // Playbook
           navigateAndScroll('/playbook');
           break;
-        case 6: // Reports
+        case 8: // Reports
           navigateAndScroll('/reports');
           break;
         default:
@@ -148,22 +171,25 @@ export default function TutorialSystem() {
       
       // Handle navigation based on the previous step
       switch (prevStep) {
-        case 1: // Dashboard
+        case 0: // Welcome
+        case 1: // Dashboard intro
+        case 2: // Stats widgets
+        case 3: // Large widgets
           navigateAndScroll('/');
           break;
-        case 2: // Daily Journal
+        case 4: // Daily Journal
           navigateAndScroll('/journal');
           break;
-        case 3: // Trades
+        case 5: // Trades
           navigateAndScroll('/trades');
           break;
-        case 4: // Notebook
+        case 6: // Notebook
           navigateAndScroll('/notebook');
           break;
-        case 5: // Playbook
+        case 7: // Playbook
           navigateAndScroll('/playbook');
           break;
-        case 6: // Reports
+        case 8: // Reports
           navigateAndScroll('/reports');
           break;
         default:
