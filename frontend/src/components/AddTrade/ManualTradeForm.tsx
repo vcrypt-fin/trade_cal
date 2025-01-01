@@ -1,8 +1,10 @@
 // src/components/ManualTradeForm.tsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
+import { supabase } from '../../context/SupabaseClient';
+import { Upload } from 'lucide-react';
 
 
 interface ContractSpec {
@@ -43,6 +45,9 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
   const location = useLocation();
   const { addTrade, playbooks } = useTrades();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Initialize form data excluding exitPrice and takeProfits
   const [formData, setFormData] = useState({
@@ -161,8 +166,111 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     return risk !== 0 ? reward / risk : 0;
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Verify file type
+      if (!file.type.match(/^image\/(jpeg|png)$/)) {
+        alert('Please upload only PNG or JPEG files');
+        return;
+      }
+
+      console.log('Selected file:', {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+
+      // Create a new File instance with explicit MIME type
+      const newFile = new File([file], file.name, {
+        type: file.type,
+      });
+
+      setUploadedImage(newFile);
+      const previewUrl = URL.createObjectURL(newFile);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const uploadImageToSupabase = async (file: File): Promise<string | null> => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) throw new Error('No user session');
+
+      console.log('Original file:', {
+        name: file.name,
+        type: file.type,
+        size: file.size
+      });
+
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      const filePath = `${session.user.id}/${fileName}`;
+
+      // Create form data
+      const formData = new FormData();
+      // Important: Do not set any name for the file append
+      formData.append('', file);
+
+      // Make direct request to Supabase Storage API
+      const response = await fetch(
+        `https://wxvmssqfidodxyoxjtju.supabase.co/storage/v1/object/trade-images/${filePath}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: formData
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('Upload error:', error);
+        throw new Error(error.message);
+      }
+
+      // Get the public URL
+      const { data: urlData } = supabase.storage
+        .from('trade-images')
+        .getPublicUrl(filePath);
+
+      return urlData.publicUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      return null;
+    }
+  };
+
+  const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      const validTypes = ['image/png', 'image/jpeg'];
+      if (validTypes.includes(file.type)) {
+        console.log('Dropped file:', {
+          name: file.name,
+          type: file.type,
+          size: file.size
+        });
+        setUploadedImage(file);
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+      } else {
+        alert('Please upload only PNG or JPEG files.');
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsUploading(true);
     
     // Add seconds to time if not present
     const timeWithSeconds = formData.time.split(':').length === 2 
@@ -170,6 +278,11 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
       : formData.time;
 
     try {
+      let imageUrl = null;
+      if (uploadedImage) {
+        imageUrl = await uploadImageToSupabase(uploadedImage);
+      }
+
       const entryPrice = parseFloat(formData.entryPrice);
       const original_sl = formData.original_sl ? parseFloat(formData.original_sl) : undefined;
       const takeProfit = formData.takeProfit ? parseFloat(formData.takeProfit) : undefined;
@@ -208,24 +321,19 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
         quantity: parseFloat(formData.quantity) || 0,
         contractMultiplier: contractSpecs[formData.contractType]?.multiplier || 1,
         brokerage: formData.brokerage || '',
+        img: imageUrl,
       };
-  
+      
       console.log('📤 Sending trade data to context:', tradeData);
       
-      // Add error handling for the addTrade call
-      addTrade(tradeData)
-        .then(() => {
-          console.log('✅ Trade submitted successfully');
-          navigate('/trades');
-        })
-        .catch((error) => {
-          console.error('❌ Error adding trade:', error);
-          alert('Failed to add trade. Please ensure all fields are correct.');
-        });
-
+      await addTrade(tradeData);
+      console.log('✅ Trade submitted successfully');
+      navigate('/trades');
     } catch (error) {
       console.error('❌ Error preparing trade data:', error);
       alert('Failed to prepare trade data. Please check all fields.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -483,6 +591,60 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
             </div>
 
             <div>
+              <label className="block text-sm font-medium text-purple-200 mb-1">Trade Screenshot</label>
+              <div 
+                className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-purple-800/30 border-dashed rounded-lg hover:border-purple-600 transition-colors duration-300 cursor-pointer"
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('file-upload')?.click()}
+              >
+                <div className="space-y-1 text-center">
+                  {imagePreview ? (
+                    <div className="relative">
+                      <img
+                        src={imagePreview}
+                        alt="Trade screenshot preview"
+                        className="mx-auto max-h-48 rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setUploadedImage(null);
+                          setImagePreview(null);
+                        }}
+                        className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <Upload className="mx-auto h-12 w-12 text-purple-400" />
+                      <div className="flex justify-center text-sm text-purple-400">
+                        <span className="relative cursor-pointer rounded-md font-medium text-purple-300 hover:text-purple-200">
+                          <span>Upload a file</span>
+                          <input
+                            id="file-upload"
+                            name="file-upload"
+                            type="file"
+                            accept="image/png,image/jpeg"
+                            onChange={handleImageUpload}
+                            className="sr-only"
+                          />
+                        </span>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-purple-400">
+                        PNG or JPG up to 10MB
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div>
               <label className="block text-sm font-medium text-purple-200 mb-1">Notes</label>
               <textarea
                 name="notes"
@@ -503,9 +665,12 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                disabled={isUploading}
+                className={`px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 ${
+                  isUploading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               >
-                Add Trade
+                {isUploading ? 'Uploading...' : 'Add Trade'}
               </button>
             </div>
           </form>

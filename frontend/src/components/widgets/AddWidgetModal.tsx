@@ -8,15 +8,18 @@ interface AddWidgetModalProps {
   onClose: () => void;
   onAddWidget: (type: StatWidgetType, title: string) => void;
   activeWidgets?: Widget[];
+  isSingleTradeView?: boolean;
 }
 
 interface WidgetOption {
   type: StatWidgetType;
   title: string;
   description: string;
+  singleTradeOnly?: boolean;
 }
 
 export const AVAILABLE_WIDGETS: WidgetOption[] = [
+  // Standard widgets for all views
   { type: 'net_pnl', title: 'Net P&L', description: 'Total profit/loss for the selected period' },
   { type: 'win_rate', title: 'Win Rate', description: 'Percentage of winning trades' },
   { type: 'profit_factor', title: 'Profit Factor', description: 'Ratio of gross profit to gross loss' },
@@ -30,6 +33,62 @@ export const AVAILABLE_WIDGETS: WidgetOption[] = [
   { type: 'largest_loss', title: 'Largest Loss', description: 'Largest losing trade' },
   { type: 'win_loss_ratio', title: 'Win/Loss Ratio', description: 'Ratio of average win to average loss' },
   { type: 'average_rr', title: 'Average R:R', description: 'Average actual risk-to-reward ratio across all trades' },
+  
+  // Trade-specific widgets (only shown in SingleTradeView)
+  { 
+    type: 'total_trades', 
+    title: 'Position Size', 
+    description: 'Number of contracts/shares traded',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'gross_profit', 
+    title: 'Risk Amount', 
+    description: 'Amount risked in this trade based on stop loss',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'gross_loss', 
+    title: 'Potential Reward', 
+    description: 'Potential reward based on take profit target',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'largest_win', 
+    title: 'Return %', 
+    description: 'Percentage return on this trade',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'largest_loss', 
+    title: 'Slippage', 
+    description: 'Slippage from target price (if exited beyond target)',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'current_streak', 
+    title: 'Trade Duration', 
+    description: 'Time spent in the trade',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'win_rate', 
+    title: 'Price Volatility', 
+    description: 'Price range between stop loss and take profit',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'average_win', 
+    title: 'Average Fill', 
+    description: 'Average fill price for entry and exit',
+    singleTradeOnly: true 
+  },
+  { 
+    type: 'average_loss', 
+    title: 'Commission', 
+    description: 'Total commission and fees for this trade',
+    singleTradeOnly: true 
+  }
 ];
 
 const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
@@ -37,12 +96,17 @@ const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
   onClose,
   onAddWidget,
   activeWidgets = [],
+  isSingleTradeView = false
 }) => {
   if (!isOpen) return null;
 
   const isWidgetActive = (type: StatWidgetType) => {
     return activeWidgets.some(widget => widget.type === type && widget.visible);
   };
+
+  const filteredWidgets = AVAILABLE_WIDGETS.filter(widget => 
+    isSingleTradeView ? true : !widget.singleTradeOnly
+  );
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -58,7 +122,7 @@ const AddWidgetModal: React.FC<AddWidgetModalProps> = ({
         </div>
         <div className="p-4 max-h-[60vh] overflow-y-auto widget-scroll">
           <div className="grid grid-cols-2 gap-4">
-            {AVAILABLE_WIDGETS.map(widget => {
+            {filteredWidgets.map(widget => {
               const isActive = isWidgetActive(widget.type);
               return (
                 <button

@@ -179,13 +179,37 @@ export function TradeProvider({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getSession();
       if (!session) throw new Error("User is not logged in");
 
+      // Create a clean update object with only the fields we want to update
+      const tradeUpdate = {
+        date: updatedTrade.date,
+        time: updatedTrade.time,
+        symbol: updatedTrade.symbol,
+        side: updatedTrade.side,
+        entryPrice: updatedTrade.entryPrice,
+        exitPrice: updatedTrade.exitPrice,
+        original_sl: updatedTrade.original_sl,
+        takeProfit: updatedTrade.takeProfit,
+        quantity: updatedTrade.quantity,
+        pnl: updatedTrade.pnl,
+        strategy: updatedTrade.strategy,
+        notes: updatedTrade.notes,
+        brokerage: updatedTrade.brokerage,
+        contractMultiplier: updatedTrade.contractMultiplier,
+        playbookId: updatedTrade.playbookId,
+        img: updatedTrade.img,
+        forecasted_rr: updatedTrade.forecasted_rr,
+        actual_rr: updatedTrade.actual_rr
+      };
+
       const { error } = await supabase
         .from("trades")
-        .update(updatedTrade)
-        .match({ id: updatedTrade.id, userId: session.user.id });
+        .update(tradeUpdate)
+        .eq('id', updatedTrade.id)
+        .eq('userId', session.user.id);
 
       if (error) {
         console.error("Failed to edit trade:", error);
+        throw error;
       } else {
         await fetchTrades();
       }

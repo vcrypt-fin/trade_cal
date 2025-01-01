@@ -124,6 +124,10 @@ const Trades: React.FC = () => {
     };
   }, []);
 
+  const handleRowClick = (tradeId: string) => {
+    navigate(`/trades/${tradeId}`);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
       <Sidebar 
@@ -271,7 +275,7 @@ const Trades: React.FC = () => {
               <tbody>
                 {filteredTrades.length === 0 ? (
                   <tr>
-                    <td colSpan={12} className="px-6 py-4 text-center text-purple-400">
+                    <td colSpan={13} className="px-6 py-4 text-center text-purple-400">
                       No trades available.
                     </td>
                   </tr>
@@ -279,7 +283,11 @@ const Trades: React.FC = () => {
                   filteredTrades.map((trade) => {
                     const playbook = playbooks.find(p => p.id === trade.strategy);
                     return (
-                    <tr key={trade.id} className="hover:bg-purple-800/10">
+                    <tr
+                      key={trade.id}
+                      onClick={() => handleRowClick(trade.id)}
+                      className="border-b border-purple-800/30 hover:bg-purple-800/10 cursor-pointer transition-colors duration-200"
+                    >
                       <td className="px-6 py-4 border-b border-purple-800/30">
                         <input
                           type="checkbox"

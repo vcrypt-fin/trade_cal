@@ -22,6 +22,10 @@ export interface Trade {
   brokerage?: string;
   contractMultiplier?: number;
   playbookId?: string;
+  img?: string | null;
+  createdat?: string;
+  updatedat?: string;
+  timestamp?: string;
 }
 
 export interface DailyPnLData {

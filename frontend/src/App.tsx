@@ -42,6 +42,7 @@ import PrivacyPage from './app/legal/privacy/page';
 import CookiesPage from './app/legal/cookies/page';
 import { TutorialProvider } from './context/TutorialContext';
 import TutorialSystem from './components/TutorialSystem';
+import SingleTradeView from './components/Trade/SingleTradeView';
 
 function App() {
   return (
@@ -80,6 +81,7 @@ function App() {
                     <Route path="/playbook/:id" element={<PlaybookDetail />} />
                     <Route path="/trades" element={<Trades />} /> 
                     <Route path="/reports" element={<Reports />} />
+                    <Route path="/trades/:id" element={<SingleTradeView />} />
 
                     {/* <Route path="/settings" element={<Settings />} /> */}
                     <Route path="/profile" element={<Profile />} />
