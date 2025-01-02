@@ -88,9 +88,15 @@ export const SocialOptInModal: React.FC<SocialOptInModalProps> = ({
       <div className="bg-[#1A1625] rounded-lg w-full max-w-lg border border-purple-900/20 p-6">
         <div className="flex items-center gap-3 mb-4">
           <Trophy className="text-purple-500 stroke-[2.5px]" size={24} />
-          <h2 className="text-xl font-semibold text-gray-200">
-            {isSocialEnabled ? 'Disable Social Features' : 'Join TradeMind Social'}
-          </h2>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-200">
+              {isSocialEnabled ? 'Disable Social Features' : 'Join TradeMind Social'}
+            </h2>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">Beta</span>
+              <span className="text-xs text-purple-300">Some features are still in development</span>
+            </div>
+          </div>
         </div>
 
         {status === 'initial' ? (

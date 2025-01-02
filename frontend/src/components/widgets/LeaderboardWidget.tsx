@@ -88,48 +88,53 @@ const LeaderboardWidget: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 pt-3 px-3">
-        <div className="flex items-center gap-2 -ml-2">
-          <Trophy className="text-purple-500 stroke-[2.5px]" size={16} />
-          <h3 className="text-lg font-semibold text-white">Leaderboard</h3>
+      <div className="flex flex-col mb-4 pt-3 px-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 -ml-2">
+            <Trophy className="text-purple-500 stroke-[2.5px]" size={16} />
+            <h3 className="text-lg font-semibold text-white">Leaderboard</h3>
+          </div>
+          <div className="flex items-center">
+            <button
+              onClick={() => setTimeframe('daily')}
+              className={`text-m px-2 font-bold ${
+                timeframe === 'daily'
+                  ? 'text-purple-400'
+                  : 'text-white/60'
+              }`}
+            >
+              D
+            </button>
+            <button
+              onClick={() => setTimeframe('weekly')}
+              className={`text-m px-2 font-bold ${
+                timeframe === 'weekly'
+                  ? 'text-purple-400'
+                  : 'text-white/60'   
+              }`}
+            >
+              W
+            </button>
+            <button
+              onClick={() => setTimeframe('overall')}
+              className={`text-m px-2 font-bold ${
+                timeframe === 'overall'
+                  ? 'text-purple-400'
+                  : 'text-white/60'
+              }`}
+            >
+              Overall
+            </button>
+          </div>
         </div>
-        <div className="flex items-center">
-          <button
-            onClick={() => setTimeframe('daily')}
-            className={`text-m px-2 font-bold ${
-              timeframe === 'daily'
-                ? 'text-purple-400'
-                : 'text-white/60'
-            }`}
-          >
-            D
-          </button>
-          <button
-            onClick={() => setTimeframe('weekly')}
-            className={`text-m px-2 font-bold ${
-              timeframe === 'weekly'
-                ? 'text-purple-400'
-                : 'text-white/60'   
-            }`}
-          >
-            W
-          </button>
-          <button
-            onClick={() => setTimeframe('overall')}
-            className={`text-m px-2 font-bold ${
-              timeframe === 'overall'
-                ? 'text-purple-400'
-                : 'text-white/60'
-            }`}
-          >
-            Overall
-          </button>
+        <div className="-mt-2 ml-4 mb-[-20px]">
+          <span className="text-[8px] px-1 py-0 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">Beta</span>
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs text-white/60">
         <div className="col-span-4">Trader</div>
-        <div className="col-span-4 text-right">P&L</div>
+        <div className="col-span-4 text-center">P&L</div>
         <div className="col-span-4 text-right">Win Rate</div>
       </div>
 

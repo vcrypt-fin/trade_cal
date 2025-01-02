@@ -341,17 +341,21 @@ const Profile = () => {
 
           {/* Social Features Section */}
           <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6 mb-8">
-            <h2 className="text-lg font-semibold mb-4 text-purple-100">Social Features</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-semibold text-purple-100">Social Features</h2>
+              <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded-full border border-purple-500/30">Beta</span>
+            </div>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <Trophy className="text-purple-500 mt-1" size={20} />
                 <div>
                   <h3 className="text-gray-200 font-medium">Leaderboard & Social Trading</h3>
-                  <p className="text-purple-300 text-sm mb-4">
+                  <p className="text-purple-300 text-sm mb-2">
                     {socialEnabled 
                       ? "Your trading stats are currently visible on the leaderboard. You can disable this at any time."
                       : "Enable social features to compete on the leaderboard and connect with other traders."}
                   </p>
+                  <p className="text-purple-300/60 text-xs mb-4">Note: Some social features are still in development.</p>
                   <button
                     onClick={() => setShowSocialModal(true)}
                     className={`px-4 py-2 ${
