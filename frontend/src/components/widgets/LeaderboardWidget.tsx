@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import leaderboardService, { LeaderboardUser } from '../../services/leaderboardService';
 import { Trophy, TrendingUp, TrendingDown, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import './NewsWidget.css';
 
 console.log('LeaderboardWidget.tsx is being imported!');
@@ -8,6 +9,7 @@ console.log('LeaderboardWidget.tsx is being imported!');
 type TimeFrame = 'daily' | 'weekly' | 'overall';
 
 const LeaderboardWidget: React.FC = () => {
+  const { user } = useAuth();
   console.log('LeaderboardWidget is being rendered!');
   
   const [timeframe, setTimeframe] = useState<TimeFrame>('daily');
@@ -138,14 +140,21 @@ const LeaderboardWidget: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-1">
-            {filteredData.map((user) => (
-              <div key={user.id} className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 transition-colors">
+            {filteredData.map((leaderboardUser) => (
+              <div 
+                key={leaderboardUser.id} 
+                className={`grid grid-cols-12 gap-2 px-4 py-2.5 transition-colors ${
+                  leaderboardUser.id === user?.id 
+                    ? 'bg-purple-500/20 hover:bg-purple-500/30' 
+                    : 'bg-white/5 hover:bg-white/10'
+                }`}
+              >
                 <div className="col-span-4">
                   <div className="flex items-center gap-2">
-                    {user.avatar_url ? (
+                    {leaderboardUser.avatar_url ? (
                       <img 
-                        src={user.avatar_url} 
-                        alt={user.display_name}
+                        src={leaderboardUser.avatar_url} 
+                        alt={leaderboardUser.display_name}
                         className="w-5 h-5 rounded-full object-cover"
                       />
                     ) : (
@@ -153,18 +162,18 @@ const LeaderboardWidget: React.FC = () => {
                         <User className="w-3 h-3 text-default-500/80" />
                       </div>
                     )}
-                    <span className="text-xs text-white/80 truncate max-w-[100px]">{user.display_name}</span>
+                    <span className="text-xs text-white/80 truncate max-w-[100px]">{leaderboardUser.display_name}</span>
                   </div>
                 </div>
                 <div className="col-span-4 text-right text-xs">
                   {formatPnL(
-                    timeframe === 'daily' ? user.daily_pnl :
-                    timeframe === 'weekly' ? user.weekly_pnl :
-                    user.total_pnl
+                    timeframe === 'daily' ? leaderboardUser.daily_pnl :
+                    timeframe === 'weekly' ? leaderboardUser.weekly_pnl :
+                    leaderboardUser.total_pnl
                   )}
                 </div>
                 <div className="col-span-4 text-right text-xs text-white/80">
-                  {(user.win_rate * 100).toFixed(1)}%
+                  {(leaderboardUser.win_rate * 100).toFixed(1)}%
                 </div>
               </div>
             ))}
