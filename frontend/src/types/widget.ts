@@ -1,6 +1,6 @@
 export type WidgetType = 'price' | 'volume' | 'change' | 'market-cap' | 'pe-ratio' | 'dividend-yield';
 
-export type LargeWidgetType = 'news' | 'economic-calendar';
+export type LargeWidgetType = 'news' | 'economic-calendar' | 'leaderboard';
 
 export type StatWidgetType = 
   | 'net_pnl' 
@@ -43,5 +43,11 @@ export const LARGE_WIDGETS = [
     title: 'Economic Calendar',
     description: 'Upcoming economic events and FOMC meetings',
     icon: 'Calendar'
+  },
+  {
+    type: 'leaderboard' as LargeWidgetType,
+    title: 'Leaderboard',
+    description: 'Top traders ranked by daily, weekly, and overall performance',
+    icon: 'Trophy'
   }
 ]; 

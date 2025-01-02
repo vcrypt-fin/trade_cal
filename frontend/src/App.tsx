@@ -43,6 +43,7 @@ import CookiesPage from './app/legal/cookies/page';
 import { TutorialProvider } from './context/TutorialContext';
 import TutorialSystem from './components/TutorialSystem';
 import SingleTradeView from './components/Trade/SingleTradeView';
+import { SocialProvider } from './context/SocialContext';
 
 function App() {
   return (
@@ -54,39 +55,41 @@ function App() {
             <TradeProvider>
               <JournalProvider>
                 <NotebookProvider>
-                  <TutorialSystem />
-                  <Routes>
-                    {/* Public routes */}
-                    <Route path="/demo" element={<LandingPage />} />
-                    <Route path="/watch-demo" element={<WatchDemo />} />
-                    <Route path="/auth" element={<AuthPage />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/github/callback" element={<GitHubCallback />} />
-                    <Route path="/stripe/callback" element={<StripeCallback />} />
-                    <Route path="/payment" element={<PaymentPage />} />
-                    <Route path="/subscription" element={<SubscriptionPage />} />
-                    <Route path="/about" element={<AboutPage />} />
-                    <Route path="/careers" element={<CareersPage />} />
-                    <Route path="/legal/terms" element={<TermsPage />} />
-                    <Route path="/legal/privacy" element={<PrivacyPage />} />
-                    <Route path="/legal/cookies" element={<CookiesPage />} />
+                  <SocialProvider>
+                    <TutorialSystem />
+                    <Routes>
+                      {/* Public routes */}
+                      <Route path="/demo" element={<LandingPage />} />
+                      <Route path="/watch-demo" element={<WatchDemo />} />
+                      <Route path="/auth" element={<AuthPage />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/github/callback" element={<GitHubCallback />} />
+                      <Route path="/stripe/callback" element={<StripeCallback />} />
+                      <Route path="/payment" element={<PaymentPage />} />
+                      <Route path="/subscription" element={<SubscriptionPage />} />
+                      <Route path="/about" element={<AboutPage />} />
+                      <Route path="/careers" element={<CareersPage />} />
+                      <Route path="/legal/terms" element={<TermsPage />} />
+                      <Route path="/legal/privacy" element={<PrivacyPage />} />
+                      <Route path="/legal/cookies" element={<CookiesPage />} />
 
-                    {/* Protected routes */}
-                    <Route path="/" element={<DashboardLayout />} />
-                    <Route path="/add-trade" element={<AddTradeForm />} />
-                    <Route path="/edit-trade/:id" element={<EditTradeForm />} />
-                    <Route path="/notebook" element={<Notebook />} />
-                    <Route path="/journal" element={<Journal />} />
-                    <Route path="/playbook" element={<Playbook />} />
-                    <Route path="/playbook/:id" element={<PlaybookDetail />} />
-                    <Route path="/trades" element={<Trades />} /> 
-                    <Route path="/reports" element={<Reports />} />
-                    <Route path="/trades/:id" element={<SingleTradeView />} />
+                      {/* Protected routes */}
+                      <Route path="/" element={<DashboardLayout />} />
+                      <Route path="/add-trade" element={<AddTradeForm />} />
+                      <Route path="/edit-trade/:id" element={<EditTradeForm />} />
+                      <Route path="/notebook" element={<Notebook />} />
+                      <Route path="/journal" element={<Journal />} />
+                      <Route path="/playbook" element={<Playbook />} />
+                      <Route path="/playbook/:id" element={<PlaybookDetail />} />
+                      <Route path="/trades" element={<Trades />} /> 
+                      <Route path="/reports" element={<Reports />} />
+                      <Route path="/trades/:id" element={<SingleTradeView />} />
 
-                    {/* <Route path="/settings" element={<Settings />} /> */}
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/update-password" element={<UpdatePassword />} />
-                  </Routes>
+                      {/* <Route path="/settings" element={<Settings />} /> */}
+                      <Route path="/profile" element={<Profile />} />
+                      <Route path="/update-password" element={<UpdatePassword />} />
+                    </Routes>
+                  </SocialProvider>
                 </NotebookProvider>
               </JournalProvider>
             </TradeProvider>

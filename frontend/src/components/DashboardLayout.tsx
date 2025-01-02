@@ -12,10 +12,11 @@ import EconomicCalendarWidget from './widgets/EconomicCalendarWidget';
 import AddLargeWidgetModal from './AddLargeWidgetModal';
 import { X } from 'lucide-react';
 import { LargeWidgetType } from '../types/widget';
+import LeaderboardWidget from './widgets/LeaderboardWidget';
 
 export type LargeWidget = {
   id: string;
-  type: 'news' | 'economic-calendar';
+  type: 'news' | 'economic-calendar' | 'leaderboard';
 };
 
 const DashboardLayout: React.FC = () => {
@@ -67,13 +68,18 @@ const DashboardLayout: React.FC = () => {
     setLargeWidgets(largeWidgets.filter(widget => widget.id !== id));
   };
 
-  const renderWidget = (widget: LargeWidget) => {
-    switch (widget.type) {
+  const renderLargeWidget = (type: LargeWidgetType) => {
+    console.log('Attempting to render large widget:', type);
+    switch (type) {
       case 'news':
         return <NewsWidget />;
       case 'economic-calendar':
         return <EconomicCalendarWidget />;
+      case 'leaderboard':
+        console.log('Rendering LeaderboardWidget');
+        return <LeaderboardWidget />;
       default:
+        console.log('Unknown widget type:', type);
         return null;
     }
   };
@@ -141,7 +147,7 @@ const DashboardLayout: React.FC = () => {
                       >
                         <X size={16} />
                       </button>
-                      {renderWidget(widget)}
+                      {renderLargeWidget(widget.type)}
                     </div>
                   ))}
                   {largeWidgets.length < 2 && (
