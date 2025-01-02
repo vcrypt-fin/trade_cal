@@ -13,6 +13,7 @@ interface SnapTradeContextProps {
     customRedirect: string;
   }) => Promise<string>;
   listBrokerageConnections: () => Promise<any[]>;
+  importAccount: (accountId: string) => Promise<any>;
 }
 
 const SnapTradeContext = createContext<SnapTradeContextProps | undefined>(
@@ -62,7 +63,7 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
       const { data, error } = await supabase
         .from("snap_users")
         .select("snap_user_secret")
-        .eq("snap_user_id", snapTradeUserId)
+        .eq("user_id", session.user.id)
         .single();
 
       if(error && error.code == 'PGRST116') {
@@ -190,6 +191,49 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
     }
   };
 
+
+  const importAccount = async (accountId: string) => {
+    if (!snapTradeUserId || !snapTradeUserSecret) {
+      throw new Error("SnapTrade user ID or secret is not available.");
+    }
+
+    console.log(`Importing account: ${accountId}`);
+
+    const {
+      data: { session },
+      error: sessionError,
+    } = await supabase.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!session) { console.error("User is not logged in"); return; }
+
+    try {
+      const response = await fetch(`${SNAPTRADE_URL}/snaptrade-pull-accounts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          type: 'snaptrade-pull-holdings',
+          userId: snapTradeUserId,
+          userSecret: snapTradeUserSecret,
+          accountId
+        }),
+      });
+
+      let res = await response.json();
+      console.log(res);
+
+      return res; // Return the list of connections
+    } catch (error) {
+      console.error("Error listing brokerage connections:", error);
+      throw new Error(
+        "Failed to retrieve brokerage connections. Please try again."
+      );
+    }
+  };
+
+
   useEffect(() => {
     getUser();
   }, []);
@@ -202,6 +246,7 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
         getUser,
         loginSnapTradeUser,
         listBrokerageConnections,
+        importAccount
       }}
     >
       {loading ? <div>Loading...</div> : error ? <div>{error}</div> : children}

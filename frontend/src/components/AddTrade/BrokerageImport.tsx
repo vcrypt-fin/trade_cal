@@ -7,7 +7,7 @@ interface BrokerageImportProps {
 }
 
 const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
-  const { listBrokerageConnections } = useSnapTrade();
+  const { listBrokerageConnections, importAccount } = useSnapTrade();
   const [connections, setConnections] = useState<
     { id: string; name: string }[]
   >([]);
@@ -50,7 +50,7 @@ const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
   const handleImport = () => {
     if (selectedConnection) {
       console.log(`Import initiated for connection: ${selectedConnection}`);
-      // Add your import logic here
+      importAccount(selectedConnection.id);
     }
   };
 
@@ -93,7 +93,10 @@ const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
             <select
               id="connections"
               value={selectedConnection || ""}
-              onChange={(e) => setSelectedConnection(e.target.value)}
+              onChange={(e) => {
+                const connection = connections.find(c => c.id === e.target.value);
+                setSelectedConnection(connection || null);
+              }}
               className="w-full mt-2 p-2 bg-[#2A1A4A] text-purple-100 rounded-lg"
             >
               {connections.map((connection) => (
