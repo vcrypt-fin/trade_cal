@@ -1,11 +1,13 @@
 // src/components/ManualTradeForm.tsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 import { supabase } from '../../context/SupabaseClient';
-import { Upload } from 'lucide-react';
+import { Upload, Trash2 } from 'lucide-react';
 import ManualTradeTutorial from '../ManualTradeTutorial';
+import { toast } from 'react-hot-toast';
+import { useTutorial } from '../../context/TutorialContext';
 
 
 interface ContractSpec {
@@ -41,6 +43,8 @@ interface ManualTradeFormProps {
   onBack: () => void;
 }
 
+const FORM_STORAGE_KEY = 'trademind_manual_trade_form';
+
 export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,32 +53,117 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const { setShowManualTradeTutorial } = useTutorial();
   
-  // Initialize form data excluding exitPrice and takeProfits
-  const [formData, setFormData] = useState({
-    date: new Date().toISOString().split('T')[0],
-    time: new Date().toLocaleTimeString('en-US', { 
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    }).replace(/,/g, ''),  // Ensures HH:MM:SS format
-    contractType: '',
-    side: '',
-    entryPrice: '',
-    original_sl: '',  // Added original stop loss
-    takeProfit: '',   // Added take profit
-    quantity: '',
-    strategy: '',
-    notes: '',
-    brokerage: '',
-    timestamp: new Date().toISOString(),
+  // Initialize form data from localStorage or defaults
+  const [formData, setFormData] = useState(() => {
+    const savedForm = localStorage.getItem(FORM_STORAGE_KEY);
+    if (savedForm) {
+      const parsed = JSON.parse(savedForm);
+      return {
+        ...parsed,
+        date: parsed.date || new Date().toISOString().split('T')[0],
+        time: parsed.time || new Date().toLocaleTimeString('en-US', { 
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).replace(/,/g, '')
+      };
+    }
+    
+    return {
+      date: new Date().toISOString().split('T')[0],
+      time: new Date().toLocaleTimeString('en-US', { 
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      }).replace(/,/g, ''),
+      contractType: '',
+      side: '',
+      entryPrice: '',
+      original_sl: '',
+      takeProfit: '',
+      quantity: '',
+      strategy: '',
+      notes: '',
+      brokerage: '',
+      timestamp: new Date().toISOString(),
+    };
   });
 
-  // Initialize executions with one Entry execution
-  const [executions, setExecutions] = useState<Execution[]>([
-    { id: crypto.randomUUID(), type: 'ENTRY', price: formData.entryPrice, quantity: formData.quantity, fee: '0' }
-  ]);
+  // Initialize executions from localStorage or defaults
+  const [executions, setExecutions] = useState<Execution[]>(() => {
+    const savedForm = localStorage.getItem(FORM_STORAGE_KEY);
+    if (savedForm) {
+      const parsed = JSON.parse(savedForm);
+      return parsed.executions || [{ 
+        id: crypto.randomUUID(), 
+        type: 'ENTRY', 
+        price: formData.entryPrice, 
+        quantity: formData.quantity, 
+        fee: '0' 
+      }];
+    }
+    return [{ 
+      id: crypto.randomUUID(), 
+      type: 'ENTRY', 
+      price: formData.entryPrice, 
+      quantity: formData.quantity, 
+      fee: '0' 
+    }];
+  });
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify({
+      ...formData,
+      executions
+    }));
+  }, [formData, executions]);
+
+  const clearForm = () => {
+    const confirmed = window.confirm('Are you sure you want to clear all form data? This cannot be undone.');
+    if (confirmed) {
+      setFormData({
+        date: new Date().toISOString().split('T')[0],
+        time: new Date().toLocaleTimeString('en-US', { 
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).replace(/,/g, ''),
+        contractType: '',
+        side: '',
+        entryPrice: '',
+        original_sl: '',
+        takeProfit: '',
+        quantity: '',
+        strategy: '',
+        notes: '',
+        brokerage: '',
+        timestamp: new Date().toISOString(),
+      });
+      setExecutions([{ 
+        id: crypto.randomUUID(), 
+        type: 'ENTRY', 
+        price: '', 
+        quantity: '', 
+        fee: '0' 
+      }]);
+      setUploadedImage(null);
+      setImagePreview(null);
+      localStorage.removeItem(FORM_STORAGE_KEY);
+      toast.success('Form data cleared successfully', {
+        style: {
+          background: '#2A1A4A',
+          color: '#E5E7EB',
+          border: '1px solid rgba(147, 51, 234, 0.3)',
+        },
+      });
+    }
+  };
 
   // Function to calculate total PNL
   const calculatePnL = (data: typeof formData, exes: Execution[]) => {
@@ -131,7 +220,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev: typeof formData) => ({ ...prev, [name]: value }));
 
     // Update the Entry execution if entryPrice or quantity changes
     if (name === 'entryPrice' || name === 'quantity') {
@@ -273,6 +362,69 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     e.preventDefault();
     setIsUploading(true);
     
+    // Check if there's at least one exit execution
+    const hasExitExecution = executions.some(exe => exe.type === 'EXIT');
+    if (!hasExitExecution) {
+      setIsUploading(false);
+      toast.error(
+        <div className="flex flex-col gap-2">
+          <span className="font-bold">⚠️ Missing Exit Execution</span>
+          <span>You must add at least one exit execution to log your trade. Click the "Add Exit" button below the executions section.</span>
+        </div>,
+        {
+          duration: 5000,
+          style: {
+            background: '#2A1A4A',
+            color: '#E5E7EB',
+            border: '1px solid rgba(147, 51, 234, 0.3)',
+          },
+        }
+      );
+      
+      // Create and show tooltip
+      const addExitBtn = document.querySelector('[data-tour="add-exit-btn"]');
+      if (addExitBtn) {
+        // Create tooltip
+        const tooltip = document.createElement('div');
+        tooltip.className = 'fixed bg-[#1E1E1E] text-white px-4 py-3 rounded-lg shadow-xl z-50 text-sm';
+        tooltip.style.width = '220px';
+        tooltip.innerHTML = `
+          <div class="flex items-center gap-2 font-semibold text-[#FFB020] mb-2">
+            <span class="text-lg">⚠</span>
+            <span>Action Required</span>
+          </div>
+          <div class="text-[#D1D5DB] text-[13px] leading-tight">Click here to add your exit execution. This is required to calculate your P&L correctly.</div>
+        `;
+        
+        // Position tooltip
+        const btnRect = addExitBtn.getBoundingClientRect();
+        tooltip.style.top = `${btnRect.top - 100}px`; // Position above button
+        tooltip.style.left = `${btnRect.left + (btnRect.width / 2) - 110}px`; // Center horizontally
+        
+        // Add arrow
+        const arrow = document.createElement('div');
+        arrow.className = 'absolute w-4 h-4 bg-[#1E1E1E] rotate-45';
+        arrow.style.bottom = '-8px';
+        arrow.style.left = '50%';
+        arrow.style.transform = 'translateX(-50%) rotate(45deg)';
+        tooltip.appendChild(arrow);
+        
+        // Add to document
+        document.body.appendChild(tooltip);
+        
+        // Highlight button
+        addExitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        addExitBtn.classList.add('animate-pulse', 'ring-2', 'ring-[#FFB020]', 'ring-opacity-50');
+        
+        // Remove tooltip and highlight after delay
+        setTimeout(() => {
+          tooltip.remove();
+          addExitBtn.classList.remove('animate-pulse', 'ring-2', 'ring-[#FFB020]', 'ring-opacity-50');
+        }, 5000);
+      }
+      return;
+    }
+    
     // Add seconds to time if not present
     const timeWithSeconds = formData.time.split(':').length === 2 
       ? `${formData.time}:00` 
@@ -329,10 +481,27 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
       
       await addTrade(tradeData);
       console.log('✅ Trade submitted successfully');
+      
+      // Clear form data from localStorage after successful submission
+      localStorage.removeItem(FORM_STORAGE_KEY);
+      
+      toast.success('Trade logged successfully!', {
+        style: {
+          background: '#2A1A4A',
+          color: '#E5E7EB',
+          border: '1px solid rgba(147, 51, 234, 0.3)',
+        },
+      });
       navigate('/trades');
     } catch (error) {
       console.error('❌ Error preparing trade data:', error);
-      alert('Failed to prepare trade data. Please check all fields.');
+      toast.error('Failed to log trade. Please check all fields.', {
+        style: {
+          background: '#2A1A4A',
+          color: '#E5E7EB',
+          border: '1px solid rgba(147, 51, 234, 0.3)',
+        },
+      });
     } finally {
       setIsUploading(false);
     }
@@ -382,14 +551,24 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
       />
       <div className={`transition-all duration-300 ${isCollapsed ? 'ml-[80px]' : 'ml-[280px]'} p-8`}>
         <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={onBack}
+                className="text-purple-400 hover:text-purple-300"
+              >
+                ← Back
+              </button>
+              <h1 className="text-2xl font-semibold text-purple-100">Add Trade</h1>
+            </div>
             <button
-              onClick={onBack}
-              className="text-purple-400 hover:text-purple-300"
+              onClick={clearForm}
+              className="flex items-center gap-2 px-3 py-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+              title="Clear all form data"
             >
-              ← Back
+              <Trash2 className="w-5 h-5" />
+              <span className="text-sm">Clear Form</span>
             </button>
-            <h1 className="text-2xl font-semibold text-purple-100">Add Trade</h1>
           </div>
           <form onSubmit={handleSubmit} className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm space-y-6">
             <div className="grid grid-cols-2 gap-6" data-tour="trade-datetime">
