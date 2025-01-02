@@ -38,7 +38,7 @@ const Profile = () => {
         return;
       }
 
-      console.log('Fetching subscription for user:', user.id);
+      //console.log('Fetching subscription for user:', user.id);
 
       const { data, error } = await supabase
         .from('subscriptions')
@@ -47,18 +47,18 @@ const Profile = () => {
         .single();
 
       if (error) {
-        console.error('Error fetching subscription:', error);
+        //console.error('Error fetching subscription:', error);
         if (error.code === 'PGRST116') {
           setSubscription(null);
         } else {
           throw error;
         }
       } else {
-        console.log('Fetched subscription:', data);
+       // console.log('Fetched subscription:', data);
         setSubscription(data);
       }
     } catch (err) {
-      console.error('Error in fetchSubscription:', err);
+      //console.error('Error in fetchSubscription:', err);
       setError('Failed to load subscription details');
     } finally {
       setLoading(false);
@@ -66,7 +66,7 @@ const Profile = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log('Profile component mounted/updated');
+   // console.log('Profile component mounted/updated');
     fetchSubscription();
   }, [fetchSubscription]);
 
@@ -124,7 +124,7 @@ const Profile = () => {
       
       // Clear localStorage except for Supabase session
       for (let key of Object.keys(localStorage)) {
-        if (!key.startsWith('sb-')) {
+        if (!key.startsWith('supabase.auth.token')) {
           localStorage.removeItem(key);
         }
       }
