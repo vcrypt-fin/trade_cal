@@ -406,6 +406,8 @@ export default function LandingPage() {
                 subtitle: "Perfect for Beginners",
                 monthlyPrice: "$1.99",
                 yearlyPrice: "$19.90",
+                originalMonthlyPrice: "$3.99",
+                originalYearlyPrice: "$39.90",
                 features: [
                   "Trade journaling",
                   "Basic performance analytics",
@@ -421,6 +423,8 @@ export default function LandingPage() {
                 subtitle: "For Serious Traders",
                 monthlyPrice: "$5.99",
                 yearlyPrice: "$59.90",
+                originalMonthlyPrice: "$11.99",
+                originalYearlyPrice: "$119.90",
                 features: [
                   "Everything in Basic",
                   "AI-powered insights",
@@ -436,6 +440,8 @@ export default function LandingPage() {
                 subtitle: "For Trading Firms",
                 monthlyPrice: "$199.00",
                 yearlyPrice: "$1990.00",
+                originalMonthlyPrice: "$399.00",
+                originalYearlyPrice: "$3990.00",
                 features: [
                   "Everything in Pro",
                   "Multi-user support",
@@ -471,16 +477,43 @@ export default function LandingPage() {
                 </CardHeader>
                 <CardContent className={`p-6 flex flex-col h-[500px] ${plan.comingSoon ? 'opacity-60' : ''}`}>
                   <div className="mb-6 text-center">
-                    <p className="text-5xl font-bold text-white">
-                      {billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
-                    </p>
-                    <p className="text-sm text-purple-200">
+                    <div className="relative inline-block">
+                      <div className="flex flex-col items-center">
+                        <div className="bg-purple-900/50 rounded-full px-3 py-0.5 mb-1">
+                          <p className="text-lg text-gray-400 line-through font-medium">
+                            {billingCycle === 'monthly' ? plan.originalMonthlyPrice : plan.originalYearlyPrice}
+                          </p>
+                        </div>
+                        <p className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-white animate-gradient">
+                          {billingCycle === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-2">
+                      <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg">
+                        50% OFF
+                      </span>
+                    </div>
+                    <style jsx>{`
+                      @keyframes gradient {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                      }
+                      .animate-gradient {
+                        background-size: 200% auto;
+                        animation: gradient 3s ease infinite;
+                      }
+                    `}</style>
+                    <p className="text-sm text-purple-200 mt-4">
                       {billingCycle === 'monthly' ? 'per month' : 'per year'}
                     </p>
                     {billingCycle === 'yearly' && (
-                      <p className="text-sm text-green-400 font-bold mt-2">
-                        Save {Math.round((1 - (parseFloat(plan.yearlyPrice.slice(1)) / (parseFloat(plan.monthlyPrice.slice(1)) * 12))) * 100)}%
-                      </p>
+                      <div className="mt-2 bg-green-500/10 rounded-full py-1 px-3 inline-block">
+                        <p className="text-sm text-green-400 font-bold">
+                          Save {Math.round((1 - (parseFloat(plan.yearlyPrice.slice(1)) / (parseFloat(plan.monthlyPrice.slice(1)) * 12))) * 100)}% extra
+                        </p>
+                      </div>
                     )}
                   </div>
                   <ul className="space-y-2 mb-6 flex-1">

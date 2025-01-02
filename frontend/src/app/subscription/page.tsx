@@ -115,11 +115,40 @@ export default function SubscriptionPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className={plan.comingSoon ? 'opacity-50' : ''}>
-                <div className="text-4xl font-bold text-purple-100 mb-4">
-                  ${calculatePrice(plan.price)}
-                  <span className="text-lg font-normal text-purple-300">
+                <div className="text-center mb-6">
+                  <div className="relative inline-block">
+                    <div className="flex flex-col items-center">
+                      <div className="bg-purple-900/50 rounded-full px-3 py-0.5 mb-1">
+                        <p className="text-lg text-gray-400 line-through font-medium">
+                          ${isAnnual ? (plan.originalPrice * 10).toFixed(2) : plan.originalPrice.toFixed(2)}
+                        </p>
+                      </div>
+                      <p className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-purple-100 to-white animate-gradient">
+                        ${calculatePrice(plan.price)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-sm font-bold px-3 py-1 rounded-full shadow-lg">
+                      50% OFF
+                    </span>
+                  </div>
+                  <style>
+                    {`
+                      @keyframes gradient {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                      }
+                      .animate-gradient {
+                        background-size: 200% auto;
+                        animation: gradient 3s ease infinite;
+                      }
+                    `}
+                  </style>
+                  <p className="text-sm text-purple-200 mt-2">
                     {isAnnual ? '/year' : '/month'}
-                  </span>
+                  </p>
                 </div>
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((feature, i) => (
@@ -180,6 +209,7 @@ const plans = [
     name: "Basic",
     description: "Perfect for beginners",
     price: 1.99,
+    originalPrice: 3.99,
     features: [
       "Trade journaling",
       "Basic performance analytics",
@@ -193,6 +223,7 @@ const plans = [
     name: "Pro",
     description: "For serious traders",
     price: 5.99,
+    originalPrice: 11.99,
     featured: true,
     features: [
       "Everything in Basic",
@@ -209,6 +240,7 @@ const plans = [
     name: "Enterprise",
     description: "For trading firms",
     price: 199.00,
+    originalPrice: 399.00,
     features: [
       "Everything in Pro",
       "Multi-user support",
