@@ -54,9 +54,9 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     {
       id: crypto.randomUUID(),
       type: "ENTRY",
-      price: trade.entryPrice.toString(),
-      quantity: trade.quantity.toString(),
-      fee: "0",
+      price: trade.entryPrice,
+      quantity: trade.quantity,
+      fee: 0,
     },
   ]);
 
@@ -150,33 +150,6 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     }
   };
 
-  const handleExecutionChange = (
-    id: string,
-    field: keyof Omit<Execution, "id">,
-    value: string
-  ) => {
-    setExecutions((prev) =>
-      prev.map((exe) => (exe.id === id ? { ...exe, [field]: value } : exe))
-    );
-  };
-
-  const addExecution = () => {
-    setExecutions((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        type: "EXIT",
-        price: "",
-        quantity: "",
-        fee: "0",
-      },
-    ]);
-  };
-
-  const removeExecution = (id: string) => {
-    setExecutions((prev) => prev.filter((exe) => exe.id !== id));
-  };
-
   if (playbooks.length === 0) {
     return (
       <div className="min-h-screen flex">
@@ -208,18 +181,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
     <div className="min-h-screen flex bg-gray-50">
       <Sidebar />
       <div className="flex-1 p-4 lg:p-8 max-w-4xl mx-auto bg-white shadow-lg rounded-lg">
-        <TradeForm
-          trade={trade}
-          setTrade={setTrade}
-          executions={executions}
-          setExecutions={setExecutions}
-          addExecution={addExecution}
-          removeExecution={removeExecution}
-          handleExecutionChange={handleExecutionChange}
-          playbooks={playbooks}
-          brokerages={brokerages}
-          contractSpecs={contractSpecs}
-        />
+        <TradeForm trade={trade} setTrade={setTrade} />
         <div className="mt-4 flex justify-end">
           <button
             onClick={handleSubmit}

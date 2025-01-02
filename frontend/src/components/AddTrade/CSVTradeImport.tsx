@@ -32,12 +32,12 @@ const CSVTradeImport: React.FC = () => {
   );
   const [parsingError, setParsingError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [parsedTrades, setParsedTrades] = useState<Trade[]>([]); // Parsed trades
+  const [parsedTrades, setParsedTrades] = useState<Trade[]>([]);
   const [currentExecutions, setCurrentExecutions] = useState<Execution[][]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setParsingError(null);
-    if (e.target.files && e.target.files.length > 0) {
+    if (e.target.files?.[0]) {
       const file = e.target.files[0];
       if (file.type !== "text/csv" && !file.name.endsWith(".csv")) {
         setParsingError("Please upload a valid CSV file");
@@ -62,28 +62,26 @@ const CSVTradeImport: React.FC = () => {
 
       const csvData = event.target.result.toString();
       try {
-        const trades = parseCsv(csvData, selectedBroker); // Parse CSV
+        const trades = parseCsv(csvData, selectedBroker);
         setParsedTrades(
-          trades.map((trade: Trade) => ({
+          trades.map((trade) => ({
             ...trade,
             id: crypto.randomUUID(),
             timestamp: trade.timestamp || new Date().toISOString(),
           }))
         );
-
         setCurrentExecutions(
           trades.map(() => [
             {
               id: crypto.randomUUID(),
               type: "ENTRY",
-              price: "",
-              quantity: "",
-              fee: "0",
+              price: 0,
+              quantity: 0,
+              fee: 0,
             },
           ])
         );
       } catch (error: any) {
-        console.error("Error importing trades:", error);
         setParsingError(error.message || "An unknown error occurred.");
       } finally {
         setIsProcessing(false);
@@ -99,8 +97,8 @@ const CSVTradeImport: React.FC = () => {
   };
 
   const handleTradeChange = (index: number, updatedTrade: Trade) => {
-    setParsedTrades((prevTrades) =>
-      prevTrades.map((trade, i) => (i === index ? updatedTrade : trade))
+    setParsedTrades((prev) =>
+      prev.map((trade, i) => (i === index ? updatedTrade : trade))
     );
   };
 
@@ -110,8 +108,8 @@ const CSVTradeImport: React.FC = () => {
     field: keyof Execution,
     value: string
   ) => {
-    setCurrentExecutions((prevExecutions) =>
-      prevExecutions.map((executions, i) =>
+    setCurrentExecutions((prev) =>
+      prev.map((executions, i) =>
         i === tradeIndex
           ? executions.map((exe, j) =>
               j === executionIndex ? { ...exe, [field]: value } : exe
@@ -122,17 +120,17 @@ const CSVTradeImport: React.FC = () => {
   };
 
   const addExecution = (tradeIndex: number) => {
-    setCurrentExecutions((prevExecutions) =>
-      prevExecutions.map((executions, i) =>
+    setCurrentExecutions((prev) =>
+      prev.map((executions, i) =>
         i === tradeIndex
           ? [
               ...executions,
               {
                 id: crypto.randomUUID(),
                 type: "EXIT",
-                price: "",
-                quantity: "",
-                fee: "0",
+                price: 0,
+                quantity: 0,
+                fee: 0,
               },
             ]
           : executions
@@ -141,8 +139,8 @@ const CSVTradeImport: React.FC = () => {
   };
 
   const removeExecution = (tradeIndex: number, executionId: string) => {
-    setCurrentExecutions((prevExecutions) =>
-      prevExecutions.map((executions, i) =>
+    setCurrentExecutions((prev) =>
+      prev.map((executions, i) =>
         i === tradeIndex
           ? executions.filter((exe) => exe.id !== executionId)
           : executions
@@ -156,12 +154,10 @@ const CSVTradeImport: React.FC = () => {
         ...trade,
         executions: currentExecutions[index],
       }));
-
       await addBulkTrades(tradesWithExecutions);
       alert("Trades successfully submitted!");
       navigate("/");
-    } catch (error) {
-      console.error("Error submitting trades:", error);
+    } catch {
       alert("Failed to submit trades. Please try again.");
     }
   };
@@ -174,8 +170,6 @@ const CSVTradeImport: React.FC = () => {
           <h1 className="text-2xl font-semibold mb-6">
             Import Trades from CSV
           </h1>
-
-          {/* Step 1: Broker Selection and File Upload */}
           <div className="bg-white p-6 rounded-lg shadow-md mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Broker
@@ -215,7 +209,6 @@ const CSVTradeImport: React.FC = () => {
             </button>
           </div>
 
-          {/* Step 2: Review and Update Trades */}
           {parsedTrades.length > 0 && (
             <div>
               <h2 className="text-xl font-semibold mb-4">
@@ -253,7 +246,6 @@ const CSVTradeImport: React.FC = () => {
                   />
                 ))}
               </div>
-
               <button
                 onClick={handleSubmit}
                 className="mt-6 bg-green-600 text-white px-4 py-2 rounded-lg"
