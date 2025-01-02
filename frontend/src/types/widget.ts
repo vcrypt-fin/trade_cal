@@ -25,6 +25,12 @@ export interface Widget {
   visible: boolean;
 }
 
+export interface LargeWidget {
+  id: string;
+  type: LargeWidgetType;
+  position: number;
+}
+
 export interface WidgetData {
   value: string | number;
   type: 'currency' | 'percent' | 'number';
