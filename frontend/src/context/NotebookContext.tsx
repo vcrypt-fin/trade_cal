@@ -23,7 +23,6 @@ interface NoteFolder {
 const DEFAULT_FOLDERS = [
   { name: 'Daily Journal' },
   { name: 'Sessions Recap' }
-  // Removed 'All Notes' as it should be handled differently
 ];
 
 interface NotebookContextType {
@@ -64,12 +63,20 @@ export const NotebookProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!isMounted) return;
         if (fetchError) throw fetchError;
 
-        // Only insert default folders if user has NO folders
-        if (existingFolders && existingFolders.length === 0) {
+        // Create a set of existing folder names for quick lookup
+        const existingFolderNames = new Set((existingFolders || []).map(f => f.name));
+
+        // Filter out default folders that already exist
+        const foldersToCreate = DEFAULT_FOLDERS.filter(folder => 
+          !existingFolderNames.has(folder.name)
+        );
+
+        // Only insert missing default folders
+        if (foldersToCreate.length > 0) {
           const { error: insertError } = await supabase
             .from('note_folders')
             .insert(
-              DEFAULT_FOLDERS.map(folder => ({
+              foldersToCreate.map(folder => ({
                 name: folder.name,
                 user_id: user.id
               }))
