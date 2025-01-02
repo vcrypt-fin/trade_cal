@@ -11,6 +11,7 @@ export interface LeaderboardUser {
   win_rate: number;
   trade_count: number;
   last_stats_update?: string;
+  last_online?: string;
   leaderboard_stats?: {
     daily_rank: number;
     weekly_rank: number;
@@ -27,6 +28,7 @@ export interface StatsUpdateStatus {
 class LeaderboardService {
   private subscribers: ((data: LeaderboardUser[]) => void)[] = [];
   private pollingInterval: number | null = null;
+  private onlineUpdateInterval: number | null = null;
 
   public async checkSocialPromptStatus(): Promise<boolean> {
     try {
@@ -123,6 +125,8 @@ class LeaderboardService {
           daily_pnl,
           win_rate,
           trade_count,
+          last_stats_update,
+          last_online,
           leaderboard_stats (
             daily_rank,
             weekly_rank,
@@ -276,6 +280,56 @@ class LeaderboardService {
     } catch (error) {
       console.error('Error forcing stats update:', error);
       return false;
+    }
+  }
+
+  public async updateOnlineStatus(): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.log('updateOnlineStatus: No user found');
+        return;
+      }
+
+      const timestamp = new Date().toISOString();
+      console.log('updateOnlineStatus: Updating status', {
+        userId: user.id,
+        timestamp
+      });
+
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({ last_online: timestamp })
+        .eq('id', user.id);
+
+      if (error) {
+        console.error('updateOnlineStatus: Error updating status:', error);
+        throw error;
+      }
+
+      console.log('updateOnlineStatus: Successfully updated status');
+    } catch (error) {
+      console.error('Error updating online status:', error);
+    }
+  }
+
+  public startOnlineStatusUpdates() {
+    console.log('startOnlineStatusUpdates: Starting updates');
+    // Update immediately
+    this.updateOnlineStatus();
+
+    // Then update every 5 minutes
+    this.onlineUpdateInterval = window.setInterval(() => {
+      console.log('onlineUpdateInterval: Triggering update');
+      this.updateOnlineStatus();
+    }, 5 * 60 * 1000); // 5 minutes
+  }
+
+  public stopOnlineStatusUpdates() {
+    if (this.onlineUpdateInterval) {
+      console.log('stopOnlineStatusUpdates: Stopping updates');
+      clearInterval(this.onlineUpdateInterval);
+      this.onlineUpdateInterval = null;
     }
   }
 }
