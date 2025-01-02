@@ -30,7 +30,10 @@ const DashboardLayout: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isTickerCollapsed, setIsTickerCollapsed] = useState(false);
   const [isWidgetModalOpen, setIsWidgetModalOpen] = useState(false);
-  const [largeWidgets, setLargeWidgets] = useState<LargeWidget[]>([]);
+  const [largeWidgets, setLargeWidgets] = useState<LargeWidget[]>(() => {
+    const savedWidgets = localStorage.getItem('largeWidgets');
+    return savedWidgets ? JSON.parse(savedWidgets) : [];
+  });
   const [draggedWidget, setDraggedWidget] = useState<LargeWidget | null>(null);
 
   // Save widgets to localStorage whenever they change
