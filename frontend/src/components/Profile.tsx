@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../context/SupabaseClient';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTrades } from '../context/TradeContext';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Trophy, Users } from 'lucide-react';
+import { SocialOptInModal } from './SocialOptInModal';
+import leaderboardService from '../services/leaderboardService';
 
 interface Subscription {
   id: string;
@@ -15,6 +17,8 @@ interface Subscription {
   cancel_at_period_end: boolean;
   stripe_customer_id: string;
 }
+
+const FETCH_INTERVAL = 60000; // 1 minute in milliseconds
 
 const Profile = () => {
   const { user } = useAuth();
@@ -29,17 +33,25 @@ const Profile = () => {
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showSocialModal, setShowSocialModal] = useState(false);
+  const [socialEnabled, setSocialEnabled] = useState(false);
+  
+  const lastFetchTime = useRef<number>(0);
+  const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchSubscription = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastFetchTime.current < FETCH_INTERVAL && lastFetchTime.current !== 0) {
+      return; // Skip if not enough time has passed
+    }
+
     try {
       if (!user) {
-        console.log('No user found, skipping subscription fetch');
         setLoading(false);
         return;
       }
 
-      //console.log('Fetching subscription for user:', user.id);
-
+      lastFetchTime.current = now;
       const { data, error } = await supabase
         .from('subscriptions')
         .select('*')
@@ -47,28 +59,50 @@ const Profile = () => {
         .single();
 
       if (error) {
-        //console.error('Error fetching subscription:', error);
         if (error.code === 'PGRST116') {
           setSubscription(null);
         } else {
           throw error;
         }
       } else {
-       // console.log('Fetched subscription:', data);
         setSubscription(data);
       }
     } catch (err) {
-      //console.error('Error in fetchSubscription:', err);
       setError('Failed to load subscription details');
     } finally {
       setLoading(false);
     }
   }, [user]);
 
+  const checkSocialStatus = useCallback(async () => {
+    const now = Date.now();
+    if (now - lastFetchTime.current < FETCH_INTERVAL && lastFetchTime.current !== 0) {
+      return; // Skip if not enough time has passed
+    }
+
+    const isEnabled = await leaderboardService.checkSocialStatus();
+    setSocialEnabled(isEnabled);
+  }, []);
+
   useEffect(() => {
-   // console.log('Profile component mounted/updated');
+    // Initial fetch
     fetchSubscription();
-  }, [fetchSubscription]);
+    checkSocialStatus();
+
+    // Setup interval for subsequent fetches
+    const intervalId = setInterval(() => {
+      fetchSubscription();
+      checkSocialStatus();
+    }, FETCH_INTERVAL);
+
+    // Cleanup
+    return () => {
+      clearInterval(intervalId);
+      if (fetchTimeoutRef.current) {
+        clearTimeout(fetchTimeoutRef.current);
+      }
+    };
+  }, [fetchSubscription, checkSocialStatus]);
 
   const handleSubscribe = () => {
     console.log('Navigating to subscription page');
@@ -220,7 +254,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gradient-to-bl from-[#110420] via-[#0B0118] to-[#0B0118] flex">
       <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-      <div className={`flex-1 transition-all duration-300 pt-12 ${isCollapsed ? 'ml-[60px]' : 'ml-[250px]'} p-8`}>
+      <div className={`flex-1 transition-all duration-300 pt-12 ${isCollapsed ? 'ml-[60px]' : 'ml-[280px]'} p-8`}>
         <div className="max-w-7xl mx-auto">
           {/* Subscription Section */}
           <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6 mb-8">
@@ -303,6 +337,31 @@ const Profile = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Social Features Section */}
+          <div className="bg-[#120322] rounded-lg border border-purple-800/30 backdrop-blur-sm p-6 mb-8">
+            <h2 className="text-lg font-semibold mb-4 text-purple-100">Social Features</h2>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Trophy className="text-purple-500 mt-1" size={20} />
+                <div>
+                  <h3 className="text-gray-200 font-medium">Leaderboard & Social Trading</h3>
+                  <p className="text-purple-300 text-sm mb-4">
+                    {socialEnabled 
+                      ? "Your trading stats are visible on the leaderboard. You're part of the TradeMind community!"
+                      : "Enable social features to compete on the leaderboard and connect with other traders."}
+                  </p>
+                  <button
+                    onClick={() => setShowSocialModal(true)}
+                    className="px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors inline-flex items-center gap-2"
+                  >
+                    <Users size={16} />
+                    {socialEnabled ? 'Manage Social Features' : 'Enable Social Features'}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Data Management Section */}
@@ -447,6 +506,15 @@ const Profile = () => {
             </div>
           </div>
         )}
+
+        {/* Social Opt-In Modal */}
+        <SocialOptInModal
+          isOpen={showSocialModal}
+          onClose={() => {
+            setShowSocialModal(false);
+            checkSocialStatus(); // Refresh social status after modal closes
+          }}
+        />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Newspaper, Calendar } from 'lucide-react';
+import { X, Newspaper, Calendar, Trophy } from 'lucide-react';
 import { LargeWidgetType, LARGE_WIDGETS } from '../types/widget';
 
 interface AddLargeWidgetModalProps {
@@ -10,7 +10,8 @@ interface AddLargeWidgetModalProps {
 
 const WIDGET_ICONS = {
   'news': Newspaper,
-  'economic-calendar': Calendar
+  'economic-calendar': Calendar,
+  'leaderboard': Trophy
 } as const;
 
 const AddLargeWidgetModal: React.FC<AddLargeWidgetModalProps> = ({
@@ -18,7 +19,15 @@ const AddLargeWidgetModal: React.FC<AddLargeWidgetModalProps> = ({
   onClose,
   onAddWidget,
 }) => {
+  console.log('AddLargeWidgetModal rendered with widgets:', LARGE_WIDGETS);
+
   if (!isOpen) return null;
+
+  const handleAddWidget = (type: LargeWidgetType) => {
+    console.log('Adding widget:', type);
+    onAddWidget(type);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -39,10 +48,7 @@ const AddLargeWidgetModal: React.FC<AddLargeWidgetModalProps> = ({
               return (
                 <button
                   key={widget.type}
-                  onClick={() => {
-                    onAddWidget(widget.type);
-                    onClose();
-                  }}
+                  onClick={() => handleAddWidget(widget.type)}
                   className="w-full p-4 border border-purple-900/20 rounded-lg flex items-start gap-4 hover:bg-purple-900/20 transition-colors"
                 >
                   <Icon className="text-purple-700 mt-1 stroke-[2.5px]" size={24} />
