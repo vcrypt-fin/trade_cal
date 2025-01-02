@@ -349,15 +349,19 @@ const Profile = () => {
                   <h3 className="text-gray-200 font-medium">Leaderboard & Social Trading</h3>
                   <p className="text-purple-300 text-sm mb-4">
                     {socialEnabled 
-                      ? "Your trading stats are visible on the leaderboard. You're part of the TradeMind community!"
+                      ? "Your trading stats are currently visible on the leaderboard. You can disable this at any time."
                       : "Enable social features to compete on the leaderboard and connect with other traders."}
                   </p>
                   <button
                     onClick={() => setShowSocialModal(true)}
-                    className="px-4 py-2 bg-purple-600/80 text-white rounded-lg hover:bg-purple-700/80 transition-colors inline-flex items-center gap-2"
+                    className={`px-4 py-2 ${
+                      socialEnabled 
+                        ? 'bg-red-600/80 hover:bg-red-700/80' 
+                        : 'bg-purple-600/80 hover:bg-purple-700/80'
+                    } text-white rounded-lg transition-colors inline-flex items-center gap-2`}
                   >
                     <Users size={16} />
-                    {socialEnabled ? 'Manage Social Features' : 'Enable Social Features'}
+                    {'Manage Social Features'}
                   </button>
                 </div>
               </div>
