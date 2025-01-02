@@ -47,15 +47,15 @@ import { SocialProvider } from './context/SocialContext';
 
 function App() {
   return (
-    <SocialProvider>
-      <Router>
-        <AuthTokenProvider>
-          <AuthProvider>
-            <AuthChecker />
-            <TutorialProvider>
-              <TradeProvider>
-                <JournalProvider>
-                  <NotebookProvider>
+    <Router>
+      <AuthTokenProvider>
+        <AuthProvider>
+          <AuthChecker />
+          <TutorialProvider>
+            <TradeProvider>
+              <JournalProvider>
+                <NotebookProvider>
+                  <SocialProvider>
                     <TutorialSystem />
                     <Routes>
                       {/* Public routes */}
@@ -89,15 +89,15 @@ function App() {
                       <Route path="/profile" element={<Profile />} />
                       <Route path="/update-password" element={<UpdatePassword />} />
                     </Routes>
-                  </NotebookProvider>
-                </JournalProvider>
-              </TradeProvider>
-            </TutorialProvider>
-            <ToastContainer position="top-right" autoClose={3000} />
-          </AuthProvider>
-        </AuthTokenProvider>
-      </Router>
-    </SocialProvider>
+                  </SocialProvider>
+                </NotebookProvider>
+              </JournalProvider>
+            </TradeProvider>
+          </TutorialProvider>
+          <ToastContainer position="top-right" autoClose={3000} />
+        </AuthProvider>
+      </AuthTokenProvider>
+    </Router>
   );
 }
 

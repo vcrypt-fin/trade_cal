@@ -10,7 +10,7 @@ type TimeFrame = 'daily' | 'weekly' | 'overall';
 
 const LeaderboardWidget: React.FC = () => {
   const { user } = useAuth();
-  console.log('LeaderboardWidget is being rendered!');
+  //console.log('LeaderboardWidget is being rendered!');
   
   const [timeframe, setTimeframe] = useState<TimeFrame>('daily');
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardUser[]>([]);
