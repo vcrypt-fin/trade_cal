@@ -5,6 +5,7 @@ import { useTrades } from '../../context/TradeContext';
 import Sidebar from '../Sidebar';
 import { supabase } from '../../context/SupabaseClient';
 import { Upload } from 'lucide-react';
+import ManualTradeTutorial from '../ManualTradeTutorial';
 
 
 interface ContractSpec {
@@ -341,6 +342,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
   if (playbooks.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+        <ManualTradeTutorial />
         <Sidebar 
           isCollapsed={isCollapsed}
           onToggle={() => setIsCollapsed(!isCollapsed)}
@@ -373,6 +375,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
+      <ManualTradeTutorial />
       <Sidebar 
         isCollapsed={isCollapsed}
         onToggle={() => setIsCollapsed(!isCollapsed)}
@@ -389,7 +392,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
             <h1 className="text-2xl font-semibold text-purple-100">Add Trade</h1>
           </div>
           <form onSubmit={handleSubmit} className="bg-[#120322] p-6 rounded-lg border border-purple-800/30 backdrop-blur-sm space-y-6">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6" data-tour="trade-datetime">
               <div>
                 <label className="block text-sm font-medium text-purple-200 mb-1">Date</label>
                 <input
@@ -415,7 +418,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-6" data-tour="trade-contract">
               <div>
                 <label className="block text-sm font-medium text-purple-200 mb-1">Contract</label>
                 <select
@@ -447,7 +450,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </div>
             </div>
 
-            <div>
+            <div data-tour="trade-strategy">
               <label className="block text-sm font-medium text-purple-200 mb-1">Strategy</label>
               <select
                 name="strategy"
@@ -463,7 +466,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </select>
             </div>
 
-            <div>
+            <div data-tour="trade-brokerage">
               <label className="block text-sm font-medium text-purple-200 mb-1">Brokerage</label>
               <select
                 name="brokerage"
@@ -479,7 +482,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </select>
             </div>
 
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-6" data-tour="trade-prices">
               <div>
                 <label className="block text-sm font-medium text-purple-200 mb-1">Entry Price</label>
                 <input
@@ -518,7 +521,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </div>
             </div>
 
-            <div>
+            <div data-tour="trade-quantity">
               <label className="block text-sm font-medium text-purple-200 mb-1">Quantity</label>
               <input
                 type="number"
@@ -531,7 +534,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               />
             </div>
 
-            <div>
+            <div data-tour="trade-executions">
               <h3 className="text-lg font-medium text-purple-100 mb-4">Executions</h3>
               {executions.map((execution, index) => (
                 <div key={execution.id} className="mb-4 p-4 bg-[#1A0F2E] rounded-lg border border-purple-800/30">
@@ -585,12 +588,13 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
                 type="button"
                 onClick={addExecution}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm"
+                data-tour="add-exit-btn"
               >
                 Add Exit
               </button>
             </div>
 
-            <div>
+            <div data-tour="trade-screenshot">
               <label className="block text-sm font-medium text-purple-200 mb-1">Trade Screenshot</label>
               <div 
                 className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-purple-800/30 border-dashed rounded-lg hover:border-purple-600 transition-colors duration-300 cursor-pointer"
@@ -644,7 +648,7 @@ export default function ManualTradeForm({ onBack }: ManualTradeFormProps) {
               </div>
             </div>
 
-            <div>
+            <div data-tour="trade-notes">
               <label className="block text-sm font-medium text-purple-200 mb-1">Notes</label>
               <textarea
                 name="notes"
