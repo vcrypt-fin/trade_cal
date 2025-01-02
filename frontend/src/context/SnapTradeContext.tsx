@@ -62,9 +62,14 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
       // Fetch SnapTrade user secret
       const { data, error } = await supabase
         .from("snap_users")
-        .select("snap_user_secret")
+        .select("snap_user_secret, snap_user_id")
         .eq("user_id", session.user.id)
         .single();
+
+      if (data) {
+        setSnapTradeUserId(data.snap_user_id);
+        setSnapTradeUserSecret(data.snap_user_secret);
+      }
 
       if(error && error.code == 'PGRST116') {
         // Register new SnapTrade user
@@ -76,6 +81,7 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
           },
           body: JSON.stringify({
             type: 'snaptrade-newuser',
+            userId: session.user.id
           }),
         });
         
@@ -91,8 +97,12 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
 
         setSnapTradeUserId(res.userId);
         setSnapTradeUserSecret(res.userSecret);
+
+        return res
       } else {
         setSnapTradeUserSecret(data.snap_user_secret);
+
+        return { userId: data?.snap_user_id, userSecret: data?.snap_user_secret}
       }
     } catch (err) {
       console.error("Error fetching or registering SnapTrade user:", err);
@@ -153,7 +163,7 @@ export const SnapTradeProvider: React.FC<SnapTradeProviderProps> = ({
     }
   };
 
-  const listBrokerageConnections = async () => {
+  const listBrokerageConnections = async (snapTradeUserId, snapTradeUserSecret) => {
     if (!snapTradeUserId || !snapTradeUserSecret) {
       throw new Error("SnapTrade user ID or secret is not available.");
     }

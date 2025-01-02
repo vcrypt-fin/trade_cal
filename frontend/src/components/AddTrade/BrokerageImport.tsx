@@ -7,7 +7,7 @@ interface BrokerageImportProps {
 }
 
 const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
-  const { listBrokerageConnections, importAccount } = useSnapTrade();
+  const { listBrokerageConnections, importAccount, getUser } = useSnapTrade();
   const [connections, setConnections] = useState<
     { id: string; name: string }[]
   >([]);
@@ -16,6 +16,11 @@ const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
   );
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+
+  }, []);
 
   useEffect(() => {
     const fetchConnections = async () => {
@@ -23,19 +28,23 @@ const BrokerageImport: React.FC<BrokerageImportProps> = ({ onBack }) => {
       setError(null);
 
       try {
-        const rawConnections = await listBrokerageConnections();
+        getUser().then(async (user) => {
+          console.log(user)
+          const rawConnections = await listBrokerageConnections(user.userId, user.userSecret);
 
-        // Extract the necessary fields: connection ID and brokerage name
-        const simplifiedConnections = rawConnections.map((connection: any) => ({
-          id: connection.id,
-          name: connection.name || "Unknown Brokerage",
-        }));
+          // Extract the necessary fields: connection ID and brokerage name
+          const simplifiedConnections = rawConnections.map((connection: any) => ({
+            id: connection.id,
+            name: connection.name || "Unknown Brokerage",
+          }));
 
-        setConnections(simplifiedConnections);
-        // Automatically select the first connection
-        if (simplifiedConnections.length > 0) {
-          setSelectedConnection(simplifiedConnections[0].id);
-        }
+          setConnections(simplifiedConnections);
+          // Automatically select the first connection
+          if (simplifiedConnections.length > 0) {
+            setSelectedConnection(simplifiedConnections[0].id);
+          }
+        })
+
       } catch (err: any) {
         console.error("Error fetching connections:", err);
         setError("Failed to load connections. Please try again.");

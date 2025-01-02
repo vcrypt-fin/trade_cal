@@ -85,7 +85,7 @@ Deno.serve(async (req) => {
 
                     return new Response(JSON.stringify(new_res.data), {
                         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-                        status: 200,
+                        status: supabase_res.status,
                     })
                 } catch (error) {
                     console.error("Error creating SnapTrade user:", error)
@@ -134,6 +134,8 @@ Deno.serve(async (req) => {
                         userId: userId,
                         userSecret: userSecret,
                     })
+
+                    console.log(holding_res.data)
 
                     return new Response(JSON.stringify(holding_res.data), {
                         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
