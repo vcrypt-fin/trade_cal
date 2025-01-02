@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
 import { supabase } from './SupabaseClient';
 import LoadingScreen from '../components/LoadingScreen';
+import { setCookie, deleteCookie } from '../utils/cookies';
 
 interface AuthContextType {
   user: User | null;
@@ -29,6 +30,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       setUser(session?.user ?? null);
+      if (session?.access_token) {
+        setCookie('authToken', session.access_token);
+      } else {
+        deleteCookie('authToken');
+      }
       setError(error);
       setIsLoading(false);
     });
@@ -39,6 +45,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setShowLoadingScreen(true);
       }
       setUser(session?.user ?? null);
+      if (session?.access_token) {
+        setCookie('authToken', session.access_token);
+      } else {
+        deleteCookie('authToken');
+      }
       setIsLoading(false);
     });
 

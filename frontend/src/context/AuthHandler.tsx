@@ -1,6 +1,7 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from './SupabaseClient';
+import { setCookie, deleteCookie, getCookie } from '../utils/cookies';
 
 const PUBLIC_ROUTES = [
   '/login', 
@@ -46,8 +47,17 @@ const LoadingScreen: React.FC = () => (
 export const AuthTokenProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
 
+  const handleSetToken = (newToken: string | null) => {
+    setToken(newToken);
+    if (newToken) {
+      setCookie('authToken', newToken);
+    } else {
+      deleteCookie('authToken');
+    }
+  };
+
   return (
-    <AuthTokenContext.Provider value={{ token, setToken }}>
+    <AuthTokenContext.Provider value={{ token, setToken: handleSetToken }}>
       {children}
     </AuthTokenContext.Provider>
   );
@@ -64,6 +74,7 @@ const AuthHandler: React.FC = () => {
 
   const clearAuth = () => {
     setToken(null);
+    deleteCookie('authToken');
     setIsAuthenticated(false);
     setHasActiveSubscription(null);
   };
@@ -145,6 +156,7 @@ const AuthHandler: React.FC = () => {
           }
 
           setToken(session.access_token);
+          setCookie('authToken', session.access_token);
           setIsAuthenticated(true);
           
           // Clear the hash without triggering a reload
@@ -184,6 +196,7 @@ const AuthHandler: React.FC = () => {
 
         // Always set isAuthenticated = true if there's a valid session
         setToken(session.access_token);
+        setCookie('authToken', session.access_token);
         setIsAuthenticated(true);
 
         // Now check subscription
@@ -213,9 +226,10 @@ const AuthHandler: React.FC = () => {
 
       if (session) {
         setToken(session.access_token);
+        setCookie('authToken', session.access_token);
         setIsAuthenticated(true);
 
-        // Only check subscription if we’re actively authenticating
+        // Only check subscription if we're actively authenticating
         if (localStorage.getItem('auth_in_prog') === 'true') {
           setIsCheckingSubscription(true);
           const hasSubscription = await checkSubscription(session.user.id);

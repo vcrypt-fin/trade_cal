@@ -75,8 +75,8 @@ const LoginPage: React.FC = () => {
             return;
         }
 
-        if (data?.session) {
-            localStorage.setItem('authToken', data.session.access_token);
+        if (data.session) {
+            console.log('Login successful');
             navigate('/');
         }
     } catch (err) {

@@ -17,6 +17,7 @@ import {
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { Avatar } from "@nextui-org/react";
 import { cn } from '../utils/cn';
+import { deleteCookie } from '../utils/cookies';
 
 const menuItems = [
   { icon: LayoutDashboard, text: 'Dashboard', path: '/', tourId: 'dashboard' },
@@ -84,17 +85,15 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('auth_in_prog');
-      
-      navigate('/demo');
-    } catch (error) {
-      console.error('Error logging out:', error);
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+        console.error('Error signing out:', error.message);
+        return;
     }
+    deleteCookie('authToken');
+    // localStorage.removeItem('authToken');
+    localStorage.removeItem('auth_in_prog');
+    navigate('/demo');
   };
 
   const handleResetPassword = async () => {

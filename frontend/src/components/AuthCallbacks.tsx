@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../context/SupabaseClient';
 import { getBaseUrl } from '../utils/environment';
+import { setCookie } from '../utils/cookies';
 
 export const GitHubCallback: React.FC = () => {
     const navigate = useNavigate();
@@ -34,13 +35,13 @@ export const GitHubCallback: React.FC = () => {
 
                     // Store the access token if present
                     if (accessToken) {
-                        localStorage.setItem('authToken', accessToken);
-                    } else {
-                        localStorage.setItem('authToken', session.access_token);
+                        setCookie('authToken', accessToken);
+                    } else if (session.access_token) {
+                        setCookie('authToken', session.access_token);
                     }
 
                     // Clear the auth in progress flag
-                    localStorage.setItem('auth_in_prog', 'false');
+                    // localStorage.setItem('auth_in_prog', 'false');
 
                     // Get base URL from utility function
                     const redirectUrl = getBaseUrl();
