@@ -82,55 +82,57 @@ export default function BrokerageLink({
   return (
     <div className="min-h-screen bg-gradient-to-bl from-[#120322] via-[#0B0118] to-[#0B0118]">
       <Sidebar />
-      <div className="max-w-2xl mx-auto mt-10">
-        <button
-          onClick={onBack}
-          className="text-purple-400 hover:text-purple-300 mb-4"
-        >
-          ← Back
-        </button>
-        <h1 className="text-3xl font-semibold text-purple-100 mb-4">
-          Link Brokerage
-        </h1>
-        {error && <div className="text-red-500 text-center">{error}</div>}
-
-        <div className="bg-[#1A0F2E] p-6 rounded-lg shadow-lg">
-          <div className="mb-4">
-            <label htmlFor="broker" className="text-purple-200 font-semibold">
-              Link SnapTrade Brokerages
-            </label>
-
-          </div>
+      <div className="ml-[280px] p-8"> {/* Add margin-left for sidebar */}
+        <div className="max-w-2xl mx-auto"> {/* Constrain content width */}
           <button
-            onClick={handleBrokerConnect}
-            disabled={loading}
-            className={`w-full py-2 mt-4 rounded-lg text-purple-100 font-semibold ${
-              loading
-                ? "bg-gray-600 cursor-not-allowed"
-                : "bg-purple-700 hover:bg-purple-600"
-            }`}
+            onClick={onBack}
+            className="text-purple-400 hover:text-purple-300 mb-4"
           >
-            {loading ? "Connecting..." : "Connect"}
+            ← Back
           </button>
-        </div>
+          <h1 className="text-3xl font-semibold text-purple-100 mb-4">
+            Link Brokerage
+          </h1>
+          {error && <div className="text-red-500 text-center mb-4">{error}</div>}
 
-        {loading && (
-          <div className="flex justify-center mt-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+          <div className="bg-[#1A0F2E] p-6 rounded-lg shadow-lg">
+            <div className="mb-4">
+              <label htmlFor="broker" className="text-purple-200 font-semibold">
+                Link SnapTrade Brokerages
+              </label>
+            </div>
+            <button
+              onClick={handleBrokerConnect}
+              disabled={loading}
+              className={`w-full py-2 mt-4 rounded-lg text-purple-100 font-semibold ${
+                loading
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-purple-700 hover:bg-purple-600"
+              }`}
+            >
+              {loading ? "Connecting..." : "Connect"}
+            </button>
           </div>
-        )}
 
-        {redirectLink && (
-          <SnapTradeReact
-            loginLink={redirectLink}
-            isOpen={open}
-            close={() => {
-              setOpen(false);
-              onConnectionComplete(); // Notify parent when manually closed
-            }}
-          />
-        )}
+          {loading && (
+            <div className="flex justify-center mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            </div>
+          )}
+
+          {redirectLink && (
+            <SnapTradeReact
+              loginLink={redirectLink}
+              isOpen={open}
+              close={() => {
+                setOpen(false);
+                onConnectionComplete(); // Notify parent when manually closed
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
