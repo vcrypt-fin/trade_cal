@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import leaderboardService, { LeaderboardUser } from '../../services/leaderboardService';
-import { Trophy, TrendingUp, TrendingDown, User, X, Calendar, BarChart2, Circle } from 'lucide-react';
+import { Trophy, TrendingUp, TrendingDown, User, X, Calendar, BarChart2, Circle, UserPlus, UserMinus } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import followService, { FollowStats } from '../../services/followService';
 import './NewsWidget.css';
 
 console.log('LeaderboardWidget.tsx is being imported!');
@@ -64,28 +65,60 @@ interface ProfileModalProps {
   onClose: () => void;
 }
 
-const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose }) => {
+const ProfileModal = ({ user, onClose }: ProfileModalProps): JSX.Element => {
+  const { user: currentUser } = useAuth();
   const [, forceUpdate] = useState({});
   const onlineStatus = getOnlineStatus(user.last_online);
-  
+  const [followStats, setFollowStats] = useState<FollowStats>({
+    follower_count: 0,
+    following_count: 0,
+    is_following: false
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    console.log('ProfileModal: Initial render', {
+    loadFollowStats();
+  }, [user.id]);
+
+  const loadFollowStats = async () => {
+    const stats = await followService.getFollowStats(user.id);
+    setFollowStats(stats);
+  };
+
+  const handleFollow = async () => {
+    if (!currentUser) return;
+    setIsLoading(true);
+    
+    const success = followStats.is_following
+      ? await followService.unfollowUser(user.id)
+      : await followService.followUser(user.id);
+
+    if (success) {
+      await loadFollowStats();
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    const logData = {
       userId: user.id,
       lastOnline: user.last_online,
       currentStatus: onlineStatus
-    });
+    };
+    console.log('ProfileModal: Initial render', logData);
 
     const interval = setInterval(() => {
-      console.log('ProfileModal: Forcing update for user', {
+      const updateData = {
         userId: user.id,
         lastOnline: user.last_online,
         currentTime: new Date().toISOString()
-      });
+      };
+      console.log('ProfileModal: Forcing update for user', updateData);
       forceUpdate({});
     }, 60000);
     
     return () => clearInterval(interval);
-  }, [user.id, user.last_online]);
+  }, [user.id, user.last_online, onlineStatus]);
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
@@ -118,14 +151,39 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ user, onClose }) => {
                  onlineStatus === 'away' ? 'Away' :
                  user.last_online ? `Last seen ${new Date(user.last_online).toLocaleString()}` : 'Offline'}
               </p>
+              <div className="flex gap-4 mt-2 text-sm text-gray-400">
+                <span>{followStats.follower_count} followers</span>
+                <span>{followStats.following_count} following</span>
+              </div>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-purple-900/20 rounded-full"
-          >
-            <X size={20} className="text-gray-400" />
-          </button>
+          <div className="flex gap-2">
+            {currentUser && currentUser.id !== user.id && (
+              <button
+                onClick={handleFollow}
+                disabled={isLoading}
+                className={`p-2 rounded-full transition-colors ${
+                  followStats.is_following 
+                    ? 'bg-purple-500/20 hover:bg-purple-500/30 text-purple-400' 
+                    : 'bg-purple-900/20 hover:bg-purple-900/30 text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : followStats.is_following ? (
+                  <UserMinus size={20} />
+                ) : (
+                  <UserPlus size={20} />
+                )}
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 hover:bg-purple-900/20 rounded-full"
+            >
+              <X size={20} className="text-gray-400" />
+            </button>
+          </div>
         </div>
 
         <div className="space-y-6">
